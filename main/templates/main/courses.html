@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h1>{% trans "Courses" %}</h1>
+  {% blocktrans %}
+  <p>Course contents working in progress...</p>
+  {% endblocktrans %}
+</div>
+<div class="ui container">
+  <div class="ui stackable doubling four link cards">
+    {% for course in all_courses %}
+    <!-- Content inside <a> tag: requires HTML5 -->
+    <a class="ui card" href="{% url 'main:course' course.codename %}">
+      <div class="image">
+        <img src="{{ course.image.url }}" />
+      </div>
+      <div class="content">
+        <span class="header" href="{% url 'main:course' course.codename %}">{{ course.name }}</span>
+        <div class="meta">
+          <span class="date">{% trans 'Last update: ' %}{{ course.lecture_last_edited }}</span>
+        </div>
+        <div class="description">
+          {{ course.description }}
+        </div>
+      </div>
+      <!-- <div class="extra content">
+        <span>
+          <i class="add icon"></i>
+          {% trans 'Add to favorite' %}
+        </span>
+      </div> -->
+    </a>
+    {% endfor %}
+  </div>
+  <!-- <ul class="ui list">
+    {% for course in all_courses %}
+    <li>
+      <a href="{% url 'main:course' course.codename %}">{{ course.name }}</a>
+    </li>
+    {% endfor %}
+  </ul> -->
+</div>
+<div class="section">
+  <a class="ui button" href="{% url 'main:index' %}">{% trans "Go back" %}</a>
+</div>
+{% endblock %}

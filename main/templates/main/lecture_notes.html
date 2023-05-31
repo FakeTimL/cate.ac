@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{ request.LANGUAGE_CODE }}">
+
+{% load static i18n %}
+<head id="__head__">
+  <meta charset="utf-8" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="#####">
+  <title>{{ course.name }} | {{ lecture.title }}</title>
+  <script type="text/javascript" src="{% static 'mathjax/mathjax-loader.js' %}" async></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'semantic-ui/semantic.min.css' %}">
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
+  <link rel="stylesheet" href="{% static 'pygments/friendly.css' %}" />
+</head>
+<body style="background-color: #ffffff;">
+<style>
+{{ lecture.lecture_notes_css|safe }}
+</style>
+{% if lecture.lecture_notes and lecture.lecture_notes != "" %}
+<div class="lecture_notes">
+  {{ lecture.lecture_notes|safe }}
+</div>
+{% endif %}
+</body>
+</html>

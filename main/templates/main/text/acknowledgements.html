@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  {% blocktrans %}
+  <h1>Acknowledgements</h1>
+  <p>Currently, we host this website on <a target="_blank" rel="nofollow" href="https://cloud.tencent.com/">Tencent Cloud</a>. We have used <em>a lot</em> of open-source libraries in this project, as listed below:</p>
+
+  <p>This website is built with:</p>
+
+  <ul>
+    <li><a target="_blank" rel="nofollow" href="https://www.python.org/">Python</a> + <a target="_blank" rel="nofollow" href="https://www.djangoproject.com/">Django</a>, as the server-side application framework</li>
+    <li><a target="_blank" rel="nofollow" href="https://www.mysql.com/">MySQL</a>, as the database system</li>
+    <li><a target="_blank" rel="nofollow" href="https://www.nginx.com/">Nginx</a>, previously used for serving static files</li>
+    <li><a target="_blank" rel="nofollow" href="https://github.com/unbit/uwsgi">uWSGI</a>, as the server program (forwards requests from Nginx to Django)</li>
+    <li><a target="_blank" rel="nofollow" href="https://semantic-ui.com/">Semantic UI</a>, for the styling of UI components</li>
+    <li><a target="_blank" rel="nofollow" href="https://v3.vuejs.org/">Vue.js</a>, to simplify JavaScript DOM operations (although currently we do not have much JavaScript on this site...)</li>
+  </ul>
+
+  <p>Other third-party components used:</p>
+
+  <ul>
+    <li><a target="_blank" rel="nofollow" href="https://github.com/trentm/python-markdown2">python-markdown2</a>, for server-side rendering (conversion to HTML) of Markdown contents</li>
+    <li><a target="_blank" rel="nofollow" href="https://www.mathjax.org/">MathJax</a>, for client-side rendering of mathematical formulas</li>
+    <li><a target="_blank" rel="nofollow" href="https://www.sympy.org/en/index.html">SymPy</a>, for automatic simplification of mathematical expressions</li>
+    <li><a target="_blank" rel="nofollow" href="https://certbot.eff.org/">Let's Encrypt / Certbot</a>, for a free HTTP SSL certificate</li>
+    <li><a target="_blank" rel="nofollow" href="https://github.com/js-cookie/js-cookie/">js-cookie</a>, to simplify JavaScript cookie operations</li>
+  </ul>
+
+  <p>Plan to use in the future:</p>
+
+  <ul>
+    <li><a target="_blank" rel="nofollow" href="https://www.elastic.co/elasticsearch/">Elasticsearch</a>, for in-site search functionality
+    <ul>
+    <li><a target="_blank" rel="nofollow" href="https://github.com/django-es/django-elasticsearch-dsl">django-elasticsearch-dsl</a>, as a wrapper for Elasticsearch</li>
+    </ul></li>
+  </ul>
+
+  <!-- <blockquote class="ui message">
+    <p>真的调包侠，敢于大包小包地调十几个包。</p>
+  </blockquote> -->
+  
+  <p>Besides, we have used some awesome photos on <a target="_blank" rel="nofollow" href="https://www.pexels.com/">Pexels</a> to decorate this website:</p>
+
+  <ul>
+    <li><a target="_blank" rel="nofollow" href="https://www.pexels.com/photo/shallow-focus-photography-of-green-leaves-1002335/">shallow-focus-photography-of-green-leaves-1002335</a></li>
+    <li><a target="_blank" rel="nofollow" href="https://www.pexels.com/photo/analysis-blackboard-board-bubble-355952/">analysis-blackboard-board-bubble-355952</a></li>
+    <li><a target="_blank" rel="nofollow" href="https://www.pexels.com/photo/auditorium-benches-chairs-class-207691/">auditorium-benches-chairs-class-207691</a></li>
+    <li><a target="_blank" rel="nofollow" href="https://www.pexels.com/photo/ipad-paper-clips-and-erasers-flatlay-5088022/">ipad-paper-clips-and-erasers-flatlay-5088022</a></li>
+  </ul>
+  
+  {% endblocktrans %}
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  {% blocktrans %}
+  <h1>Privacy Policy</h1>
+  <blockquote class="ui message">
+    <p>Coming soon...</p>
+  </blockquote>
+  
+  <p><strong>This is an initial draft and leaves out many details. It will be changed in the near future.</strong></p>
+  
+  <p>In the following paragraphs, <strong>"we", "us", "our" etc.</strong> refers to Anfa Technologies (a.k.a. AnfaTech) or equivalently, the three persons Xiuxuan Wang, Zhanrong Qiao and Zhuo Zhang. <strong>"Services"</strong> refers to the functions and contents provided by "us" and the Anfa Learning website. <strong>"Website"</strong> refers to the Anfa Learning website if not alternatively specified.</p>
+  
+  <h2>What we collect</h2>
+  <ol>
+  <li>We collect your IP address and the URLs of the pages you are currently viewing (otherwise we cannot send you the content of these pages);</li>
+  <li>You can choose to provide personal information like your real name after you have logged in. These information will then become publicly visible.</li>
+  <li>You can choose to send comments. These will become publicly visible as well.</li>
+  <li>Your password will undergo an irreversible hashing process (<code>pbkdf2_sha256</code>, 180000 iterations) before being stored in our database. It is impossible for other people to know your password, including Website administrators.</li>
+  <li>We enforce HTTP SSL encrypted connections to ensure that your data will not be revealed to third-parties during transmission.</li>
+  </ol>
+
+  <h2>Cookies</h2>
+  <p>("Cookies" are small pieces of data stored on your browser, which is used and updated every time you interact with our website. By using cookies, we will be able to <em>associate multiple requests sent by your browser</em>.)</p>
+  <ol>
+  <li>If you are not logged in, we only store a "<code>csrf_token</code>" cookie when you are about to submit forms. This is used only to ensure that hackers cannot perform actions on this website "in your name".</li>
+  <li>If you are logged in, we will store a "<code>session_id</code>" to identify your login status (e.g. which account you have logged in?)</li>
+  <li>Except for cases specified above, we do not track your activities by using cookies.</li>
+  </ol>
+  
+  <blockquote class="ui message">
+    <p>Coming soon...</p>
+  </blockquote>
+  {% endblocktrans %}
+</div>
+{% endblock %}

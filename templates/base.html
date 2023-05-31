@@ -1,0 +1,144 @@
+{% extends "min_base.html" %}
+{% load static i18n %}
+
+{% block body %}
+{% block header %}
+<a href="#main_content" class="keyboard_skip_link">{% trans "Skip to main content" %}</a>
+<div class="nav ui borderless horizontal menu">
+  <div class="ui container">
+    <a class="toggle item" onclick="toggleVerticalMenu();"><i class="bars icon"></i></a>
+    <a class="header item" href="{% url 'main:index' %}">
+      {% include "anfa.svg" with class_name="ui tiny image" %}
+      <!-- {% trans "Anfa Learning" %}
+      <span style="font-size: 0.6em;">v0.2-alpha</span> -->
+    </a>
+    <a class="item" href="{% url 'main:courses' %}">{% trans "Courses" %}</a>
+    <a class="item" href="{% url 'main:problemsets' %}">{% trans "Problem sets" %}</a>
+    <a class="item" href="{% url 'main:about' %}">{% trans "About us" %}</a>
+    <div class="right menu">
+      <div class="item">
+        <form class="ui icon input" action="{% url 'main:search' %}" method="get">
+          <input type="text" name="query" placeholder="{% trans 'Search...' %}" />
+          <i class="search icon"></i>
+        </form>
+      </div>
+      {% if user.is_authenticated %}
+      <a class="login item" href="{% url 'accounts:index' %}">
+        <img class="ui avatar image" src="{{ user.profile.avatar.url }}" alt="{% blocktrans with username=user.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+        <span>{{ user.get_username }}</span>
+      </a>
+      {% else %}
+      <a class="login item" href="{% url 'accounts:index' %}"><i class="user circle icon"></i><span>{% trans "Log in or sign up" %}</span></a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<div class="ui one_time_messages container">
+  {% for message in messages %}
+  <div class="ui {% if message.tags %}{{ message.tags }}{% endif %} message">
+    <i class="close icon"></i>
+    {% if 'safe' in message.extra_tags %}{{ message|safe }}{% else %}<span>{{ message }}</span>{% endif %}
+  </div>
+  {% endfor %}
+  <script>
+  $('.message .close').on('click', function() {
+    $(this).closest('.message').transition({ animation: 'fade down', onHide: function() { $(this).remove(); } });
+  });
+  </script>
+</div>
+<div class="nav ui large vertical menu" style="display: none;">
+  <a class="item" href="{% url 'main:courses' %}">{% trans "Courses" %}</a>
+  <a class="item" href="{% url 'main:problemsets' %}">{% trans "Problem sets" %}</a>
+  <a class="item" href="{% url 'main:about' %}">{% trans "About us" %}</a>
+  <div class="item">
+    <form class="ui icon input" action="{% url 'main:search' %}" method="get">
+      <input type="text" name="query" placeholder="{% trans 'Search...' %}" />
+      <i class="search icon"></i>
+    </form>
+  </div>
+  {% if user.is_authenticated %}
+  <a class="item" href="{% url 'accounts:index' %}">
+    <img class="ui avatar image" src="{{ user.profile.avatar.url }}" alt="{% blocktrans with username=user.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+    <span>{{ user.get_username }}</span>
+  </a>
+  {% else %}
+  <a class="item" href="{% url 'accounts:index' %}"><i class="user circle icon"></i><span>{% trans "Log in or sign up" %}</span></a>
+  {% endif %}
+</div>
+<script>
+function updateNavbarClassname() {
+  var isDesktop = window.matchMedia("screen and (min-width: 768px)").matches;
+  var horizontalMenu = document.querySelector(".nav.ui.horizontal.menu");
+  if (isDesktop) {
+    var arr = horizontalMenu.className.split(" ");
+    var newClassName = "";
+    for (var i = 0; i < arr.length; i++) {
+      var curr = arr[i].toLowerCase();
+      if (curr != "huge") newClassName += (" " + curr);
+    }
+    horizontalMenu.className = newClassName;
+  } else horizontalMenu.className += " huge";
+}
+
+function toggleVerticalMenu() {
+  var verticalMenu = document.querySelector(".nav.ui.vertical.menu");
+  verticalMenu.style.display = (verticalMenu.style.display == "none")? "" : "none";
+}
+
+updateNavbarClassname();
+if (window.attachEvent) window.attachEvent("onresize", updateNavbarClassname);
+if (window.addEventListener) window.addEventListener("resize", updateNavbarClassname);
+console.info('\n\t... We only have one "full-stack developer" currently and that is certainly not enough.\n\t\tIf you are interested, please see: https://www.anfatech.net/about/#joinus ...\n\n');
+console.info('\n\t... 我们目前全靠一个“全栈工程师”搞开发，很明显这完全不够。\n\t\t如果你也想加入，可以看看: https://www.anfatech.net/about/#joinus ...\n\n');
+</script>
+{% endblock %}
+<div id="main_content" class="body_wrapper">
+  {% block content %}{% endblock %}
+</div>
+{% block footer %}
+<div class="ui inverted vertical footer segment">
+  <div class="ui container">
+    <div class="ui divided inverted grid">
+      <div class="three wide computer eight wide column">
+        <h4 class="ui inverted tiny header">{% trans 'Select language' %}</h4> <!-- TODO: get language list automatically -->
+        <div class="ui inverted tiny link list">
+          <a href="/" class="item">简体中文</a>
+          <a href="/en/" class="item">English</a>
+        </div>
+      </div>
+      <div class="three wide computer eight wide column">
+        <div class="ui inverted tiny link list">
+          <a href="{% url 'main:help' %}" class="item">{% trans 'Help' %}</a>
+          <a href="{% url 'main:feedback' %}" class="item">{% trans 'Send feedback' %}</a>
+          <a href="{% url 'main:api' %}" class="item">{% trans 'API' %}</a>
+        </div>
+      </div>
+      <div class="three wide computer eight wide column">
+        <h4 class="ui inverted tiny header">{% trans 'About us' %}</h4>
+        <div class="ui inverted tiny link list">
+          {% url 'main:about' as about_url %}
+          <a href="{{ about_url }}#joinus" class="item">{% trans 'Join us' %}</a>
+          <a href="#" class="item">{% trans "Sushi Bear's blog (coming soon...)" %}</a>
+          <a href="{% url 'main:infinideas_archive' %}" class="item">{% trans 'Infinideas webpage archive' %}</a>
+        </div>
+      </div>
+      <div class="seven wide computer sixteen wide column">
+        {% blocktrans %}
+        <i>Anfa Learning is a non-profit project that aims to use technology to reduce the cost of teaching, so that more people can enjoy quality education. Our main focus is on high school-level courses in mainland China. <a href="{{ about_url }}#joinus">Join us</a> if you are interested!</i>
+        {% endblocktrans %}
+      </div>
+    </div>
+    <div class="ui inverted uisection divider"></div>
+    <div class="ui center aligned container">
+      <div class="ui horizontal inverted tiny divided link list">
+        <p class="item">&copy; 2020 {% trans 'Anfa Technologies' %}</p>
+        <a class="item" href="{% url 'main:acknowledgements' %}">{% trans 'Acknowledgements' %}</a>
+        <a class="item" href="{% url 'main:terms_of_use' %}">{% trans 'Terms of Use' %}</a>
+        <a class="item" href="{% url 'main:privacy_policy' %}">{% trans 'Privacy Policy' %}</a>
+        <a class="item" href="http://beian.miit.gov.cn/" target="_blank">苏ICP备20010109号-2</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% endblock %}

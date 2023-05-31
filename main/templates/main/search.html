@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  {% blocktrans %}
+  <h1>Search results for "{{ query }}"</h1>
+  {% endblocktrans %}
+  <p>{% trans "Page working in progress..." %}</p>
+  <ol class="ui list">
+    {% for result in results %}
+    <li>
+      <span>{{ result }}</span>
+    </li>
+    {% endfor %}
+  </ol>
+  <p>{{ total }}</p>
+  <a class="ui button" href="{% url 'main:problemsets' %}">{% trans "Go back" %}</a>
+</div>
+{% endblock %}

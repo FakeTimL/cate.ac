@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  {% if parent_id %}
+  <a class="ui icon button" href="{% url 'main:comment' parent_id %}"><i class="up arrow icon"></i></a>
+  {% endif %}
+  {% if redirect_url %}
+  <a class="ui button" href="{{ redirect_url }}">{% trans "Go back to " %}{{ redirect_name }}</a>
+  {% endif %}
+  
+  <div class="ui comments"> <!-- ui threaded comments -->
+    {% with cid=comment.id u=comment.user %}
+    <div class="comment">
+      <a class="ui circular avatar image" href="{% url 'accounts:profile' u.get_username %}">
+        <img src="{{ u.profile.avatar.url }}" alt="{% blocktrans with username=u.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+      </a>
+      <div class="content">
+        <a class="author" href="{% url 'accounts:profile' u.get_username %}"><span dir="auto">{{ u.get_username }}</span></a>
+        <div class="metadata">
+          <span class="date">{{ comment.publish_date|naturaltime }}</span>
+        </div>
+        <div class="markdown text"> <!-- style="font-size: 1.2em;" -->
+          <p>{{ comment.text }}</p>
+        </div>
+        <div class="actions">
+          {% if user.is_authenticated %}<a class="reply" href="#reply_form">{% trans "Reply" %}</a>{% endif %}
+          
+          {% if u.id == user.id or user.is_staff %}
+          <form style="display: none;" id="delete_form_{{ cid }}" action="{% url 'main:comment' cid %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="delete" value="1" />
+            <input type="hidden" name="redirect_url" value="{{ redirect_url }}" />
+          </form>
+          <a href="#" onclick="if (window.confirm('{% trans " Are you sure to delete this comment and all its replies? " %}')) document.getElementById('delete_form_{{ cid }}').submit(); return false;">{% trans "Delete" %}</a>
+          {% endif %}
+          
+          {% if u.id != user.id or user.is_staff %}
+          <!--<a>{% trans "Upvote" %}</a>
+          <a>{% trans "Downvote" %}</a>-->
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endwith %}
+    <h3 class="ui dividing header">{% trans "All replies" %}</h3>
+    {% url 'main:comment' comment.id as redirect_url %}
+    {% include "main/comments_tree_view.html" with all_comments=all_comments redirect_url=redirect_url %}
+    <script>
+      function toggleReplyBox(id) {
+        el = document.getElementById(id);
+        el.style.display = (el.style.display == "none"? "block" : "none");
+      }
+    </script>
+  </div>
+  {% if user.is_authenticated %}
+  <div style="margin: 0.5em;">
+    <form class="ui reply form" id="reply_form" action="{% url 'main:comment' comment.id %}" method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label><span dir="auto">{{ user.get_username }}</span>{% trans ":" %}</label>
+        <textarea style="resize: vertical;" placeholder="{% trans 'Say something...' %}" rows="10" name="content"></textarea>
+      </div>
+      {# Translators: The "send comment" button text #}
+      <input class="ui button primary" type="submit" value="{% trans 'Comment' %}" />
+    </form>
+  </div>
+  {% else %}
+  <div style="margin: 0.5em;">
+    {% url 'accounts:login' as login_url %}
+    <p>{% blocktrans %}Please <a href="{{ login_url }}">log in</a> to comment{% endblocktrans %}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

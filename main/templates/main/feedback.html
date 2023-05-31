@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h1>{% trans 'Send anonymous feedback' %}</h1>
+  <form class="ui form" action="{% url 'main:feedback' %}" method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label>{% trans "You can describe the problem or tell us about your ideas for improvements:" %}</label>
+      <textarea style="resize: vertical;" placeholder="{% trans 'e.g. The page at [link] is not displaying formulas correctly...' %}" rows="20" name="content"></textarea>
+    </div>
+    <input class="ui button primary" type="submit" value="{% trans 'Send' context 'Send feedback button text' %}" />
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  {% url 'main:feedback' as feedback_url %}
+  {% blocktrans %}
+  <h1>Terms of Use</h1>
+  <blockquote class="ui message">
+    <p>Coming soon...</p>
+  </blockquote>
+  
+  <p><strong>This is an initial draft and leaves out many details. It will be changed in the near future.</strong></p>
+  
+  <p>In the following paragraphs, <strong>"we", "us", "our" etc.</strong> refers to Anfa Technologies (a.k.a. AnfaTech) or equivalently, the three persons Xiuxuan Wang, Zhanrong Qiao and Zhuo Zhang. <strong>"Services"</strong> refers to the functions and contents provided by "us" and the Anfa Learning website. <strong>"Website"</strong> refers to the Anfa Learning website if not alternatively specified.</p>
+  
+  <h2>What you cannot do:</h2>
+  <ul>
+  <li>Send offensive messages or make personal attacks to other users, either publicly or privately;</li>
+  <li>Commercially exploit (e.g. license or sell) the contents provided by other users without their prior consent;</li>
+  <li>Commercially exploit (e.g. license or sell) the Services provided by us without our prior consent;</li>
+  </ul>
+  
+  <blockquote class="ui message">
+    <p>Coming soon...</p>
+  </blockquote>
+  {% endblocktrans %}
+</div>
+{% endblock %}

@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<style>
+  .choices { margin-bottom: 1em; }
+  .choices>div { padding: 1em 1.5em; }
+</style>
+<div class="markdown section">
+  <p>{{ question_data.statement|safe }}</p>
+  
+  {% if not user_responded %} {# User did not give an answer #}
+  
+  <form class="ui form" action="{{ submission_url }}" method="{{ submission_method }}">
+    {% if submission_method != 'get' %}{% csrf_token %}{% endif %}
+    
+    <!--
+    {% if question_data.type == 'choice' %}
+    <div class="ui selection list">
+      {% for choice in question_data.choices_shown %}
+      {% if question_data.num_correct_choices == 1 %}
+      <div class="ui radio checkbox item" onclick="clickSelection(event, 'choice_{{ forloop.counter }}', true);">
+        <input type="radio" id="choice_{{ forloop.counter }}" name="choices" value="{{ forloop.counter }}" />
+        <label>{{ choice.text|safe }}</label>
+      </div>
+      {% else %}
+      <div class="ui checkbox item" onclick="clickSelection(event, 'choice_{{ forloop.counter }}', false);">
+        <input type="checkbox" id="choice_{{ forloop.counter }}" name="choices" value="{{ forloop.counter }}" />
+        <label>{{ choice.text|safe }}</label>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <style>
+      .ui.selection.list * { cursor: pointer; }
+    </style>
+    <script>
+      function clickSelection(e, id, is_radio) {
+        el = document.getElementById(id);
+        if (el != e.target) el.checked = (is_radio? true : !el.checked);
+      }
+    </script>
+    {% endif %}
+    -->
+    
+    {% if question_data.type == 'choice' %}
+    <table class="ui selectable table">
+      <tbody>
+        {% for choice in question_data.choices_shown %}
+        {% if question_data.num_correct_choices == 1 %}
+        <tr onclick="clickSelection(event, 'choice_{{ forloop.counter }}', true);">
+          <td>
+            <div class="ui radio checkbox">
+              <input type="radio" id="choice_{{ forloop.counter }}" name="choices" value="{{ forloop.counter }}" />
+              <label>{{ choice.text|safe }}</label>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr onclick="clickSelection(event, 'choice_{{ forloop.counter }}', false);">
+          <td>
+            <div class="ui checkbox">
+              <input type="checkbox" id="choice_{{ forloop.counter }}" name="choices" value="{{ forloop.counter }}" />
+              <label>{{ choice.text|safe }}</label>
+            </div>
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <style>
+      .ui.selectable.table * { cursor: pointer; }
+    </style>
+    <script>
+      function clickSelection(e, id, is_radio) {
+        el = document.getElementById(id);
+        if (el != e.target) el.checked = (is_radio? true : !el.checked);
+      }
+    </script>
+    {% endif %}
+    
+    {% if question_data.type == 'qa' %}
+    <div class="field">
+      <label>{% trans "You can choose to write your answer on a paper or type it here (if possible):" %}</label>
+      <textarea style="resize: vertical;" name="answer_text" placeholder="{% trans 'Your answer...' %}" rows="15"></textarea>
+    </div>
+    {% endif %}
+    
+    {% if question_data.type == 'fill' %}
+    <div class="field">
+      <label>{% trans "You can choose to write your answer on a paper or type it here (if possible):" %}</label>
+      <ol class="ui list">
+        {% for blank in question_data.blanks %}
+        <li class="item">
+          <input id="blank_{{ forloop.counter0 }}" type="text" name="blank_{{ forloop.counter0 }}" placeholder="{% trans 'Your answer...' %}" />
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+    {% endif %}
+    
+    <input class="ui button primary" type="submit" value="{% trans 'Check' context 'Check the answer' %}" />
+    <a class="ui button" href="{{ back_url }}">{% trans "Go back" %}</a>
+  </form>
+  
+  {% else %} {# User gave an answer #}
+  
+  <div>
+    {% if question_data.type == 'choice' %}
+    {% if question_data.user_is_correct == True %}
+    <h1>{% trans "You're correct!" %}</h1>
+    {% elif question_data.user_is_correct == False %}
+    <h4>{% trans "There might be something wrong with your choices..." %}</h4>
+    {% else %}
+    <h4>{% trans "The computer is not smart enough to determine whether your answer is correct. You will need to decide by yourself:" %}</h4>
+    {% endif %}
+    
+    <!--
+    <div class="choices">
+      {% for choice in question_data.choices_shown %}
+      {% if choice.is_correct and choice.user_chosen %}
+      <div class="ui success message">
+      {% elif choice.is_correct %}
+      <div class="ui info message">
+      {% elif choice.user_chosen %}
+      <div class="ui warning message">
+      {% else %}
+      <div>
+      {% endif %}
+        {% if choice.is_correct %}
+        <i class="ui check icon"></i><span>{% trans "Correct" %}</span>
+        {% else %}
+        <i class="ui x icon"></i><span>{% trans "Incorrect" %}</span>
+        {% endif %}
+        {% if choice.user_chosen %}
+        <span>{% trans " (selected)" %}</span>
+        {% endif %}
+        <b>{{ choice.text|safe }}</b>
+        {% if choice.explanation %}
+        {{ choice.explanation|safe }}
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    -->
+    
+    <table class="ui table">
+      <tbody>
+        {% for choice in question_data.choices_shown %}
+        
+        {% if choice.is_correct and choice.user_chosen %}
+        <tr class="top aligned positive">
+        {% elif choice.is_correct %}
+        <tr class="top aligned warning">
+        {% elif choice.user_chosen %}
+        <tr class="top aligned negative">
+        {% else %}
+        <tr class="top aligned">
+        {% endif %}
+          <td class="collapsing">
+            {% if choice.is_correct %}
+            <i class="ui check icon"></i><span>{% trans "Correct" %}</span>
+            {% else %}
+            <i class="ui x icon"></i><span>{% trans "Incorrect" %}</span>
+            {% endif %}
+            {% if choice.user_chosen %}
+            <span>{% trans " (selected)" %}</span>
+            {% endif %}
+            {{ choice.text|safe }}
+          </td>
+          <td>
+            {% if choice.explanation %}
+            {{ choice.explanation|safe }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    
+    {% if question_data.type == 'qa' and question_data.user_answer != '' %}
+    <h4>{% trans "Your typed answer:" %}</h4>
+    <p>
+      {{ question_data.user_answer }}
+    </p>
+    {% endif %}
+    
+    {% if question_data.type == 'fill' %}
+    {% if question_data.user_is_correct == True %}
+    <h1>{% trans "You're correct!" %}</h1>
+    {% elif question_data.user_is_correct == False %}
+    <h4>{% trans "There might be something wrong with your choices..." %}</h4>
+    {% else %}
+    <h4>{% trans "The computer is not smart enough to decide whether your answers are all correct. You will need to decide by yourself:" %}</h4>
+    {% endif %}
+    
+    <h4>{% trans "Your typed answer:" %}</h4>
+    <ol style="font-weight: bold;">
+      {% for blank in question_data.blanks %}
+      <li>
+        <p style="font-weight: normal;" id="blank_{{ forloop.counter0 }}"><i>&nbsp;{{ blank.user_answer }}</i></p>
+        <!-- <p>{{ blank.user_is_correct }}</p>
+        <p>{{ blank.correct_answer }}</p> -->
+      </li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+    
+    {% if question_data.explanation %}
+    <h2 class="ui dividing header">{% trans "Explanation" %}</h2>
+    {{ question_data.explanation|safe }}
+    {% endif %}
+    <p>
+      {% trans "Knowledge units: " %}
+      {% for knowledge_unit in question_data.knowledge_units %}
+      <a href="#" class="ui blue label">{{ knowledge_unit }}</a>
+      {% endfor %}
+    </p>
+    {% if next_question_url %}
+    <a class="ui button primary" href="{{ next_question_url }}">{% trans "Next question" %}</a>
+    {% endif %}
+    <a class="ui button" href="{{ back_url }}">{% trans "Go back" %}</a>
+  </div>
+  
+  {% endif %}
+  
+</div>
+{% endblock %}

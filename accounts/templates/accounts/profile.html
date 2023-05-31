@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+
+{% block title %}{% blocktrans with username=u.get_username %}{{ username }}'s profile{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  <img class="ui small avatar image" src="{{ u.profile.avatar.url }}" alt="{% blocktrans with username=u.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+  {% if u.last_name %}
+  <h1 style="unicode-bidi: embed;">{% blocktrans with username=u.get_username last_name=u.last_name first_name=u.first_name %}{{ username }} ({{ first_name }} {{ last_name }}){% endblocktrans %}</h1>
+  {% else %}
+  <h1 style="unicode-bidi: embed;">{{ u.get_username }}</h1>
+  {% endif %}
+  <ul class="ui list">
+    <div class="item"><i class="calendar alternate icon"></i><div class="content">{% trans "Last login: " %}{{ u.last_login|naturaltime }}</div></div>
+    <!--<div class="item"><i class="calendar alternate icon"></i><div class="content">{% trans "Date joined: " %}{{ u.date_joined|naturalday }}</div></div>-->
+  </ul>
+  <p style="white-space: pre-wrap;">{{ u.profile.bio }}</p>
+</div>
+{% endblock %}

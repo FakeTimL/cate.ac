@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div style="width: 100%; background-image: url({% static 'main/bg2-01.svg' %}), url({% static 'main/bg2-02.svg' %}); background-size: 1420px, 1420px; background-repeat: no-repeat, no-repeat; background-position: left bottom, right bottom;">
+<div class="section">
+  {% url 'main:feedback' as feedback_url %}
+  {% blocktrans %}
+  <h1>About us</h1>
+  <blockquote class="ui message">
+    <p><strong>Q: What does the name "Anfa" mean?</strong></p>
+    <p>A: It was randomly assigned as the name of this project.</p>
+  </blockquote>
+  
+  <h2>Our Mission</h2>
+  <p>At AnfaTech, we hope to improve education equality by using technology to reduce the cost of teaching. Specifically, we want to provide students with free and high-quality educational resources through the internet, and utilize new teaching styles (e.g. spaced repetition, interactive lectures) to improve their learning efficiency.</p>
+
+  <h2>Our Team</h2>
+  <p>AnfaTech is founded by "Bridge Cat" (Zhanrong Qiao) and "Sushi Bear" (Xiuxuan Wang) in March 2020. "Woodpecker" (Zhuo Zhang) joined right after its founding. We are all 12th graders at Nanjing Foreign Language School.</p>
+
+  <h3>🌉🐈 "Bridge Cat"</h3>
+  <p><em>Co-founder (web developer, curriculum designer)</em></p>
+
+  <blockquote class="ui message">
+    <p>His real name is <strong>Zhanrong Qiao</strong>. He has independently created a minecraft-like sandbox game <em>NEWorld</em> using FreeBASIC / C++ and OpenGL in elementary school, whose performance and lighting effects are still among the top of minecraft-like games. He later entered Nanjing Foreign Language School and started training for the Olympiad Informatics, and would normally get first prize on a National Level. He was awarded first prize while attending the OI winter camp of Tsinghua University, which would normally grant him an early-admission bond, but due to a change in national admission policies, he didn't get the early-admission and decided to pursue his education abroad.</p>
+    
+    <p>Bridge Cat is now the one in charge of AnfaTech as a whole. He is the one behind the great technologies that AnfaTech has to offer. He is also the only one in our team who knows how to code.</p>
+    
+    <p><em>-- Sushi Bear</em></p>
+  </blockquote>
+
+  <!-- -->
+
+  <blockquote class="ui message">
+    <p>His real name is Zhanrong Qiao. He is mainly engaged in computer graphics, computer vision and machine learning, and is completely a joke in other fields of study. Though he is still unsure whether Project Anfa will be as effective as Sushi Bear once imagined, he wanted to help Sushi Bear to realize his ideas.</p>
+    
+    <p><em>-- Bridge Cat</em></p>
+  </blockquote>
+
+  <h3>🍣🐻 "Sushi Bear"</h3>
+  <p><em>Co-founder (coordinator, curriculum designer)</em></p>
+
+  <blockquote class="ui message">
+    <p>His real name is <strong>Xiuxuan Wang</strong>. He entered Nanjing Foreign Language School after ranking the 108th (among over 40,000 examinees) in the High School Entrance Exam. In high school, he excelled as well. He has scored 1560 in the SAT, 115 in TOEFL (much lower than Woodpecker!). He has a bizzare passion for learning, and once self-studied 10 AP courses just for exploring different learning methods. Meanwhile, he has also written a blog called <em>In the North Pole</em>, where he shared the methods he learned under the nickname <em>Koala</em>.</p>
+    
+    <p>Sushi Bear is in charge of designing Mathematics courses and the operational details of Anfa.</p>
+    
+    <p><em>-- Sushi Bear</em></p>
+  </blockquote>
+
+  <!-- -->
+  
+  <blockquote class="ui message">
+    <p>Sushi Bear is an adult bear who is passionate about the cause of education. He has not only initiated Anfa, but also proposed most of AnfaTech's ideas in course design and psychological principles in exercise question design. He has a wide range of interests and hobbies, and loves to play Minecraft leisurely. So far, he has not yet killed the Ender Dragon. Let's cheer him on!</p>
+    
+    <p><em>-- Woodpecker</em></p>
+  </blockquote>
+  
+  <!-- -->
+  
+  <blockquote class="ui message">
+    <p>Sushi Bear is the one who <em>initiated</em> Project Anfa - he has had the idea of using technology to improve education quality in China since <em>at least three years ago</em>, when he made a visit to the University of North Carolina in the United States and was impressed by their "paperless" classrooms. However, we did not fully realize his great foresight until the recent outbreak of COVID-19 that has turned all schools online.</p>
+    
+    <p>Sushi Bear is nice and optimistic. He has been complimenting / flattering Bridge Cat since 2017, giving him lots of confidence.</p>
+    
+    <p><em>-- Bridge Cat</em></p>
+  </blockquote>
+
+  <h3>🌳🦜 "Woodpecker"</h3>
+  <p><em>Early member (curriculum designer)</em></p>
+
+  <blockquote class="ui message">
+    <p>His real name is <strong>Zhuo Zhang</strong>, who entered Nanjing Xuanwu Foreign Language School and attended Nanjing Foreign Language School. His ability to self study is extraordinary, which can be manifested by the fact that he covered all the knowledge in basic organic chemistry in <em>eight days</em>. In the subsequent UK Chemistry Olympiad, he also did a great job, for he ranked 20 among all the 1300 contestants. He loves science and studies really hard. He is a strong environmentalist and an advocate for double-sided printing.</p>
+    
+    <p>Woodpecker is in charge of designing Mathematics and Chemistry courses in AnfaTech.</p>
+    
+    <p><em>-- Sushi Bear</em></p>
+  </blockquote>
+
+  <!-- -->
+
+  <blockquote class="ui message">
+    <p>Woodpecker likes to play Minecraft, and is trying to kill the Ender Dragon</p>
+    <p><em>-- Woodpecker</em></p>
+  </blockquote>
+
+  <h2>Our Difficulties</h2>
+
+  <p>As high school students, we can rarely work full-time for Anfa. To make things worse, we only have limited experience on course design. We can only share our <em>own</em> thoughts about learning, however we have little understanding about whether our own ideas are helpful for <em>most</em> high school students. We may also accidentally ignore some key points while writing our lectures. (If you find it difficult to understand what the lectures are talking about, please <a target="_blank" rel="nofollow" href="{{ feedback_url }}">tell us</a> for us to improve!)</p>
+
+  <p>Under such circumstances, it is especially hard to accomplish our goals. So we sincerely hope that there would be professional teachers willing to join our team.</p>
+
+  <h2>What We Can Do</h2>
+
+  <p>Based on our limited ability and the lack of teachers in our team, AnfaTech is currently more geared towards <em>providing a platform</em> for all those students and teachers willing to share their knowledge. We hope to reduce your hassle on sharing information. At the same time, our team members will help structure and organize all the information shared on our platform to ensure that every student could have a comfortable learning process.</p>
+
+  <p>The current members of AnfaTech is trying to write some learning materials in their free time. We will start by writing materials for Chinese junior high school (Grades 7~9) curriculum, as well as introductory materials in our areas of specialization (e.g. computer science). However, due to the fact that we are a very small team, the work is being carried out slowly. The purpose of writing and sharing these materials is to encourage more people to join in our community, to eventually help provide all students with better learning environments.</p>
+
+  <h2>What You Can Do</h2>
+
+  <p>We have been working on AnfaTech for months, but it really takes time to make a good platform. Due to the limited benefit that we can offer you as of right now, we have not opened a donation pathway. However, if you are interested in our mission or if you have any suggestions to our platform, we are more than willing to <a target="_blank" rel="nofollow" href="{{ feedback_url }}">hear your voice</a>. If you are a specialist in the Chinese high school curriculum and is willing to <a name="joinus"></a>join us, please contact us via QQ:</p>
+
+  <ul>
+  <li>1249413073 (Sushi Bear / Xiuxuan Wang);</li>
+  <li>1281432293 (Bridge Cat / Zhanrong Qiao);</li>
+  <li>1836987211 (Woodpecker / Zhuo Zhang).</li>
+  </ul>
+  {% endblocktrans %}
+</div>
+</div>
+{% endblock %}

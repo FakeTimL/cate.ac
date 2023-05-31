@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h1>{% trans "Congratulations!" %}</h1>
+  <p>{% trans "Seems like you have completed reviewing all questions for now. Please come here later..." %}</p>
+  <ul>
+    {% blocktrans %}
+    <li>{{ count_1hour }} questions arriving in 1 hour</li>
+    <li>{{ count_3hours }} questions arriving in 3 hours</li>
+    <li>{{ count_1day }} questions arriving in one day</li>
+    <li>{{ count_7days }} questions arriving in one week</li>
+    {% endblocktrans %}
+  </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,1656 @@
+#
+# Modified from Django admin site translation file
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: anfa\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-31 14:41+0100\n"
+"PO-Revision-Date: 2023-05-31 14:45+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.3.1\n"
+
+#: .\accounts\templates\accounts\index.html:10
+#, python-format
+msgid "Welcome to users page, <span dir=\"auto\">%(username)s</span>."
+msgstr "欢迎来到用户页面，<span dir=\"auto\">%(username)s</span>。"
+
+#: .\accounts\templates\accounts\index.html:12
+msgid "Welcome to users page! "
+msgstr "欢迎来到用户页面！"
+
+#: .\accounts\templates\accounts\index.html:17 .\accounts\views.py:127
+msgid "My profile"
+msgstr "我的个人信息"
+
+#: .\accounts\templates\accounts\index.html:18
+msgid "Log out"
+msgstr "退出登录"
+
+#: .\accounts\templates\accounts\index.html:20
+msgid "Test page"
+msgstr "测试页面"
+
+#: .\accounts\templates\accounts\index.html:21
+msgid "Online Markdown previewer"
+msgstr "在线Markdown预览器"
+
+#: .\accounts\templates\accounts\index.html:22
+msgid "Question batch upload"
+msgstr "题目批量上传"
+
+#: .\accounts\templates\accounts\index.html:23
+msgid "Django administration"
+msgstr "Django网站管理"
+
+#: .\accounts\templates\accounts\index.html:26
+#: .\accounts\templates\accounts\login.html:28 .\accounts\views.py:41
+msgid "Log in"
+msgstr "登录"
+
+#: .\accounts\templates\accounts\index.html:27
+#: .\accounts\templates\accounts\signup.html:38 .\accounts\views.py:82
+msgid "Sign up"
+msgstr "注册"
+
+#: .\accounts\templates\accounts\login.html:10
+msgid "You do not have permission to access this page."
+msgstr "你没有权限访问这个页面。"
+
+#: .\accounts\templates\accounts\login.html:12
+#: .\accounts\templates\accounts\signup.html:8
+msgid "Please log in to see this page."
+msgstr "请登录后查看此页面。"
+
+#: .\accounts\templates\accounts\login.html:20
+#: .\accounts\templates\accounts\login.html:21
+#: .\accounts\templates\accounts\signup.html:14
+#: .\accounts\templates\accounts\signup.html:15
+msgid "Username"
+msgstr "用户名"
+
+#: .\accounts\templates\accounts\login.html:24
+#: .\accounts\templates\accounts\login.html:25
+#: .\accounts\templates\accounts\signup.html:22
+#: .\accounts\templates\accounts\signup.html:23
+msgid "Password"
+msgstr "密码"
+
+#: .\accounts\templates\accounts\login.html:27
+#: .\accounts\templates\accounts\me.html:79
+#: .\accounts\templates\accounts\signup.html:37
+#: .\main\templates\main\course.html:33 .\main\templates\main\courses.html:48
+#: .\main\templates\main\lecture.html:23 .\main\templates\main\lecture.html:55
+#: .\main\templates\main\problemset.html:17
+#: .\main\templates\main\problemsets.html:20
+#: .\main\templates\main\question.html:106
+#: .\main\templates\main\question.html:226 .\main\templates\main\search.html:20
+msgid "Go back"
+msgstr "返回"
+
+#: .\accounts\templates\accounts\login.html:34
+msgid "Create an account"
+msgstr "创建一个用户帐号"
+
+#: .\accounts\templates\accounts\me.html:24
+#: .\accounts\templates\accounts\profile.html:8
+#: .\main\templates\main\comment.html:19
+#: .\main\templates\main\comments_tree_view.html:9 .\templates\base.html:27
+#: .\templates\base.html:61
+#, python-format
+msgid "%(username)s's avatar"
+msgstr "%(username)s 的头像"
+
+#: .\accounts\templates\accounts\me.html:27
+#: .\accounts\templates\accounts\profile.html:15
+msgid "Last login: "
+msgstr "最近登录于："
+
+#: .\accounts\templates\accounts\me.html:28
+#: .\accounts\templates\accounts\profile.html:16
+msgid "Date joined: "
+msgstr "加入时间："
+
+#: .\accounts\templates\accounts\me.html:34
+msgid "Change your email:"
+msgstr "修改你的电子邮箱地址："
+
+#: .\accounts\templates\accounts\me.html:36
+#: .\accounts\templates\accounts\me.html:37
+msgid "New email address"
+msgstr "新的电子邮箱地址："
+
+#: .\accounts\templates\accounts\me.html:39
+msgid "Send verification link"
+msgstr "发送验证链接"
+
+#: .\accounts\templates\accounts\me.html:45
+msgid "These following personal information will be publicly visible."
+msgstr "以下的个人信息将会公开。"
+
+#: .\accounts\templates\accounts\me.html:49
+msgid "Change your avatar:"
+msgstr "修改你的头像："
+
+#: .\accounts\templates\accounts\me.html:52
+#: .\accounts\templates\accounts\me.html:55
+msgid "Choose image..."
+msgstr "选择图片…"
+
+#: .\accounts\templates\accounts\me.html:57
+#: .\accounts\templates\accounts\me.html:74
+msgid "Confirm changes"
+msgstr "确认修改"
+
+#: .\accounts\templates\accounts\me.html:62
+msgid "Edit your information:"
+msgstr "编辑你的个人信息："
+
+#: .\accounts\templates\accounts\me.html:64
+msgid "Name"
+msgstr "姓名"
+
+#: .\accounts\templates\accounts\me.html:66
+msgid "Last name"
+msgstr "姓氏"
+
+#: .\accounts\templates\accounts\me.html:67
+msgid "First name"
+msgstr "名字"
+
+#: .\accounts\templates\accounts\me.html:71
+msgid "Bio"
+msgstr "自我介绍"
+
+#: .\accounts\templates\accounts\me.html:72
+msgid ""
+"You may write a short description about yourself, or whatever you want other "
+"people know..."
+msgstr "你可以写一个简短的自我介绍，或者其他任何你想让别人知道的事…"
+
+#: .\accounts\templates\accounts\profile.html:4
+#, python-format
+msgid "%(username)s's profile"
+msgstr "%(username)s 的个人信息"
+
+#: .\accounts\templates\accounts\profile.html:10
+#, python-format
+msgid "%(username)s (%(first_name)s %(last_name)s)"
+msgstr "%(username)s (%(last_name)s%(first_name)s)"
+
+#: .\accounts\templates\accounts\signup.html:18
+#: .\accounts\templates\accounts\signup.html:19
+msgid "Email"
+msgstr "电子邮箱"
+
+#: .\accounts\templates\accounts\signup.html:18
+#: .\accounts\templates\accounts\signup.html:19
+msgid " (optional)"
+msgstr "（不是必填）"
+
+#: .\accounts\templates\accounts\signup.html:26
+#: .\accounts\templates\accounts\signup.html:27
+msgid "Repeat Password"
+msgstr "再次输入密码"
+
+#: .\accounts\templates\accounts\signup.html:32
+msgid "I agree to the "
+msgstr "我同意"
+
+#: .\accounts\templates\accounts\signup.html:32 .\templates\base.html:136
+msgid "Terms of Use"
+msgstr "使用条款"
+
+#: .\accounts\templates\accounts\signup.html:32
+msgid " and "
+msgstr "和"
+
+#: .\accounts\templates\accounts\signup.html:32 .\templates\base.html:137
+msgid "Privacy Policy"
+msgstr "隐私政策"
+
+#: .\accounts\templates\accounts\signup.html:36
+msgid "Captcha (case insensitive)"
+msgstr "验证码（不区分大小写）"
+
+#: .\accounts\templates\accounts\signup.html:42
+msgid "Already have an account?"
+msgstr "已经注册过了？"
+
+#: .\accounts\templates\accounts\signup.html:60
+msgid "Username must not be empty."
+msgstr "用户名不能不填。"
+
+#: .\accounts\templates\accounts\signup.html:65
+msgid "Two passwords are different."
+msgstr "两次输入的密码不一致。"
+
+#: .\accounts\views.py:20 .\main\templates\main\comment.html:4
+#: .\main\templates\main\course.html:4 .\main\templates\main\courses.html:4
+#: .\main\templates\main\feedback.html:4 .\main\templates\main\index.html:4
+#: .\main\templates\main\lecture.html:4 .\main\templates\main\problemset.html:4
+#: .\main\templates\main\problemsets.html:4
+#: .\main\templates\main\question.html:4
+#: .\main\templates\main\queue_cleared.html:4
+#: .\main\templates\main\search.html:4 .\main\templates\main\text\about.html:4
+#: .\main\templates\main\text\acknowledgements.html:4
+#: .\main\templates\main\text\api.html:4 .\main\templates\main\text\help.html:4
+#: .\main\templates\main\text\privacy_policy.html:4
+#: .\main\templates\main\text\terms_of_use.html:4 .\main\views.py:368
+#: .\main\views.py:390 .\templates\base.html:12
+msgid "Anfa Learning"
+msgstr "暗法学习"
+
+#: .\accounts\views.py:37
+msgid "Invalid username or password"
+msgstr "用户名或密码不正确"
+
+#: .\accounts\views.py:76
+msgid "The same username have been registered. Please try another one."
+msgstr "同样的用户名已经有人在用了，请换一个试试。"
+
+#: .\accounts\views.py:78
+msgid ""
+"The username must not contain Unicode control or formatting characters. "
+"Please try another one."
+msgstr "用户名暂时不能包含Unicode控制字符或格式字符，请换一个试试。"
+
+#: .\main\models.py:155
+msgid "Multiple Choice"
+msgstr "选择"
+
+#: .\main\models.py:156
+msgid "Fill-in-the-Blanks"
+msgstr "填空"
+
+#: .\main\models.py:157
+msgid "Q&A"
+msgstr "问答"
+
+#: .\main\templates\main\comment.html:12
+msgid "Go back to "
+msgstr "返回"
+
+#: .\main\templates\main\comment.html:30
+#: .\main\templates\main\comments_tree_view.html:24
+#: .\main\templates\main\comments_tree_view.html:52
+msgid "Reply"
+msgstr "回复"
+
+#: .\main\templates\main\comment.html:38
+#: .\main\templates\main\comments_tree_view.html:33
+msgid " Are you sure to delete this comment and all its replies? "
+msgstr "你确定删除这条评论和下面的所有回复吗？"
+
+#: .\main\templates\main\comment.html:38
+#: .\main\templates\main\comments_tree_view.html:33
+msgid "Delete"
+msgstr "删除"
+
+#: .\main\templates\main\comment.html:42
+#: .\main\templates\main\comments_tree_view.html:37
+msgid "Upvote"
+msgstr "顶"
+
+#: .\main\templates\main\comment.html:43
+#: .\main\templates\main\comments_tree_view.html:38
+msgid "Downvote"
+msgstr "踩"
+
+#: .\main\templates\main\comment.html:49
+msgid "All replies"
+msgstr "所有回复"
+
+#: .\main\templates\main\comment.html:64 .\main\templates\main\lecture.html:69
+msgid ":"
+msgstr "："
+
+#: .\main\templates\main\comment.html:65
+#: .\main\templates\main\comments_tree_view.html:49
+#: .\main\templates\main\lecture.html:70
+#: .\main\templates\main\markdown_editor.html:12
+msgid "Say something..."
+msgstr "说几句话吧…"
+
+#. Translators: The "send comment" button text
+#: .\main\templates\main\comment.html:68 .\main\templates\main\lecture.html:73
+msgid "Comment"
+msgstr "评论"
+
+#: .\main\templates\main\comment.html:74 .\main\templates\main\lecture.html:79
+#, python-format
+msgid "Please <a href=\"%(login_url)s\">log in</a> to comment"
+msgstr "<a href=\"%(login_url)s\">登录</a>后才能发表评论"
+
+#: .\main\templates\main\comments_tree_view.html:41
+msgid "Full-screen"
+msgstr "全屏"
+
+#: .\main\templates\main\comments_tree_view.html:53
+msgid "Close"
+msgstr "关闭"
+
+#: .\main\templates\main\comments_tree_view.html:65
+msgid "See more..."
+msgstr "查看更多…"
+
+#: .\main\templates\main\course.html:9
+msgid "Course description"
+msgstr "课程简介"
+
+#: .\main\templates\main\course.html:13
+msgid "Table of contents"
+msgstr "目录"
+
+#: .\main\templates\main\courses.html:8 .\templates\base.html:15
+#: .\templates\base.html:50
+msgid "Courses"
+msgstr "课程"
+
+#: .\main\templates\main\courses.html:9
+msgid ""
+"\n"
+"  <p>Course contents working in progress...</p>\n"
+"  "
+msgstr ""
+"\n"
+"  <p>课程内容正在制作中…</p>\n"
+"  "
+
+#: .\main\templates\main\courses.html:24 .\main\templates\main\lecture.html:38
+msgid "Last update: "
+msgstr "最近更新于："
+
+#: .\main\templates\main\courses.html:33
+msgid "Add to favorite"
+msgstr "加入收藏夹"
+
+#: .\main\templates\main\design.html:27
+#: .\main\templates\main\markdown_editor.html:35
+#: .\main\templates\main\question_upload.html:69
+msgid "Generating preview..."
+msgstr "正在生成预览…"
+
+#: .\main\templates\main\design.html:30
+#: .\main\templates\main\markdown_editor.html:38
+#: .\main\templates\main\question_upload.html:59
+#: .\main\templates\main\question_upload.html:62
+msgid "Failed to generate preview: "
+msgstr "生成预览失败："
+
+#: .\main\templates\main\feedback.html:8
+msgid "Send anonymous feedback"
+msgstr "匿名发送意见反馈"
+
+#: .\main\templates\main\feedback.html:12
+msgid ""
+"You can describe the problem or tell us about your ideas for improvements:"
+msgstr "你可以描述你所遇到的问题，或者告诉我们你的改进意见："
+
+#: .\main\templates\main\feedback.html:13
+msgid "e.g. The page at [link] is not displaying formulas correctly..."
+msgstr "如：在[链接]处的页面无法正常显示数学公式…"
+
+#: .\main\templates\main\feedback.html:15
+msgctxt "Send feedback button text"
+msgid "Send"
+msgstr "反馈"
+
+#: .\main\templates\main\index.html:84
+msgid ""
+"\n"
+"    <h1>Technology to help you learn,<br />in an efficient way. "
+"(theoretically)</h1>\n"
+"    <span>(Some translations and page content are not completed yet)</span>\n"
+"    "
+msgstr ""
+"\n"
+"    <h1><span class=\"line\">以</span><span class=\"line\">高效</span><span "
+"class=\"line\">的</span><span class=\"line\">方法</span><span class=\"line\">"
+"（理论上），</span><br /><span class=\"line\">用</span><span class=\"line\">"
+"科技</span><span class=\"line\">帮助</span><span class=\"line\">你</"
+"span><span class=\"line\">学习。</span></h1>\n"
+"    <span>（页面内容和部分翻译未完成）</span>\n"
+"    "
+
+#: .\main\templates\main\index.html:94
+msgid ""
+"\n"
+"        <h2>Motivation</h2>\n"
+"        <p>Most teachers nowadays use a traditional teaching style that may "
+"only work well if students are taught face-to-face, and when teachers have "
+"enough time and attention on every student. However, these conditions are "
+"generally not true in underdeveloped areas, resulting in poor learning "
+"outcomes among local students. We aim to address this problem by introducing "
+"technology-assisted teaching.</p>\n"
+"        <p>Everyone can use this platform for educational purposes. You can "
+"even self-learn without guidance from a real teacher!</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h2>缘由</h2>\n"
+"        <p>现在的许多老师仍然使用一种传统的教学方法进行教学，这种方法需要老师"
+"们面对面指导学生，还要为每个学生留出足够的时间和精力。但是在许多不发达地区，"
+"师资力量极度缺乏，过低的师生比例使得老师们难以做到上述这些，导致当地学生们的"
+"学业水平较低。我们希望通过引入科技辅助教学来缓解这一问题。</p>\n"
+"        <p>每个人都可以把这个平台用作教育目的。你甚至可以在没有老师指导的情况"
+"下自学！</p>\n"
+"        "
+
+#: .\main\templates\main\index.html:110
+msgid ""
+"\n"
+"        <h2>Design Principles</h2>\n"
+"        <p>We use effective psychological methods to help you learn better.</"
+"p>\n"
+"        <p><strong>Active Recall</strong>: Anfa Learning will provide "
+"practice questions after you have learned certain concepts in a course. "
+"Solving them by yourself will help your brain enter a pathway of active "
+"recall, and remember the concepts more efficiently.</p>\n"
+"        <p><strong>Spaced Repetition</strong>: in the \"Review\" section, "
+"Anfa Learning regularly presents some practice questions to you. If you "
+"think you are not proficient in solving a certain question, you can \"mark\" "
+"that question and Anfa will present relevant ones to you after some time. "
+"This is based on the Anki-SM2 schedule and our \"Knowledge Network\" model. "
+"<em>(still under research...)</em></p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h2>设计原理</h2>\n"
+"        <p>我们利用有效的心理学方法来帮助你更好地学习。</p>\n"
+"        <p><strong>主动回忆</strong>：在你学完课程里的一些概念之后，平台会为"
+"你提供一些习题。你可以尝试自己解决它们——这会让你的大脑进入主动回忆的过程，使"
+"你能够把这些概念记得更熟。</p>\n"
+"        <p><strong>间隔重复</strong>：在“复习”版块，平台会有规律地给你展示一"
+"些习题。如果你在做一道题的过程中感觉自己的解题技能还不是很熟，你可以“标记”那"
+"道题目，平台会在一段时间之后给你推荐类似的题目做。整个过程基于 Anki-SM2 算法"
+"和我们的“知识点网络”模型运作。<em>（仍在开发中…）</em></p>\n"
+"        "
+
+#: .\main\templates\main\index.html:127
+msgid ""
+"\n"
+"        <h2>Student Perspective</h2>\n"
+"        <p>As students ourselves, we know what might confuse you and what "
+"may feel boring to you. We seek to minimize your frustration in the learning "
+"process.</p>\n"
+"        <p><strong>Interactive explanation</strong>: We try to exploit "
+"technology to make abstract ideas more intuitive to you. We visualize and "
+"animate mathematical concepts on web pages so that you can play around and "
+"remember them quickly. <em>(still under development...)</em></p>\n"
+"        <p><strong>Examination standards</strong>: Our learning materials "
+"for Chinese junior high school students are designed to meet the standards "
+"of the High School Entrance Exam. We explain its rubrics and emphasize "
+"special caveats to help you gain every point that should not be lost.</p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h2>学生视角</h2>\n"
+"        <p>我们自己作为学生，也知道什么可能会让你感到困惑、什么对你来说可能有"
+"些枯燥乏味。我们争取能够最小化你学习过程中的挫败感。</p>\n"
+"        <p><strong>交互式讲解</strong>：我们尝试利用科技来让抽象的概念变得更"
+"为直观。我们会在网页上把一些数学概念以图形和动画的形式展现出来，让你能够反复"
+"琢磨、更快地把它们记住。<em>（仍在开发中…）</em></p>\n"
+"        <p><strong>考试标准</strong>：我们为中国初中生准备的学习资料是以中考"
+"标准设计的。我们会解释中考的评分标准，并强调一些特殊的易错点，以帮助你在考试"
+"中把不该丢的分都得到。</p>\n"
+"        "
+
+#: .\main\templates\main\index.html:144
+msgid ""
+"\n"
+"        <h2>Self-Learning</h2>\n"
+"        <p>Traditional test-oriented teaching methods in China neglects "
+"students' abilities of learning by themselves. But here, we encourage high "
+"school students to learn searching, processing, merging, and absorbing "
+"knowledge without the guidance of a real teacher.</p>\n"
+"        <p><strong>Discussion</strong>: For each lecture, you can post "
+"comments, ask questions or help answering other students' questions. "
+"Teachers and teaching assistants in AnfaTech will also regularly check the "
+"comments under their lectures and answer your questions.</p>\n"
+"        <p><strong>Search</strong>: If you ever encountered unfamiliar "
+"concepts or knowledge units while you are learning, you can always try "
+"searching it within this site. <em>(still under development...)</em></p>\n"
+"        "
+msgstr ""
+"\n"
+"        <h2>自主学习</h2>\n"
+"        <p>在中国，传统的应试教育忽视了学生自学能力的培养。但是在这里，我们鼓"
+"励中学生学会如何在没有老师指导的情况下搜索、处理、整合、消化并吸收知识。</"
+"p>\n"
+"        <p><strong>讨论</strong>：在每一个讲解下方，你都可以发表评论、问问题"
+"或者帮助回答其他人问的问题。暗法科技的老师和助教们也会经常看自己所教课程中的"
+"评论，并回答你的问题。</p>\n"
+"        <p><strong>搜索</strong>：无论何时，如果你在学习过程中遇到自己不了解"
+"的概念或知识点，你都可以尝试在网站内搜索学习。<em>（仍在开发中…）</em></p>\n"
+"        "
+
+#: .\main\templates\main\index.html:160
+msgid "I am a student..."
+msgstr "我是学生…"
+
+#: .\main\templates\main\index.html:161
+msgid "Start learning!"
+msgstr "开始学习！"
+
+#: .\main\templates\main\index.html:162
+msgid "I am a teacher..."
+msgstr "我是老师…"
+
+#: .\main\templates\main\index.html:163
+msgid "Join our team!"
+msgstr "加入我们的团队！"
+
+#: .\main\templates\main\index.html:165
+msgid "More about us..."
+msgstr "了解更多…"
+
+#: .\main\templates\main\lecture.html:36
+msgid "Author: "
+msgstr "作者："
+
+#: .\main\templates\main\lecture.html:37
+msgid "Published on: "
+msgstr "发布于："
+
+#: .\main\templates\main\lecture.html:42
+msgid ""
+"The video player requires HTML5, which is not supported by your browser..."
+msgstr "播放视频需要 HTML5 特性，而你的浏览器还不支持…"
+
+#: .\main\templates\main\lecture.html:51
+msgid "Download"
+msgstr "下载"
+
+#: .\main\templates\main\lecture.html:51
+msgid " (in HTML format)"
+msgstr "（HTML格式）"
+
+#: .\main\templates\main\lecture.html:60
+msgid "All comments"
+msgstr "所有评论"
+
+#: .\main\templates\main\markdown_editor.html:15
+#: .\main\templates\main\markdown_editor.html:19
+#: .\main\templates\main\question_upload.html:13
+msgid "Preview"
+msgstr "预览"
+
+#: .\main\templates\main\problemset.html:9
+msgid "Problemset description: "
+msgstr "习题集简介："
+
+#: .\main\templates\main\problemset.html:13
+msgid "Question "
+msgstr "问题"
+
+#: .\main\templates\main\problemsets.html:8 .\templates\base.html:16
+#: .\templates\base.html:51
+msgid "Problem sets"
+msgstr "题库"
+
+#: .\main\templates\main\problemsets.html:9
+msgid "Uncategorized"
+msgstr "未分类"
+
+#: .\main\templates\main\question.html:87
+#: .\main\templates\main\question.html:94
+msgid ""
+"You can choose to write your answer on a paper or type it here (if possible):"
+msgstr "你可以把答案写在纸上或者打在这里（如果可能的话）："
+
+#: .\main\templates\main\question.html:88
+#: .\main\templates\main\question.html:98
+msgid "Your answer..."
+msgstr "你的答案…"
+
+#: .\main\templates\main\question.html:105
+msgctxt "Check the answer"
+msgid "Check"
+msgstr "对答案"
+
+#: .\main\templates\main\question.html:114
+#: .\main\templates\main\question.html:194
+msgid "You're correct!"
+msgstr "答对了！"
+
+#: .\main\templates\main\question.html:116
+#: .\main\templates\main\question.html:196
+msgid "There might be something wrong with your choices..."
+msgstr "好像有哪里不对…"
+
+#: .\main\templates\main\question.html:118
+msgid ""
+"The computer is not smart enough to determine whether your answer is "
+"correct. You will need to decide by yourself:"
+msgstr "电脑不够聪明，无法判断你的答案对不对。你觉得自己是否答对了呢："
+
+#: .\main\templates\main\question.html:134
+#: .\main\templates\main\question.html:165
+msgid "Correct"
+msgstr "正确"
+
+#: .\main\templates\main\question.html:136
+#: .\main\templates\main\question.html:167
+msgid "Incorrect"
+msgstr "错误"
+
+#: .\main\templates\main\question.html:139
+#: .\main\templates\main\question.html:170
+msgid " (selected)"
+msgstr "（你的选择）"
+
+#: .\main\templates\main\question.html:186
+#: .\main\templates\main\question.html:201
+msgid "Your typed answer:"
+msgstr "你打在这里的答案："
+
+#: .\main\templates\main\question.html:198
+msgid ""
+"The computer is not smart enough to decide whether your answers are all "
+"correct. You will need to decide by yourself:"
+msgstr "电脑不够聪明，无法判断你的答案是不是全都对。你觉得自己是否答对了呢："
+
+#: .\main\templates\main\question.html:214
+#: .\main\templates\main\question_upload.html:119
+#: .\main\templates\main\question_upload.html:146
+#: .\main\templates\main\question_upload.html:161
+msgid "Explanation"
+msgstr "解析"
+
+#: .\main\templates\main\question.html:218
+#: .\main\templates\main\question_upload.html:163
+msgid "Knowledge units: "
+msgstr "知识点："
+
+#: .\main\templates\main\question.html:224
+msgid "Next question"
+msgstr "下一题"
+
+#: .\main\templates\main\question_upload.html:14
+msgid "Confirm upload"
+msgstr "确认上传"
+
+#: .\main\templates\main\question_upload.html:17
+msgid "Paste text here..."
+msgstr "把文本粘贴在这里…"
+
+#: .\main\templates\main\question_upload.html:27
+msgid ""
+"Question [[question_index + 1]] of [[num_questions]], [[curr_question_type]]"
+msgstr ""
+"[[num_questions]]题中的第[[question_index + 1]]题，题型为 "
+"[[curr_question_type]]"
+
+#: .\main\templates\main\question_upload.html:112
+msgid "Statement"
+msgstr "题目描述"
+
+#: .\main\templates\main\question_upload.html:115
+msgid "Available choices"
+msgstr "可用的选项"
+
+#: .\main\templates\main\question_upload.html:116
+msgid "(Setting: choose ' + _a + ' among ' + _b + ' choices)"
+msgstr "（设定：' + _b + '选' + _a + '）"
+
+#: .\main\templates\main\question_upload.html:119
+msgid "Choice"
+msgstr "选项"
+
+#: .\main\templates\main\question_upload.html:143
+msgid "Answer validation:"
+msgstr "答案校验："
+
+#: .\main\templates\main\question_upload.html:146
+msgctxt "Numbering"
+msgid "Number"
+msgstr "编号"
+
+#: .\main\templates\main\question_upload.html:146
+msgid "Answer"
+msgstr "答案"
+
+#: .\main\templates\main\question_upload.html:153
+msgid "(Do not validate)"
+msgstr "（不校验）"
+
+#: .\main\templates\main\queue_cleared.html:8
+msgid "Congratulations!"
+msgstr "恭喜你！"
+
+#: .\main\templates\main\queue_cleared.html:9
+msgid ""
+"Seems like you have completed reviewing all questions for now. Please come "
+"here later..."
+msgstr "看起来你已经复习完了当前所有的题目。等一段时间再来吧…"
+
+#: .\main\templates\main\queue_cleared.html:11
+#, python-format
+msgid ""
+"\n"
+"    <li>%(count_1hour)s questions arriving in 1 hour</li>\n"
+"    <li>%(count_3hours)s questions arriving in 3 hours</li>\n"
+"    <li>%(count_1day)s questions arriving in one day</li>\n"
+"    <li>%(count_7days)s questions arriving in one week</li>\n"
+"    "
+msgstr ""
+"\n"
+"    <li>%(count_1hour)s道题还有一小时抵达</li>\n"
+"    <li>%(count_3hours)s道题还有三小时抵达</li>\n"
+"    <li>%(count_1day)s道题还有一天抵达</li>\n"
+"    <li>%(count_7days)s道题还有一周抵达</li>\n"
+"    "
+
+#: .\main\templates\main\search.html:8
+#, python-format
+msgid ""
+"\n"
+"  <h1>Search results for \"%(query)s\"</h1>\n"
+"  "
+msgstr ""
+"\n"
+"  <h1>“%(query)s”的搜索结果</h1>\n"
+"  "
+
+#: .\main\templates\main\search.html:11
+msgid "Page working in progress..."
+msgstr "页面正在制作中…"
+
+#: .\main\templates\main\text\about.html:10
+#, python-format
+msgid ""
+"\n"
+"  <h1>About us</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p><strong>Q: What does the name \"Anfa\" mean?</strong></p>\n"
+"    <p>A: It was randomly assigned as the name of this project.</p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <h2>Our Mission</h2>\n"
+"  <p>At AnfaTech, we hope to improve education equality by using technology "
+"to reduce the cost of teaching. Specifically, we want to provide students "
+"with free and high-quality educational resources through the internet, and "
+"utilize new teaching styles (e.g. spaced repetition, interactive lectures) "
+"to improve their learning efficiency.</p>\n"
+"\n"
+"  <h2>Our Team</h2>\n"
+"  <p>AnfaTech is founded by \"Bridge Cat\" (Zhanrong Qiao) and \"Sushi "
+"Bear\" (Xiuxuan Wang) in March 2020. \"Woodpecker\" (Zhuo Zhang) joined "
+"right after its founding. We are all 12th graders at Nanjing Foreign "
+"Language School.</p>\n"
+"\n"
+"  <h3>🌉🐈 \"Bridge Cat\"</h3>\n"
+"  <p><em>Co-founder (web developer, curriculum designer)</em></p>\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>His real name is <strong>Zhanrong Qiao</strong>. He has independently "
+"created a minecraft-like sandbox game <em>NEWorld</em> using FreeBASIC / C++ "
+"and OpenGL in elementary school, whose performance and lighting effects are "
+"still among the top of minecraft-like games. He later entered Nanjing "
+"Foreign Language School and started training for the Olympiad Informatics, "
+"and would normally get first prize on a National Level. He was awarded first "
+"prize while attending the OI winter camp of Tsinghua University, which would "
+"normally grant him an early-admission bond, but due to a change in national "
+"admission policies, he didn't get the early-admission and decided to pursue "
+"his education abroad.</p>\n"
+"    \n"
+"    <p>Bridge Cat is now the one in charge of AnfaTech as a whole. He is the "
+"one behind the great technologies that AnfaTech has to offer. He is also the "
+"only one in our team who knows how to code.</p>\n"
+"    \n"
+"    <p><em>-- Sushi Bear</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <!-- -->\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>His real name is Zhanrong Qiao. He is mainly engaged in computer "
+"graphics, computer vision and machine learning, and is completely a joke in "
+"other fields of study. Though he is still unsure whether Project Anfa will "
+"be as effective as Sushi Bear once imagined, he wanted to help Sushi Bear to "
+"realize his ideas.</p>\n"
+"    \n"
+"    <p><em>-- Bridge Cat</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <h3>🍣🐻 \"Sushi Bear\"</h3>\n"
+"  <p><em>Co-founder (coordinator, curriculum designer)</em></p>\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>His real name is <strong>Xiuxuan Wang</strong>. He entered Nanjing "
+"Foreign Language School after ranking the 108th (among over 40,000 "
+"examinees) in the High School Entrance Exam. In high school, he excelled as "
+"well. He has scored 1560 in the SAT, 115 in TOEFL (much lower than "
+"Woodpecker!). He has a bizzare passion for learning, and once self-studied "
+"10 AP courses just for exploring different learning methods. Meanwhile, he "
+"has also written a blog called <em>In the North Pole</em>, where he shared "
+"the methods he learned under the nickname <em>Koala</em>.</p>\n"
+"    \n"
+"    <p>Sushi Bear is in charge of designing Mathematics courses and the "
+"operational details of Anfa.</p>\n"
+"    \n"
+"    <p><em>-- Sushi Bear</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <!-- -->\n"
+"  \n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Sushi Bear is an adult bear who is passionate about the cause of "
+"education. He has not only initiated Anfa, but also proposed most of "
+"AnfaTech's ideas in course design and psychological principles in exercise "
+"question design. He has a wide range of interests and hobbies, and loves to "
+"play Minecraft leisurely. So far, he has not yet killed the Ender Dragon. "
+"Let's cheer him on!</p>\n"
+"    \n"
+"    <p><em>-- Woodpecker</em></p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <!-- -->\n"
+"  \n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Sushi Bear is the one who <em>initiated</em> Project Anfa - he has "
+"had the idea of using technology to improve education quality in China since "
+"<em>at least three years ago</em>, when he made a visit to the University of "
+"North Carolina in the United States and was impressed by their \"paperless\" "
+"classrooms. However, we did not fully realize his great foresight until the "
+"recent outbreak of COVID-19 that has turned all schools online.</p>\n"
+"    \n"
+"    <p>Sushi Bear is nice and optimistic. He has been complimenting / "
+"flattering Bridge Cat since 2017, giving him lots of confidence.</p>\n"
+"    \n"
+"    <p><em>-- Bridge Cat</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <h3>🌳🦜 \"Woodpecker\"</h3>\n"
+"  <p><em>Early member (curriculum designer)</em></p>\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>His real name is <strong>Zhuo Zhang</strong>, who entered Nanjing "
+"Xuanwu Foreign Language School and attended Nanjing Foreign Language School. "
+"His ability to self study is extraordinary, which can be manifested by the "
+"fact that he covered all the knowledge in basic organic chemistry in "
+"<em>eight days</em>. In the subsequent UK Chemistry Olympiad, he also did a "
+"great job, for he ranked 20 among all the 1300 contestants. He loves science "
+"and studies really hard. He is a strong environmentalist and an advocate for "
+"double-sided printing.</p>\n"
+"    \n"
+"    <p>Woodpecker is in charge of designing Mathematics and Chemistry "
+"courses in AnfaTech.</p>\n"
+"    \n"
+"    <p><em>-- Sushi Bear</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <!-- -->\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Woodpecker likes to play Minecraft, and is trying to kill the Ender "
+"Dragon</p>\n"
+"    <p><em>-- Woodpecker</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <h2>Our Difficulties</h2>\n"
+"\n"
+"  <p>As high school students, we can rarely work full-time for Anfa. To make "
+"things worse, we only have limited experience on course design. We can only "
+"share our <em>own</em> thoughts about learning, however we have little "
+"understanding about whether our own ideas are helpful for <em>most</em> high "
+"school students. We may also accidentally ignore some key points while "
+"writing our lectures. (If you find it difficult to understand what the "
+"lectures are talking about, please <a target=\"_blank\" rel=\"nofollow\" "
+"href=\"%(feedback_url)s\">tell us</a> for us to improve!)</p>\n"
+"\n"
+"  <p>Under such circumstances, it is especially hard to accomplish our "
+"goals. So we sincerely hope that there would be professional teachers "
+"willing to join our team.</p>\n"
+"\n"
+"  <h2>What We Can Do</h2>\n"
+"\n"
+"  <p>Based on our limited ability and the lack of teachers in our team, "
+"AnfaTech is currently more geared towards <em>providing a platform</em> for "
+"all those students and teachers willing to share their knowledge. We hope to "
+"reduce your hassle on sharing information. At the same time, our team "
+"members will help structure and organize all the information shared on our "
+"platform to ensure that every student could have a comfortable learning "
+"process.</p>\n"
+"\n"
+"  <p>The current members of AnfaTech is trying to write some learning "
+"materials in their free time. We will start by writing materials for Chinese "
+"junior high school (Grades 7~9) curriculum, as well as introductory "
+"materials in our areas of specialization (e.g. computer science). However, "
+"due to the fact that we are a very small team, the work is being carried out "
+"slowly. The purpose of writing and sharing these materials is to encourage "
+"more people to join in our community, to eventually help provide all "
+"students with better learning environments.</p>\n"
+"\n"
+"  <h2>What You Can Do</h2>\n"
+"\n"
+"  <p>We have been working on AnfaTech for months, but it really takes time "
+"to make a good platform. Due to the limited benefit that we can offer you as "
+"of right now, we have not opened a donation pathway. However, if you are "
+"interested in our mission or if you have any suggestions to our platform, we "
+"are more than willing to <a target=\"_blank\" rel=\"nofollow\" "
+"href=\"%(feedback_url)s\">hear your voice</a>. If you are a specialist in "
+"the Chinese high school curriculum and is willing to <a name=\"joinus\"></"
+"a>join us, please contact us via QQ:</p>\n"
+"\n"
+"  <ul>\n"
+"  <li>1249413073 (Sushi Bear / Xiuxuan Wang);</li>\n"
+"  <li>1281432293 (Bridge Cat / Zhanrong Qiao);</li>\n"
+"  <li>1836987211 (Woodpecker / Zhuo Zhang).</li>\n"
+"  </ul>\n"
+"  "
+msgstr ""
+"\n"
+"  <h1>关于我们</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p><strong>问：网站名称里的“Anfa”是啥意思？</strong></p>\n"
+"    <p>答：瞎起的名字。</p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <h2>我们的使命</h2>\n"
+"  <p>在暗法科技，我们希望通过利用科技来改善教育公平。准确来说，我们想通过互联"
+"网给学生们提供免费优质的教育资源，并利用创新的教学方法（比如间隔反复和交互式"
+"在线课程）来提升他们的学习效率。</p>\n"
+"\n"
+"  <h2>我们的团队</h2>\n"
+"  <p>暗法科技是由“乔猫”（乔展荣）和“寿司熊”（王修铉）在2020年三月所创建的，创"
+"立初期团队成员还有“啄木鸟”（张琢）。我们都是南京外国语学校的高三学生。</p>\n"
+"\n"
+"  <h3>🌉🐈 “乔猫”</h3>\n"
+"  <p><em>联合创始人（网站开发、教学方案设计）</em></p>\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>原名<strong>乔展荣</strong>，小学时候曾经模仿Minecraft采用FreeBASIC / "
+"C++和OpenGL独立开发了沙盒游戏NEWorld，其运行速度以及光影效果至今在仿Minecraft"
+"游戏之中是属于一流的。后来考入南京外国语学校并进行信息比赛的集训，常年国一水"
+"平，并获得了清华冬令营的一等奖。这个奖项在往年可以获得清华一本约，但是由于国"
+"家自主招生政策改变，乔猫没有拿到这个约，所以最终决定出国。</p>\n"
+"    \n"
+"    <p>乔猫现在是AnfaTech的项目主要负责人，同时他也是AnfaTech背后黑科技的制作"
+"者。他是目前AnfaTech团队之中唯一会编程的。</p>\n"
+"    \n"
+"    <p><em>--寿司熊</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <!-- -->\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>他的真名是乔展荣。他主要搞CG、CV和ML（尽管还是会得很少），且在其他领域"
+"完全是个笑话。虽然他依然不确定“暗法学习”项目能否像寿司熊原想的一样有效，他还"
+"是想帮助寿司熊实现一些他的想法。</p>\n"
+"    \n"
+"    <p><em>--乔猫</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <h3>🍣🐻 “寿司熊”</h3>\n"
+"  <p><em>联合创始人（管理与协调、教学方案设计）</em></p>\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>寿司熊原名<strong>王修铉</strong>，中考以南京市108名（共40000多人参加"
+"考试）进入了南京外国语学校。高中之后，他成绩也特别优异，SAT 1560，托福115（虽"
+"然比不过啄木鸟的119）。他对学习有着一种独特的热衷，特别喜欢探索各种各样的学习"
+"方法。他曾经为了研究不同学习方法而自学了10门AP。同时，他也有自己的一个公众号"
+"叫作【北极圈内】，他会在里面以“考拉”的身份和大家分享自己对学习方法的心得和体"
+"会。</p>\n"
+"    \n"
+"    <p>寿司熊主要负责的是数学课程的设计，以及团队运营中的一些事务性内容。</"
+"p>\n"
+"    \n"
+"    <p><em>--寿司熊</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <!-- -->\n"
+"  \n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>寿司熊是一位对教育事业抱有热情的成年熊。“暗法学习”最初就是由他发起的，"
+"以及整个“暗法科技”团队中的课程设计理念、题目设计中的心理学原理，大部分都是由"
+"这只熊所提出的。同时，他兴趣爱好广泛，非常喜欢佛系打Minecraft，至今还未屠龙。"
+"让我们一起为他加油！</p>\n"
+"    \n"
+"    <p><em>--啄木鸟</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <!-- -->\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>寿司熊是暗法学习项目的<em>最初发起者</em>——他在<em>至少三年前</em>就有"
+"了利用科技来改进中国教学质量的设想。那时他刚去参观过美国的北卡罗来纳大学，他"
+"们的“无纸化”教学给他留下了深刻的印象。然而，直到最近的新型冠状病毒爆发使得所"
+"有学校都转为线上授课之前，我们都还没有意识到他的远见卓识。</p>\n"
+"    \n"
+"    <p>寿司熊人非常好，也很乐观。他从2017年开始就在赞扬/奉承乔猫，给了他很多"
+"信心。</p>\n"
+"    \n"
+"    <p><em>--乔猫</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <h3>🌳🦜 “啄木鸟”</h3>\n"
+"  <p><em>初期成员（教学方案设计）</em></p>\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>他的真名叫<strong>张琢</strong>，曾就读于南京玄武外国语学校，现就读于"
+"南京外国语学校。他的自学能力是非凡的，这表现在他在<em>8天内</em>自学完了基础"
+"有机化学的所有知识。在随后的英国化学奥林匹克竞赛中，他也做得很好，在1300名参"
+"赛者中排第20名。他非常热爱科学和学习。他是一个强烈的环保主义者和双面印刷的倡"
+"导者。</p>\n"
+"    \n"
+"    <p>啄木鸟目前在AnfaTech团队中负责数学和化学课程的制作。</p>\n"
+"    \n"
+"    <p><em>--寿司熊</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <!-- -->\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>啄木鸟喜欢打Minecraft，正在试图屠龙</p>\n"
+"    <p><em>--啄木鸟</em></p>\n"
+"  </blockquote>\n"
+"\n"
+"  <h2>我们遇到的困难</h2>\n"
+"\n"
+"  <p>作为高中生，我们难以把全部时间都投入到暗法学习平台。更糟的是我们在课程设"
+"计上几乎没什么经验。我们只能分享我们<em>自身</em>对于学习的想法，却基本不知道"
+"我们自己的想法是否能对<em>大部分</em>中学生都适用。我们也可能在撰写课程材料时"
+"无意中漏掉一些要点。（如果你发现你难以理解某节课在讲啥，请<a "
+"target=\"_blank\" rel=\"nofollow\" href=\"%(feedback_url)s\">告诉我们</a>好让"
+"我们对课程加以改进！）</p>\n"
+"\n"
+"  <p>在这样的情况下，实现我们的目标是很困难的。所以我们特别希望能有专业的老师"
+"愿意加入我们的团队。</p>\n"
+"\n"
+"  <h2>我们能做什么</h2>\n"
+"\n"
+"  <p>基于我们作为学生的能力限制以及目前团队中教师的缺乏，暗法学习目前更多地是"
+"在给所有愿意分享知识的学生和老师<em>提供一个平台</em>。我们希望能够在技术层面"
+"让你分享起来更加容易。同时，我们的团队成员也会整理并组织在平台上被分享的所有"
+"信息，努力保证所有同学都可以有一个舒适的学习体验。</p>\n"
+"\n"
+"  <p>暗法科技当前的成员也正在利用自己的空余时间撰写一些学习材料，对此我们计划"
+"从初中内容和一些我们所擅长的领域（比如计算机）开始做起。但是由于团队人数太"
+"少，这个工作的进展有点慢。写这些材料主要起到的作用是抛砖引玉，希望能够鼓励更"
+"多的人加入我们的社区，最终为所有孩子们提供更好的教育环境。</p>\n"
+"\n"
+"  <h2>您能做什么</h2>\n"
+"\n"
+"  <p>“暗法学习”项目到目前为止已经做了几个月了，但是想要做成一个优秀的平台确实"
+"很需要时间。因为我们目前还没有办法带给您很多帮助，我们还没有开放接受捐款的渠"
+"道。但是，如果您对我们的理想很感兴趣，或是对我们的平台有任何建议，请一定要<a "
+"target=\"_blank\" rel=\"nofollow\" href=\"%(feedback_url)s\">告诉我们</a>，我"
+"们很愿意听到您的声音。如果您对中学课程体系非常了解，且想<a name=\"joinus\"></"
+"a>加入我们的话，请在QQ上联系我们：</p>\n"
+"\n"
+"  <ul>\n"
+"  <li>1249413073（寿司熊 / 王修铉）；</li>\n"
+"  <li>1281432293（乔猫 / 乔展荣）；</li>\n"
+"  <li>1836987211（啄木鸟 / 张琢）。</li>\n"
+"  </ul>\n"
+"  "
+
+#: .\main\templates\main\text\acknowledgements.html:8
+msgid ""
+"\n"
+"  <h1>Acknowledgements</h1>\n"
+"  <p>Currently, we host this website on <a target=\"_blank\" "
+"rel=\"nofollow\" href=\"https://cloud.tencent.com/\">Tencent Cloud</a>. We "
+"have used <em>a lot</em> of open-source libraries in this project, as listed "
+"below:</p>\n"
+"\n"
+"  <p>This website is built with:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.python.org/"
+"\">Python</a> + <a target=\"_blank\" rel=\"nofollow\" href=\"https://www."
+"djangoproject.com/\">Django</a>, as the server-side application framework</"
+"li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.mysql.com/"
+"\">MySQL</a>, as the database system</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.nginx.com/"
+"\">Nginx</a>, previously used for serving static files</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/"
+"unbit/uwsgi\">uWSGI</a>, as the server program (forwards requests from Nginx "
+"to Django)</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://semantic-ui.com/"
+"\">Semantic UI</a>, for the styling of UI components</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://v3.vuejs.org/"
+"\">Vue.js</a>, to simplify JavaScript DOM operations (although currently we "
+"do not have much JavaScript on this site...)</li>\n"
+"  </ul>\n"
+"\n"
+"  <p>Other third-party components used:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/"
+"trentm/python-markdown2\">python-markdown2</a>, for server-side rendering "
+"(conversion to HTML) of Markdown contents</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.mathjax.org/"
+"\">MathJax</a>, for client-side rendering of mathematical formulas</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.sympy.org/"
+"en/index.html\">SymPy</a>, for automatic simplification of mathematical "
+"expressions</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://certbot.eff.org/"
+"\">Let's Encrypt / Certbot</a>, for a free HTTP SSL certificate</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/js-"
+"cookie/js-cookie/\">js-cookie</a>, to simplify JavaScript cookie operations</"
+"li>\n"
+"  </ul>\n"
+"\n"
+"  <p>Plan to use in the future:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.elastic.co/"
+"elasticsearch/\">Elasticsearch</a>, for in-site search functionality\n"
+"    <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/"
+"django-es/django-elasticsearch-dsl\">django-elasticsearch-dsl</a>, as a "
+"wrapper for Elasticsearch</li>\n"
+"    </ul></li>\n"
+"  </ul>\n"
+"\n"
+"  <!-- <blockquote class=\"ui message\">\n"
+"    <p>真的调包侠，敢于大包小包地调十几个包。</p>\n"
+"  </blockquote> -->\n"
+"  \n"
+"  <p>Besides, we have used some awesome photos on <a target=\"_blank\" "
+"rel=\"nofollow\" href=\"https://www.pexels.com/\">Pexels</a> to decorate "
+"this website:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/shallow-focus-photography-of-green-leaves-1002335/\">shallow-focus-"
+"photography-of-green-leaves-1002335</a></li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/analysis-blackboard-board-bubble-355952/\">analysis-blackboard-board-"
+"bubble-355952</a></li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/auditorium-benches-chairs-class-207691/\">auditorium-benches-chairs-"
+"class-207691</a></li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/ipad-paper-clips-and-erasers-flatlay-5088022/\">ipad-paper-clips-and-"
+"erasers-flatlay-5088022</a></li>\n"
+"  </ul>\n"
+"  \n"
+"  "
+msgstr ""
+"\n"
+"  <h1>鸣谢</h1>\n"
+"  <p>目前我们把这个网站开在<a target=\"_blank\" rel=\"nofollow\" "
+"href=\"https://cloud.tencent.com/\">腾讯云</a>的服务器上。我们在项目里使用了"
+"<em>一大堆</em>开源库，以下是一个列表：</p>\n"
+"\n"
+"  <p>This website is built with:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.python.org/"
+"\">Python</a> + <a target=\"_blank\" rel=\"nofollow\" href=\"https://www."
+"djangoproject.com/\">Django</a>, as the server-side application framework</"
+"li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.mysql.com/"
+"\">MySQL</a>, as the database system</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.nginx.com/"
+"\">Nginx</a>, previously used for serving static files</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/"
+"unbit/uwsgi\">uWSGI</a>, as the server program (forwards requests from Nginx "
+"to Django)</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://semantic-ui.com/"
+"\">Semantic UI</a>, for the styling of UI components</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://v3.vuejs.org/"
+"\">Vue.js</a>, to simplify JavaScript DOM operations (although currently we "
+"do not have much JavaScript on this site...)</li>\n"
+"  </ul>\n"
+"\n"
+"  <p>Other third-party components used:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/"
+"trentm/python-markdown2\">python-markdown2</a>, for server-side rendering "
+"(conversion to HTML) of Markdown contents</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.mathjax.org/"
+"\">MathJax</a>, for client-side rendering of mathematical formulas</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.sympy.org/"
+"en/index.html\">SymPy</a>, for automatic simplification of mathematical "
+"expressions</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://certbot.eff.org/"
+"\">Let's Encrypt / Certbot</a>, for a free HTTP SSL certificate</li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/js-"
+"cookie/js-cookie/\">js-cookie</a>, to simplify JavaScript cookie operations</"
+"li>\n"
+"  </ul>\n"
+"\n"
+"  <p>Plan to use in the future:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.elastic.co/"
+"elasticsearch/\">Elasticsearch</a>, for in-site search functionality\n"
+"    <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://github.com/"
+"django-es/django-elasticsearch-dsl\">django-elasticsearch-dsl</a>, as a "
+"wrapper for Elasticsearch</li>\n"
+"    </ul></li>\n"
+"  </ul>\n"
+"\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>真的调包侠，敢于大包小包地调十几个包。</p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <p>Besides, we have used some awesome photos on <a target=\"_blank\" "
+"rel=\"nofollow\" href=\"https://www.pexels.com/\">Pexels</a> to decorate "
+"this website:</p>\n"
+"\n"
+"  <ul>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/shallow-focus-photography-of-green-leaves-1002335/\">shallow-focus-"
+"photography-of-green-leaves-1002335</a></li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/analysis-blackboard-board-bubble-355952/\">analysis-blackboard-board-"
+"bubble-355952</a></li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/auditorium-benches-chairs-class-207691/\">auditorium-benches-chairs-"
+"class-207691</a></li>\n"
+"    <li><a target=\"_blank\" rel=\"nofollow\" href=\"https://www.pexels.com/"
+"photo/ipad-paper-clips-and-erasers-flatlay-5088022/\">ipad-paper-clips-and-"
+"erasers-flatlay-5088022</a></li>\n"
+"  </ul>\n"
+"  \n"
+"  "
+
+#: .\main\templates\main\text\api.html:8
+msgid ""
+"\n"
+"  <h1>API</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Coming soon...</p>\n"
+"  </blockquote>\n"
+"  "
+msgstr ""
+"\n"
+"  <h1>API</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>敬请期待…</p>\n"
+"  </blockquote>\n"
+"  "
+
+#: .\main\templates\main\text\help.html:8
+msgid ""
+"\n"
+"  <h1>Help</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Coming soon...</p>\n"
+"  </blockquote>\n"
+"  "
+msgstr ""
+"\n"
+"  <h1>帮助</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>敬请期待…</p>\n"
+"  </blockquote>\n"
+"  "
+
+#: .\main\templates\main\text\infinideas_archive.html:4
+#: .\templates\base.html:122
+msgid "Infinideas webpage archive"
+msgstr "新创无际网页存档"
+
+#: .\main\templates\main\text\infinideas_archive.html:8
+msgid ""
+"\n"
+"  <h1>Infinideas webpage archive</h1>\n"
+"  \n"
+"  <p>Zhanrong Qiao gathered a group of people into the development of <a "
+"href=\"https://github.com/Infinideastudio/NEWorldOld\" "
+"target=\"_blank\">NEWorld</a> starting from 2015. They founded a team named "
+"Infinideas. Due to the popularity of NEWorld on <a href=\"https://tieba."
+"baidu.com/p/2822071396/\" target=\"_blank\">Baidu Tieba</a> at that time, "
+"the team quickly grown to have more than 200 members. However, most of them "
+"came there only for technological discussion and did not directly "
+"participate in the development of NEWorld, so later \"Infinideas "
+"Studio\" (the development team) and \"Infinideas Chat Group\" (for "
+"discussion) are differentiated.</p>\n"
+"  \n"
+"  <p>Infinideas Studio, being a team of teenage programming hobbists, "
+"focused mainly on open source game projects at that time. Besides NEWorld, "
+"they have also made <a href=\"https://github.com/Infinideastudio/Myomyw\" "
+"target=\"_blank\">Myomyw</a>, ColorStrike... Of course, they also built "
+"their own \"official website\" and online forum, using the programming "
+"language PHP. Here is a collection of these web pages. <i>(Some links in "
+"these pages are broken)</i></p>\n"
+"  "
+msgstr ""
+"\n"
+"  <h1>新创无际网页存档</h1>\n"
+"  \n"
+"  <p>Zhanrong Qiao gathered a group of people into the development of <a "
+"href=\"https://github.com/Infinideastudio/NEWorldOld\" "
+"target=\"_blank\">NEWorld</a> starting from 2015. They founded a team named "
+"Infinideas. Due to the popularity of NEWorld on <a href=\"https://tieba."
+"baidu.com/p/2822071396/\" target=\"_blank\">Baidu Tieba</a> at that time, "
+"the team quickly grown to have more than 200 members. However, most of them "
+"came there only for technological discussion and did not directly "
+"participate in the development of NEWorld, so later \"Infinideas "
+"Studio\" (the development team) and \"Infinideas Chat Group\" (for "
+"discussion) are differentiated.</p>\n"
+"  \n"
+"  <p>Infinideas Studio, being a team of teenage programming hobbists, "
+"focused mainly on open source game projects at that time. Besides NEWorld, "
+"they have also made <a href=\"https://github.com/Infinideastudio/Myomyw\" "
+"target=\"_blank\">Myomyw</a>, ColorStrike... Of course, they also built "
+"their own \"official website\" and online forum, using the programming "
+"language PHP. Here is a collection of these web pages. <i>(Some links in "
+"these pages are broken)</i></p>\n"
+"  "
+
+#. Translators: Have a look
+#: .\main\templates\main\text\infinideas_archive.html:26
+msgid "View"
+msgstr "查看"
+
+#: .\main\templates\main\text\infinideas_archive.html:54
+msgid ""
+"\n"
+"  <p>Although the team has dissolved in 2017, some members are still <a "
+"href=\"https://github.com/Infinideastudio/\" target=\"_blank\">working on "
+"projects</a>. And the <a href=\"http://shang.qq.com/wpa/qunwpa?"
+"idkey=7ce5eb864a00cafd50a832d2039def8b9ed931e0e316227cc0d98bf80b85f1cc\" "
+"target=\"_blank\">Chat Group (on QQ)</a> stayed active to date.</p>\n"
+"  "
+msgstr ""
+"\n"
+"  <p>Although the team has dissolved in 2017, some members are still <a "
+"href=\"https://github.com/Infinideastudio/\" target=\"_blank\">working on "
+"projects</a>. And the <a href=\"http://shang.qq.com/wpa/qunwpa?"
+"idkey=7ce5eb864a00cafd50a832d2039def8b9ed931e0e316227cc0d98bf80b85f1cc\" "
+"target=\"_blank\">Chat Group (on QQ)</a> stayed active to date.</p>\n"
+"  "
+
+#: .\main\templates\main\text\privacy_policy.html:8
+msgid ""
+"\n"
+"  <h1>Privacy Policy</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Coming soon...</p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <p><strong>This is an initial draft and leaves out many details. It will "
+"be changed in the near future.</strong></p>\n"
+"  \n"
+"  <p>In the following paragraphs, <strong>\"we\", \"us\", \"our\" etc.</"
+"strong> refers to Anfa Technologies (a.k.a. AnfaTech) or equivalently, the "
+"three persons Xiuxuan Wang, Zhanrong Qiao and Zhuo Zhang. "
+"<strong>\"Services\"</strong> refers to the functions and contents provided "
+"by \"us\" and the Anfa Learning website. <strong>\"Website\"</strong> refers "
+"to the Anfa Learning website if not alternatively specified.</p>\n"
+"  \n"
+"  <h2>What we collect</h2>\n"
+"  <ol>\n"
+"  <li>We collect your IP address and the URLs of the pages you are currently "
+"viewing (otherwise we cannot send you the content of these pages);</li>\n"
+"  <li>You can choose to provide personal information like your real name "
+"after you have logged in. These information will then become publicly "
+"visible.</li>\n"
+"  <li>You can choose to send comments. These will become publicly visible as "
+"well.</li>\n"
+"  <li>Your password will undergo an irreversible hashing process "
+"(<code>pbkdf2_sha256</code>, 180000 iterations) before being stored in our "
+"database. It is impossible for other people to know your password, including "
+"Website administrators.</li>\n"
+"  <li>We enforce HTTP SSL encrypted connections to ensure that your data "
+"will not be revealed to third-parties during transmission.</li>\n"
+"  </ol>\n"
+"\n"
+"  <h2>Cookies</h2>\n"
+"  <p>(\"Cookies\" are small pieces of data stored on your browser, which is "
+"used and updated every time you interact with our website. By using cookies, "
+"we will be able to <em>associate multiple requests sent by your browser</"
+"em>.)</p>\n"
+"  <ol>\n"
+"  <li>If you are not logged in, we only store a \"<code>csrf_token</code>\" "
+"cookie when you are about to submit forms. This is used only to ensure that "
+"hackers cannot perform actions on this website \"in your name\".</li>\n"
+"  <li>If you are logged in, we will store a \"<code>session_id</code>\" to "
+"identify your login status (e.g. which account you have logged in?)</li>\n"
+"  <li>Except for cases specified above, we do not track your activities by "
+"using cookies.</li>\n"
+"  </ol>\n"
+"  \n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Coming soon...</p>\n"
+"  </blockquote>\n"
+"  "
+msgstr ""
+"\n"
+"  <h1>隐私政策</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>敬请期待…</p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <p><strong>这只是一个省略了很多细节的初稿，过段时间会改。</strong></p>\n"
+"  \n"
+"  <p>在接下来的段落中，<strong>“我们”</strong>指代“暗法科技”（又称“Anfa "
+"Technologies”或“AnfaTech”），或者等同于以下三个人：王修铉、乔展荣和张琢。"
+"<strong>“服务”</strong>指代“我们”和暗法学习网站所提供的内容和功能。若无特殊说"
+"明，<strong>“网站”</strong>指代暗法学习网站。</p>\n"
+"  \n"
+"  <h2>我们会收集哪些信息</h2>\n"
+"  <ol>\n"
+"  <li>我们收集你的IP地址和你正在访问的页面的URL（否则我们将无法把这些网页的内"
+"容发送给你）；</li>\n"
+"  <li>在你登录之后，你可以选择提供一些个人信息，例如你的真实姓名。这些信息将"
+"会公开可见。</li>\n"
+"  <li>你也可以选择发送评论。这些也会被公开。</li>\n"
+"  <li>你的密码会先经过一个不可逆的“哈希”过程（<code>pbkdf2_sha256</code>，"
+"180000次迭代），然后才会被保存进我们的数据库。理论上来说，这意味着其他任何人"
+"都不可能知道你的密码——包括网站管理员在内。</li>\n"
+"  <li>我们强制使用HTTP SSL加密连接以保证你的数据不会在传输过程中被第三方偷"
+"看。</li>\n"
+"  </ol>\n"
+"\n"
+"  <h2>Cookies</h2>\n"
+"  <p>（“Cookies”是储存在你浏览器上的小段数据，在你每次和网站交互时Cookies都会"
+"被使用并更新。这意味着我们可以利用Cookies<em>将你浏览器多次发送的请求前后关联"
+"起来</em>。）</p>\n"
+"  <ol>\n"
+"  <li>如果你没有登录，我们只在你即将提交表单前存储一个名为“<code>csrf_token</"
+"code>”的Cookie。这仅仅是用来防止有黑客“以你的名义”在这个网站上进行操作。</"
+"li>\n"
+"  <li>如果你登录了，我们还会存储一个“<code>session_id</code>”以辨别你的登录状"
+"态（例如：你当前登录了哪个帐号？）</li>\n"
+"  <li>除了上述情况，我们不会利用Cookie跟踪你的活动。</li>\n"
+"  </ol>\n"
+"  \n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>敬请期待…</p>\n"
+"  </blockquote>\n"
+"  "
+
+#: .\main\templates\main\text\terms_of_use.html:9
+msgid ""
+"\n"
+"  <h1>Terms of Use</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Coming soon...</p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <p><strong>This is an initial draft and leaves out many details. It will "
+"be changed in the near future.</strong></p>\n"
+"  \n"
+"  <p>In the following paragraphs, <strong>\"we\", \"us\", \"our\" etc.</"
+"strong> refers to Anfa Technologies (a.k.a. AnfaTech) or equivalently, the "
+"three persons Xiuxuan Wang, Zhanrong Qiao and Zhuo Zhang. "
+"<strong>\"Services\"</strong> refers to the functions and contents provided "
+"by \"us\" and the Anfa Learning website. <strong>\"Website\"</strong> refers "
+"to the Anfa Learning website if not alternatively specified.</p>\n"
+"  \n"
+"  <h2>What you cannot do:</h2>\n"
+"  <ul>\n"
+"  <li>Send offensive messages or make personal attacks to other users, "
+"either publicly or privately;</li>\n"
+"  <li>Commercially exploit (e.g. license or sell) the contents provided by "
+"other users without their prior consent;</li>\n"
+"  <li>Commercially exploit (e.g. license or sell) the Services provided by "
+"us without our prior consent;</li>\n"
+"  </ul>\n"
+"  \n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>Coming soon...</p>\n"
+"  </blockquote>\n"
+"  "
+msgstr ""
+"\n"
+"  <h1>使用条款</h1>\n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>敬请期待…</p>\n"
+"  </blockquote>\n"
+"  \n"
+"  <p><strong>这只是一个省略了很多细节的初稿，过段时间会改。</strong></p>\n"
+"  \n"
+"  <p>在接下来的段落中，<strong>“我们”</strong>指代“暗法科技”（又称“Anfa "
+"Technologies”或“AnfaTech”），或者等同于以下三个人：王修铉、乔展荣和张琢。"
+"<strong>“服务”</strong>指代“我们”和暗法学习网站所提供的内容和功能。若无特殊说"
+"明，<strong>“网站”</strong>指代暗法学习网站。</p>\n"
+"  \n"
+"  <h2>你不能做什么：</h2>\n"
+"  <ul>\n"
+"  <li>向其他用户发送冒犯性的消息或对他们进行人身攻击，无论是公开的还是私下"
+"的；</li>\n"
+"  <li>在未取得其他用户的事先许可时，商业化地利用他们所提供的内容（比如售卖或"
+"添加许可证）；</li>\n"
+"  <li>在未取得我们的事先许可时，商业化地利用我们所提供的服务（比如售卖或添加"
+"许可证）；</li>\n"
+"  </ul>\n"
+"  \n"
+"  <blockquote class=\"ui message\">\n"
+"    <p>敬请期待…</p>\n"
+"  </blockquote>\n"
+"  "
+
+#: .\main\views.py:63
+msgid "Main page, version 3"
+msgstr "第三版主页"
+
+#: .\main\views.py:63
+msgid "Static page with hand-crafted CSS; responsive layout (by Zhanrong Qiao)"
+msgstr "手写CSS的静态页面；响应式布局 (by Zhanrong Qiao)"
+
+#: .\main\views.py:64
+msgid "NEWorld Forum"
+msgstr "NEWorld论坛"
+
+#: .\main\views.py:64
+msgid ""
+"Written in PHP + MySQL, with hand-crafted CSS (by Zhanrong Qiao & Shiyuan Yu)"
+msgstr "用PHP+MySQL做的，CSS也是手写的 (by Zhanrong Qiao & Shiyuan Yu)"
+
+#: .\main\views.py:65
+msgid "Main page, version 4"
+msgstr "第四版主页"
+
+#: .\main\views.py:65
+msgid ""
+"Written in PHP + MySQL, with hand-crafted CSS and a user account system (by "
+"Zhanrong Qiao). (There is also a description about the history of "
+"Infinideas...)"
+msgstr ""
+"用PHP+MySQL做的，CSS也是手写的，还有一个用户系统 (by Zhanrong Qiao)。（里面还"
+"有新创无际的历史简介…）"
+
+#: .\main\views.py:80
+msgid "Your feedback has been sent!"
+msgstr "你的反馈已经发送成功！"
+
+#: .\main\views.py:119
+msgid "lecture"
+msgstr "课程"
+
+#: .\main\views.py:138
+msgid "You are not allowed to view this course."
+msgstr ""
+
+#: .\main\views.py:175
+msgid "You are not allowed to view this lecture."
+msgstr ""
+
+#: .\main\views.py:236
+msgid "Question not found in this problemset."
+msgstr "题库里找不到这道题"
+
+#: .\main\views.py:354
+msgid "Anfa Learning - Design test"
+msgstr "暗法学习 - 设计测试"
+
+#: .\main\views.py:385
+#, python-brace-format
+msgid ""
+"Successfully added {0} questions. You may further edit or delete them in the "
+"<a href=\"{1}\" target=\"_blank\">administration page</a>."
+msgstr ""
+"成功添加了{0}道题。你可以在<a href=\"{1}\" target=\"_blank\">管理页面</a>继续"
+"编辑或删除这些题目。"
+
+#: .\templates\base.html:6
+msgid "Skip to main content"
+msgstr "跳至主要内容"
+
+#: .\templates\base.html:17 .\templates\base.html:52 .\templates\base.html:117
+msgid "About us"
+msgstr "关于我们"
+
+#: .\templates\base.html:21 .\templates\base.html:55
+msgid "Search..."
+msgstr "搜索…"
+
+#: .\templates\base.html:31 .\templates\base.html:65
+msgid "Log in or sign up"
+msgstr "登录/注册"
+
+#: .\templates\base.html:103
+msgid "Select language"
+msgstr "选择语言"
+
+#: .\templates\base.html:111
+msgid "Help"
+msgstr "帮助"
+
+#: .\templates\base.html:112
+msgid "Send feedback"
+msgstr "反馈意见"
+
+#: .\templates\base.html:113
+msgid "API"
+msgstr "API"
+
+#: .\templates\base.html:120
+msgid "Join us"
+msgstr "加入我们"
+
+#: .\templates\base.html:121
+msgid "Sushi Bear's blog (coming soon...)"
+msgstr "寿司熊的博客（敬请期待…）"
+
+#: .\templates\base.html:126
+#, python-format
+msgid ""
+"\n"
+"        <i>Anfa Learning is a non-profit project that aims to use technology "
+"to reduce the cost of teaching, so that more people can enjoy quality "
+"education. Our main focus is on high school-level courses in mainland China. "
+"<a href=\"%(about_url)s#joinus\">Join us</a> if you are interested!</i>\n"
+"        "
+msgstr ""
+"\n"
+"        <i>暗法学习是一个致力于利用科技降低教学成本的非营利项目，目标是能让更"
+"多的人享受到更优质的教育资源。当下我们主要的关注点是中国大陆地区的中学课程，"
+"如果你也对此感兴趣，我们欢迎<a href=\"%(about_url)s#joinus\">你的加入</a>！</"
+"i>        "
+
+#: .\templates\base.html:134
+msgid "Anfa Technologies"
+msgstr "暗法科技"
+
+#: .\templates\base.html:135
+msgid "Acknowledgements"
+msgstr "鸣谢"

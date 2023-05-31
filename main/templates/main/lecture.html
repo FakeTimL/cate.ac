@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static i18n humanize %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<style>
+@media (max-width: 767px) {
+  html, body { overflow-x: hidden; }
+}
+{{ lecture.lecture_notes_css|safe }}
+</style>
+<script>
+{{ lecture.lecture_notes_js|safe }}
+</script>
+<div id="content_with_sidenav">
+<div class="sidenav_left" :style="{ 'width': sidenavWidth + 'px', 'transition-property': (dragging? 'none' : 'width') }">
+  <div class="sidenav ui vertical menu small inverted" role="navigation">
+    <h3 class="header item" style="text-align: center;">{{ course.name }}</h3>
+    {% for l in all_lectures %}
+    <a class="item {% if l.id == lecture.id %}active{% endif %}" href="{% url 'main:lecture' course.codename l.id %}">{{ l.title }}</a>
+    {% endfor %}
+    <a class="item" href="{% url 'main:course' course.codename %}"><i class="arrow left icon"></i>{% trans 'Go back' %}</a>
+  </div>
+</div>
+<div class="sidenav_resizer" v-if="isExpanded" @mousedown="beginDrag" @touchstart="beginDrag"></div>
+<div class="sidenav_right">
+  <div class="sidenav_toggle">
+    <button class="ui basic icon large button" style="margin-right: 0;" @click="toggleExpand">
+      <i :class="[ 'angle', 'double', (isExpanded ? 'left' : 'right'), 'icon' ]"></i>
+    </button>
+  </div>
+  <div class="markdown lecture section">
+    <h1>{{ lecture.title }}</h1>
+    <div class="ui list metadata">
+      <div class="item"><i class="address card icon"></i><div class="content">{% trans "Author: " %}<a href="{% url 'accounts:profile' lecture.author %}">{{ lecture.author }}</a></div></div>
+      <!--<div class="item"><i class="calendar alternate icon"></i><div class="content">{% trans "Published on: " %}{{ lecture.publish_date }}</div></div>-->
+      <div class="item"><i class="calendar alternate icon"></i><div class="content">{% trans 'Last update: ' %}{{ lecture.last_edited }}</div></div>
+    </div>
+    
+    {% if lecture.video %}
+    <video style="float: left;" src="{{ lecture.video.url }}" controls="controls">{% trans "The video player requires HTML5, which is not supported by your browser..." %}</video>
+    {% endif %}
+    
+    {% if lecture.lecture_notes and lecture.lecture_notes != "" %}
+    <div class="lecture_notes">
+      {{ lecture.lecture_notes|safe }}
+    </div>
+    <br />
+    <!-- <p>
+      <a class="ui button" href="{% url 'main:lecture_notes' course.codename lecture.id %}">{% trans "Download" %}{% trans " (in HTML format)" %}</a>
+    </p> -->
+    {% endif %}
+    <p>
+      <a class="ui button" href="{% url 'main:course' course.codename %}">{% trans "Go back" %}</a>
+    </p>
+  </div>
+  <div class="section">
+    <div class="ui comments"> <!-- ui threaded comments -->
+      <h3 class="ui dividing header">{% trans "All comments" %}</h3>
+      {% url 'main:lecture' course.codename lecture.id as redirect_url %}
+      {% include "main/comments_tree_view.html" with all_comments=all_comments redirect_url=redirect_url %}
+    </div>
+    {% if user.is_authenticated %}
+    <div style="margin: 0.5em;">
+      <form class="ui form" action="{% url 'main:lecture' course.codename lecture.id %}" method="post">
+        {% csrf_token %}
+        <div class="field">
+          <label><span dir="auto">{{ user.get_username }}</span>{% trans ":" %}</label>
+          <textarea style="resize: vertical;" placeholder="{% trans 'Say something...' %}" rows="10" name="content"></textarea>
+        </div>
+        {# Translators: The "send comment" button text #}
+        <input class="ui button primary" type="submit" value="{% trans 'Comment' %}" />
+      </form>
+    </div>
+    {% else %}
+    <div style="margin: 0.5em;">
+      {% url 'accounts:login' as login_url %}
+      <p>{% blocktrans %}Please <a href="{{ login_url }}">log in</a> to comment{% endblocktrans %}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+</div>
+
+<style>
+.body_wrapper { background-color: transparent; }
+.sidenav_right { background-color: #ffffff; }
+</style>
+
+<script>
+function toggleReplyBox(id) {
+  el = document.getElementById(id);
+  el.style.display = (el.style.display == "none"? "block" : "none");
+}
+
+function pauseEvent(e) {
+  if (e.stopPropagation) e.stopPropagation();
+  if (e.preventDefault) e.preventDefault();
+  e.cancelBubble = true;
+  e.returnValue = false;
+  return false;
+}
+
+// Prevents text selection with mouse while dragging
+// https://stackoverflow.com/questions/29908261/prevent-text-selection-on-mouse-drag
+function unfocus() {
+  if (document.selection) document.selection.empty();
+  else window.getSelection().removeAllRanges();
+}
+
+var isDesktop = window.matchMedia('screen and (min-width: 768px)').matches;
+
+var content_with_sidenav = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#content_with_sidenav',
+  data: {
+    isExpanded: isDesktop, // Default to collapsed state on mobile
+    sidenavWidth: (isDesktop? 220 : 0), // Default to collapsed state on mobile
+    sidenavWidthOrg: 220,
+    dragging: false, x: -1, y: -1,
+    isDesktop: isDesktop
+  },
+  methods: {
+    toggleExpand: function() {
+      this.isExpanded = !this.isExpanded;
+      if (this.isExpanded) this.sidenavWidth = this.sidenavWidthOrg;
+      else { this.sidenavWidthOrg = this.sidenavWidth; this.sidenavWidth = 0; }
+    },
+    beginDrag: function(e) {
+      this.dragging = true;
+      this.x = e.type.indexOf('mouse') !== -1 ? e.pageX : e.touches[0].pageX;
+      this.y = e.type.indexOf('mouse') !== -1 ? e.pageY : e.touches[0].pageY;
+      this.sidenavWidthOrg = this.sidenavWidth;
+      document.body.style.setProperty('cursor', 'col-resize', 'important');
+    },
+    endDrag: function() {
+      this.dragging = false;
+      this.x = -1;
+      this.y = -1;
+      document.body.style.cursor = '';
+    },
+    updateDrag: function(e) {
+      if (e.buttons == 0) this.endDrag();
+      if (this.dragging) {
+        unfocus();
+        this.sidenavWidth = this.sidenavWidthOrg + (e.type.indexOf('mouse') !== -1 ? e.pageX : e.touches[0].pageX) - this.x;
+        if (this.isExpanded && this.sidenavWidth < 100) {
+          this.endDrag();
+          this.sidenavWidth = this.sidenavWidthOrg;
+          this.toggleExpand();
+          return;
+        }
+        this.sidenavWidth = Math.max(160, Math.min(480, this.sidenavWidth));
+      }
+    },
+  },
+  mounted: function() {
+    window.addEventListener('mouseup', this.endDrag);
+    window.addEventListener('mousemove', this.updateDrag);
+    window.addEventListener('touchend', this.endDrag);
+    window.addEventListener('touchmove', this.updateDrag);
+  },
+  updated: function() {
+    this.isDesktop = window.matchMedia('screen and (min-width: 768px)').matches;
+  }
+})
+</script>
+{% endblock %}

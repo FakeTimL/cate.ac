@@ -1,0 +1,7 @@
+.geometry_canvas { position: relative; background-color: transparent; max-width: 100%; margin: 1em auto; /* overflow: hidden; */ }
+.geometry_canvas>div { position: absolute; top: 0; left: 0; transform-origin: center center; }
+
+.geometry_canvas>.geometry_text { /* text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff; */ }
+.geometry_canvas>.geometry_point { margin: -1px; width: 2px; height: 2px; background-color: #000000; border-radius: 1px; }
+.geometry_canvas>.geometry_line { margin: -1px; height: 2px; background-color: #000000; border-radius: 1px; transform-origin: 1px center; }
+.geometry_canvas>.geometry_triangle { width: 0; height: 0; border: 1px solid transparent; border-left-color: rgba(128, 128, 128, 0.3); transform-origin: 0 0; }

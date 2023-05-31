@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Anfa Learning" %}{% if page_title %} - {{ page_title }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="section">
+  {% blocktrans %}
+  <h1>Help</h1>
+  <blockquote class="ui message">
+    <p>Coming soon...</p>
+  </blockquote>
+  {% endblocktrans %}
+</div>
+{% endblock %}

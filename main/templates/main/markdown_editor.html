@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div style="width: 100%; padding: 1em;" id="vue_app_content">
+  <div class="ui form">
+    <div class="two fields">
+      <div class="field">
+        <label><span dir="auto">{{ user.get_username }}</span>:</label>
+        <textarea style="resize: vertical;" placeholder="{% trans 'Say something...' %}" rows="20" v-model="content" v-on:keydown.ctrl.enter="getPreview"></textarea>
+      </div>
+      <div class="field">
+        <label>{% trans "Preview" %}</label>
+        <div class="markdown" v-html="preview"></div>
+      </div>
+    </div>
+    <button class="ui primary button" v-on:click="getPreview">{% trans "Preview" %}</button>
+  </div>
+</div>
+
+<script type="text/javascript">
+var vm = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#vue_app_content',
+  data: {
+    content: '',
+    preview: '',
+  },
+  methods: {
+    getPreview: function(e) {
+      e.preventDefault();
+      if (this.content != "") {
+        this.preview = "{% trans 'Generating preview...' %}";
+        axios.post("{% url 'main:markdown_editor' %}", vm.content, { headers: { "X-CSRFToken": Cookies.get("csrftoken") } })
+          .then(function(response) { vm.preview = response.data; })
+          .catch(function(error) { vm.preview = "{% trans 'Failed to generate preview: ' %}" + error; })
+          .then(function() { MathJax.typeset(); });
+      }
+    }
+  }
+})
+</script>
+{% endblock %}
