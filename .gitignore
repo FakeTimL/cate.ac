@@ -9,8 +9,8 @@ __pycache__/
 *$py.class
 
 # Translations
-*.mo
-*.pot
+# *.mo
+# *.pot
 
 # Django stuff:
 *.log

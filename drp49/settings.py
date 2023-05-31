@@ -49,7 +49,7 @@ ROOT_URLCONF = 'drp49.urls'
 TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [Path(BASE_DIR).joinpath('templates')], # Global template directories
+    'DIRS': [BASE_DIR / 'templates'], # Global template directories
     'APP_DIRS': True,
     'OPTIONS': {
       'context_processors': [
@@ -65,28 +65,25 @@ WSGI_APPLICATION = 'drp49.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-# Will be ignored when deploying to Heroku:
-# https://devcenter.heroku.com/articles/cleardb#using-cleardb-with-python-django
-if DEBUG:
-  DATABASES = {
-    'default': {
-      'ENGINE': 'django.db.backends.mysql',
-      'HOST': 'localhost',
-      'PORT': '3306',
-      'USER': os.environ['DRP49_MYSQL_USERNAME'],
-      'PASSWORD': os.environ['DRP49_MYSQL_PASSWORD'],
-      'NAME': os.environ['DRP49_MYSQL_DB_NAME'],
-      'OPTIONS': {
-        'init_command': " \
-          SET sql_mode='STRICT_TRANS_TABLES', \
-          default_storage_engine=INNODB, \
-          character_set_connection=utf8mb4, \
-          collation_connection=utf8mb4_unicode_520_ci; \
-        ",
-        'charset': 'utf8mb4',
-      },
-    }
+DATABASES = {
+  'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'HOST': 'localhost',
+    'PORT': '3306',
+    'USER': os.environ['DRP49_MYSQL_USERNAME'],
+    'PASSWORD': os.environ['DRP49_MYSQL_PASSWORD'],
+    'NAME': os.environ['DRP49_MYSQL_DB_NAME'],
+    'OPTIONS': {
+      'init_command': " \
+        SET sql_mode='STRICT_TRANS_TABLES', \
+        default_storage_engine=INNODB, \
+        character_set_connection=utf8mb4, \
+        collation_connection=utf8mb4_unicode_520_ci; \
+      ",
+      'charset': 'utf8mb4',
+    },
   }
+}
 
 # Custom authentication
 # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/
@@ -122,7 +119,7 @@ ELASTICSEARCH_DSL = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-LOCALE_PATHS = [Path(BASE_DIR).joinpath('locale')]
+LOCALE_PATHS = [BASE_DIR / 'locale']
 LANGUAGE_CODE = 'zh-hans' # 'en'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -132,7 +129,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, etc.) and user uploaded media files (images, videos, etc.)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 # https://docs.djangoproject.com/en/4.2/topics/files/
-STATICFILES_DIRS = [Path(BASE_DIR).joinpath('static/')] # Global static file directories
+STATICFILES_DIRS = [BASE_DIR / 'static/'] # Global static file directories
 
 # Using WhiteNoise for static files storage
 # https://whitenoise.readthedocs.io/en/latest/django.html
@@ -141,25 +138,25 @@ STATICFILES_DIRS = [Path(BASE_DIR).joinpath('static/')] # Global static file dir
 if DEBUG:
   STATIC_URL = '/static/' # Static file web URL
   MEDIA_URL = '/media/' # User-uploaded file web URL
-  STATIC_ROOT = Path(BASE_DIR).joinpath('static_root/')
-  MEDIA_ROOT = Path(BASE_DIR).joinpath('media_root/')
+  STATIC_ROOT = BASE_DIR / 'static_root/'
+  MEDIA_ROOT = BASE_DIR / 'media_root/'
 
 else:
   STATIC_URL = os.environ['DRP49_STATIC_URL']
   MEDIA_URL = os.environ['DRP49_MEDIA_URL']
-  STATIC_ROOT = Path(BASE_DIR).joinpath('static_root/')
+  STATIC_ROOT = BASE_DIR / 'static_root/'
+  AWS_S3_ACCESS_KEY_ID = os.environ['DRP49_AMAZON_S3_ACCESS_KEY_ID']
+  AWS_S3_SECRET_ACCESS_KEY = os.environ['DRP49_AMAZON_S3_SECRET_ACCESS_KEY']
+  AWS_S3_REGION_NAME = os.environ['DRP49_AMAZON_S3_REGION']
+  AWS_STORAGE_BUCKET_NAME = os.environ['DRP49_AMAZON_S3_BUCKET']
+  AWS_LOCATION = os.environ['DRP49_AMAZON_S3_LOCATION']
   STORAGES = {
     "staticfiles": {
       "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
     "default": {
       "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-      "AWS_S3_ACCESS_KEY_ID": os.environ['DRP49_AMAZON_S3_ACCESS_KEY_ID'],
-      "AWS_S3_SECRET_ACCESS_KEY": os.environ['DRP49_AMAZON_S3_SECRET_ACCESS_KEY'],
-      "AWS_S3_REGION_NAME": os.environ['DRP49_AMAZON_S3_REGION'],
-      "AWS_STORAGE_BUCKET_NAME": os.environ['DRP49_AMAZON_S3_BUCKET'],
-      "AWS_LOCATION": os.environ['DRP49_AMAZON_S3_LOCATION'],
-    },
+   },
   }
 
 # HTTP SSL configuration
@@ -174,3 +171,23 @@ else:
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
