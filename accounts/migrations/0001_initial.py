@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('email_to_be_verified', models.EmailField(blank=True, max_length=254)),
                 ('email_verification_token', models.BinaryField(blank=True, max_length=128)),
-                ('avatar', models.ImageField(default='accounts/default_avatar.png', upload_to=accounts.models.user_directory_path)),
+                ('avatar', models.ImageField(blank=True, upload_to=accounts.models.user_directory_path)),
                 ('bio', models.TextField(blank=True)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],

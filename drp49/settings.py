@@ -16,21 +16,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DRP49_SECRET_KEY']
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = ('DRP49_DEBUG' in os.environ and os.environ['DRP49_DEBUG'] == '1')
-
-ALLOWED_HOSTS = ['localhost'] + (['*'] if DEBUG else [])
-
+ALLOWED_HOSTS = ['localhost'] + (['*'] if DEBUG else ['*']) # #####
 
 # Application definition
-
 INSTALLED_APPS = [
   'main.apps.MainConfig',
   'accounts.apps.AccountsConfig',
@@ -42,9 +34,9 @@ INSTALLED_APPS = [
   'django.contrib.admin', # Administration site
   'django.contrib.humanize', # Additional templates
 ]
-
 MIDDLEWARE = [
   'django.middleware.security.SecurityMiddleware', # Security
+  "whitenoise.middleware.WhiteNoiseMiddleware", # Temporary static files server
   'django.contrib.sessions.middleware.SessionMiddleware', # User session system
   'django.middleware.locale.LocaleMiddleware', # Localization, datetime format
   'django.middleware.common.CommonMiddleware',
@@ -53,9 +45,7 @@ MIDDLEWARE = [
   'django.contrib.messages.middleware.MessageMiddleware', # One-time messages
   'django.middleware.clickjacking.XFrameOptionsMiddleware',  # Security: clickjacking protection
 ]
-
 ROOT_URLCONF = 'drp49.urls'
-
 TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -71,46 +61,42 @@ TEMPLATES = [
     },
   },
 ]
-
 WSGI_APPLICATION = 'drp49.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.mysql',
-    'HOST': 'localhost',
-    'PORT': '3306',
-    'USER': os.environ['DRP49_MYSQL_USERNAME'],
-    'PASSWORD': os.environ['DRP49_MYSQL_PASSWORD'],
-    'NAME': os.environ['DRP49_MYSQL_DB_NAME'],
-    'OPTIONS': {
-      'init_command': " \
-        SET sql_mode='STRICT_TRANS_TABLES', \
-        default_storage_engine=INNODB, \
-        character_set_connection=utf8mb4, \
-        collation_connection=utf8mb4_unicode_520_ci; \
-      ",
-      'charset': 'utf8mb4',
-    },
+# Will be ignored when deploying to Heroku:
+# https://devcenter.heroku.com/articles/cleardb#using-cleardb-with-python-django
+if DEBUG:
+  DATABASES = {
+    'default': {
+      'ENGINE': 'django.db.backends.mysql',
+      'HOST': 'localhost',
+      'PORT': '3306',
+      'USER': os.environ['DRP49_MYSQL_USERNAME'],
+      'PASSWORD': os.environ['DRP49_MYSQL_PASSWORD'],
+      'NAME': os.environ['DRP49_MYSQL_DB_NAME'],
+      'OPTIONS': {
+        'init_command': " \
+          SET sql_mode='STRICT_TRANS_TABLES', \
+          default_storage_engine=INNODB, \
+          character_set_connection=utf8mb4, \
+          collation_connection=utf8mb4_unicode_520_ci; \
+        ",
+        'charset': 'utf8mb4',
+      },
+    }
   }
-}
-
 
 # Custom authentication
 # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/
-
 AUTHENTICATION_BACKENDS = [
   'django.contrib.auth.backends.ModelBackend', # Default backend
   # 'accounts.models.EmailAuthBackend', # Custom backend for logging in with email address
 ]
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
   {
     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -126,66 +112,65 @@ AUTH_PASSWORD_VALIDATORS = [
   },
 ]
 
-
 # Elasticsearch
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
-
 ELASTICSEARCH_DSL = {
   'default': {
     'hosts': 'localhost:9200'
   },
 }
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LOCALE_PATHS = [Path(BASE_DIR).joinpath('locale')]
-
 LANGUAGE_CODE = 'zh-hans' # 'en'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, etc.) and user uploaded media files (images, videos, etc.)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
+# https://docs.djangoproject.com/en/4.2/topics/files/
 STATICFILES_DIRS = [Path(BASE_DIR).joinpath('static/')] # Global static file directories
 
-STATIC_URL = '/static/' if DEBUG else os.environ['DRP49_STATIC_URL'] # Static file web URL
+# Using WhiteNoise for static files storage
+# https://whitenoise.readthedocs.io/en/latest/django.html
+# Using AWS S3 for media storage
+# https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
+if DEBUG:
+  STATIC_URL = '/static/' # Static file web URL
+  MEDIA_URL = '/media/' # User-uploaded file web URL
+  STATIC_ROOT = Path(BASE_DIR).joinpath('static_root/')
+  MEDIA_ROOT = Path(BASE_DIR).joinpath('media_root/')
 
-STATIC_ROOT = '' if DEBUG else os.environ['DRP49_STATIC_ROOT'] # Static file local directory
-
-
-# User uploaded media files
-
-MEDIA_URL = '/media/' if DEBUG else os.environ['DRP49_MEDIA_URL']
-
-MEDIA_ROOT = Path(BASE_DIR).joinpath('media/') if DEBUG else os.environ['DRP49_MEDIA_ROOT']
-
+else:
+  STATIC_URL = os.environ['DRP49_STATIC_URL']
+  MEDIA_URL = os.environ['DRP49_MEDIA_URL']
+  STATIC_ROOT = Path(BASE_DIR).joinpath('static_root/')
+  STORAGES = {
+    "staticfiles": {
+      "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+    "default": {
+      "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+      "AWS_S3_ACCESS_KEY_ID": os.environ['DRP49_AMAZON_S3_ACCESS_KEY_ID'],
+      "AWS_S3_SECRET_ACCESS_KEY": os.environ['DRP49_AMAZON_S3_SECRET_ACCESS_KEY'],
+      "AWS_S3_REGION_NAME": os.environ['DRP49_AMAZON_S3_REGION'],
+      "AWS_STORAGE_BUCKET_NAME": os.environ['DRP49_AMAZON_S3_BUCKET'],
+      "AWS_LOCATION": os.environ['DRP49_AMAZON_S3_LOCATION'],
+    },
+  }
 
 # HTTP SSL configuration
 # https://docs.djangoproject.com/en/3.1/ref/settings/#std:setting-SECURE_PROXY_SSL_HEADER
-
-if not DEBUG:
-
-  SECURE_SSL_REDIRECT = True
-  # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # Redirect with Nginx instead
-
-  SESSION_COOKIE_SECURE = True
-
-  CSRF_COOKIE_SECURE = True
-
-  SECURE_HSTS_SECONDS = 3600
-
+# if not DEBUG:
+#   SECURE_SSL_REDIRECT = True
+#   # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # Redirect with Nginx instead
+#   SESSION_COOKIE_SECURE = True
+#   CSRF_COOKIE_SECURE = True
+#   SECURE_HSTS_SECONDS = 3600
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

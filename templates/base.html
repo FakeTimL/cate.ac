@@ -24,7 +24,7 @@
       </div>
       {% if user.is_authenticated %}
       <a class="login item" href="{% url 'accounts:index' %}">
-        <img class="ui avatar image" src="{{ user.profile.avatar.url }}" alt="{% blocktrans with username=user.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+        <img class="ui avatar image" src="{{ user.profile.get_avatar }}" alt="{% blocktrans with username=user.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
         <span>{{ user.get_username }}</span>
       </a>
       {% else %}
@@ -58,7 +58,7 @@
   </div>
   {% if user.is_authenticated %}
   <a class="item" href="{% url 'accounts:index' %}">
-    <img class="ui avatar image" src="{{ user.profile.avatar.url }}" alt="{% blocktrans with username=user.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+    <img class="ui avatar image" src="{{ user.profile.get_avatar }}" alt="{% blocktrans with username=user.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
     <span>{{ user.get_username }}</span>
   </a>
   {% else %}

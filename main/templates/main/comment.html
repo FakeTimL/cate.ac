@@ -16,7 +16,7 @@
     {% with cid=comment.id u=comment.user %}
     <div class="comment">
       <a class="ui circular avatar image" href="{% url 'accounts:profile' u.get_username %}">
-        <img src="{{ u.profile.avatar.url }}" alt="{% blocktrans with username=u.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+        <img src="{{ u.profile.get_avatar }}" alt="{% blocktrans with username=u.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
       </a>
       <div class="content">
         <a class="author" href="{% url 'accounts:profile' u.get_username %}"><span dir="auto">{{ u.get_username }}</span></a>

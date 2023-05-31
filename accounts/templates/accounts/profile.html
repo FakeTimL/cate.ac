@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="section">
-  <img class="ui small avatar image" src="{{ u.profile.avatar.url }}" alt="{% blocktrans with username=u.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
+  <img class="ui small avatar image" src="{{ u.profile.get_avatar }}" alt="{% blocktrans with username=u.get_username %}{{ username }}'s avatar{% endblocktrans %}" />
   {% if u.last_name %}
   <h1 style="unicode-bidi: embed;">{% blocktrans with username=u.get_username last_name=u.last_name first_name=u.first_name %}{{ username }} ({{ first_name }} {{ last_name }}){% endblocktrans %}</h1>
   {% else %}

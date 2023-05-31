@@ -17,3 +17,7 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+
+# Local static and media file folders for debugging:
+static_root/
+media_root/

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import BaseBackend
+from django.templatetags.static import static
 
 '''
 
@@ -80,11 +81,14 @@ class Profile(models.Model):
   user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
   email_to_be_verified = models.EmailField(blank=True)
   email_verification_token = models.BinaryField(max_length=128, blank=True)
-  avatar = models.ImageField(upload_to=user_directory_path, default='accounts/default_avatar.png')
+  avatar = models.ImageField(upload_to=user_directory_path, blank=True)
   bio = models.TextField(blank=True)
   
   def __str__(self):
     return str(self.user) + ": " + self.bio
+
+  def get_avatar(self):
+    return self.avatar.url if self.avatar else static('accounts/default_avatar.png')
 
 
 # Adding custom authentication backend, modified from Django's built-in ModelBackend
