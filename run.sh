@@ -13,6 +13,13 @@ then
   kill `cat $DIR/gunicorn.pid`
 fi
 
+# Wait until socket is no longer used
+while [ -e "$DIR/gunicorn.sock" ]
+do
+  echo "Waiting for socket..."
+  sleep 1
+done
+
 # Start `gunicorn` in daemon mode
 export DJANGO_SETTINGS_MODULE="config.settings"
 
