@@ -2,7 +2,6 @@
 /* To override Semantic UI's CSS styles, we need more "specific" selectors */
 /* https://stackoverflow.com/questions/25105736/what-is-the-order-of-precedence-for-css */
 
-
 /* Font CSS */
 
 /*
@@ -22,7 +21,6 @@ body * {
 /* body { font-weight: 200 !important; }
 h1, h2, h3, h4, h5, h6, .ui.header { font-weight: 400 !important; } */
 
-
 /* LAYOUT CSS */
 
 /* `box-sizing: border-box;` is the default in Semantic UI */
@@ -39,100 +37,153 @@ h1, h2, h3, h4, h5, h6, .ui.header { font-weight: 400 !important; } */
   height: 0;
   clear: both;
 }
+
 /*.clearfix { zoom: 1; }*/
 
-html, body { min-height: 100%; }
+html,
+body {
+  min-height: 100%;
+}
+
 /* .body_wrapper { width: 100%; min-height: 100%; } */
 
 /* Container */
-.section { padding: 1em; margin: 0 auto; max-width: 700px; font-size: 1.1rem; }
-.lecture.section { /* font-size: 1.1em; */ }
-.ui.comments { max-width: 100%; }
-
-/* Markdown lecture content */
-video { display: block; width: 100%; max-height: 90vh; }
-.codehilite { padding: 1em; overflow-x: auto; }
-.markdown img, .markdown svg, .markdown mjx-container { overflow-x: auto; overflow-y: hidden; }
-/* .markdown img { max-width: 100%; max-height: 90vh; } */
-/* .markdown p * { vertical-align: top; } */ /* “解：”后面跟着多行公式？ */
-/* .markdown p { line-height: 1.6em; } */
+.section {
+  padding: 1em;
+  margin: 0 auto;
+  max-width: 700px;
+  font-size: 1.1rem;
+}
 
 /* Navigation bar */
-.nav.menu { position: relative; z-index: 100; margin: 0; }
-.nav.menu .item .avatar { margin-top: -1em; margin-bottom: -1em; }
-.nav.menu .item .ui.tiny.image { height: 3em; width: auto; margin: -0.8em 0; }
-.nav.horizontal.menu { margin-top: -2px; padding-top: 2px; }
+.nav.menu {
+  position: relative;
+  z-index: 100;
+  margin: 0;
+}
+
+.nav.menu .item .avatar {
+  margin-top: -1em;
+  margin-bottom: -1em;
+}
+
+.nav.menu .item .ui.tiny.image {
+  height: 3em;
+  width: auto;
+  margin: -0.8em 0;
+}
+
+.nav.horizontal.menu {
+  margin-top: -2px;
+  padding-top: 2px;
+}
+
 /* .nav.vertical.menu { margin: 0; width: 100% !important; position: absolute; } */
-.nav.vertical.menu { margin: 0; width: 100% !important; }
+.nav.vertical.menu {
+  margin: 0;
+  width: 100% !important;
+}
 
 @media (min-width: 768px) {
-  .nav.horizontal.menu .item { padding: 1.0em 1.0em; }
-  .nav.horizontal.menu .toggle.item { display: none; }
-  .nav.vertical.menu { display: none !important; } /* Not too relevant... */
+  .nav.horizontal.menu .item {
+    padding: 1.0em 1.0em;
+  }
+
+  .nav.horizontal.menu .toggle.item {
+    display: none;
+  }
+
+  .nav.vertical.menu {
+    display: none !important;
+  }
+
+  /* Not too relevant... */
 }
 
 @media (max-width: 767px) {
-  .nav.horizontal.menu .item { display: none; }
-  .nav.horizontal.menu .header.item { display: inline; text-align: center; margin: 0 auto; }
-  .nav.horizontal.menu .toggle.item { display: inline; }
-  .nav.horizontal.menu .right.menu { margin-left: 0 !important; } /* Semantic UI used !important for this attribute... Had to override it */
-  .nav.horizontal.menu .login.item { display: inline; }
-  .nav.horizontal.menu .login.item span { display: none; }
+  .nav.horizontal.menu .item {
+    display: none;
+  }
+
+  .nav.horizontal.menu .header.item {
+    display: inline;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .nav.horizontal.menu .toggle.item {
+    display: inline;
+  }
+
+  .nav.horizontal.menu .right.menu {
+    margin-left: 0 !important;
+  }
+
+  /* Semantic UI used !important for this attribute... Had to override it */
+  .nav.horizontal.menu .login.item {
+    display: inline;
+  }
+
+  .nav.horizontal.menu .login.item span {
+    display: none;
+  }
 }
 
 /* Message */
-.ui.one_time_messages.container { position: absolute; width: 30em; right: 0; z-index: 999; padding: 1em; }
-
-/* Footer */
-.ui.footer.segment { padding: 3em 0em; }
-.ui.footer.segment .uisection.divider { margin: 1.5em 0; }
-.ui.footer.segment * { line-height: 1.5em; }
-
-/* Side navigation bar */
-/* Possible auto-dock side navigation bar implementations: */
-/* APPROACH 1: 'absolute' <-> 'fixed', js control: jitters at state change, noscript acceptable */
-/* APPROACH 2: 'fixed', js control `top`: noscript unfriendly */
-/* APPROACH 3[*]: 'sticky': noscript friendly */
-#content_with_sidenav { display: flex; flex-direction: row; }
-.sidenav_left { flex-shrink: 0; width: 220px; will-change: width; }
-.sidenav_resizer { flex-shrink: 0; position: relative; z-index: 999; margin: 0 -8px 0 -8px; width: 16px; }
-.sidenav_right { position: relative; flex-grow: 1; }
-
-.sidenav.ui.vertical.menu { position: sticky; position: -webkit-sticky; top: 0; bottom: 0; margin: 0; width: 100%; max-height: 100vh; overflow-y: auto; }
-.sidenav.ui.vertical.menu * { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* Overflow settings */
-.sidenav.ui.vertical.menu .item>i.icon { float: left; margin: 0 .5em 0 0; } /* Make "Back" icon stay at left */
-
-.sidenav_toggle { position: absolute; width: 0; height: 100%; left: 0.25em; top: 0.25em; overflow: visible; z-index: 999; }
-.sidenav_toggle button { position: sticky; position: -webkit-sticky; top: 0.25em; bottom: 0.25em; }
-
-@media (max-width: 767px) {
-  .sidenav_left { flex-shrink: 0; }
-  .sidenav_resizer { flex-shrink: 0; margin: 0 -16px 0 -16px; width: 32px; }
-  .sidenav_right { width: 100%; flex-grow: 0; flex-shrink: 0; }
+.ui.one_time_messages.container {
+  position: absolute;
+  width: 30em;
+  right: 0;
+  z-index: 999;
+  padding: 1em;
 }
 
+/* Footer */
+.ui.footer.segment {
+  padding: 3em 0em;
+}
+
+.ui.footer.segment .uisection.divider {
+  margin: 1.5em 0;
+}
+
+.ui.footer.segment * {
+  line-height: 1.5em;
+}
 
 /* STYLING CSS */
 
-body { background-color: #1b1c1d; } /* Make space under footer black */
-.body_wrapper { background-color: #ffffff; }
+/* Make space under footer black */
+body {
+  background-color: #1b1c1d;
+}
 
-.nav.ui.menu, .sidenav.ui.menu { border-radius: 0; }
+.body_wrapper {
+  background-color: #ffffff;
+}
 
-.sidenav_left { background-color: #1b1c1d; }
-/*.sidenav_right>.section, body>.section { background-color: #ffffff; box-shadow: 0 0 30px 0 #dddddd; margin-top: 30px; }*/
-.sidenav_resizer { transition: background-color 0.3s; border-left: 4px solid transparent; border-right: 8px solid transparent; background-clip: padding-box; }
-.sidenav_resizer:hover { background-color: #888888; cursor: col-resize; }
-.sidenav_right { background-color: #ffffff; }
+/* Code font size */
 
-.comment>.comments { border-left: 1px dotted rgba(34, 36, 38, .15); }
-
-
-/* ANIMATION CSS */
-.sidenav_left { transition: width 0.3s cubic-bezier(0, 0.6, 0.4, 1); }
-
+pre code.hljs {
+  font-size: 0.9em;
+}
 
 /* KEYBOARD ACCESSIBILITY */
-/* *:focus { box-shadow: 0 0 10px #000000 !important; outline: 2px dotted #ffffff !important; } */
-.keyboard_skip_link { position: absolute; z-index: 9999; background-color: #ffffff; margin: 5em; padding: 0.25em; width: 1px; height: 1px; clip: rect(0, 0, 0, 0); overflow: hidden; }
-.keyboard_skip_link:focus { width: auto; height: auto; clip: auto; }
+
+.keyboard_skip_link {
+  position: absolute;
+  z-index: 9999;
+  background-color: #ffffff;
+  margin: 5em;
+  padding: 0.25em;
+  width: 1px;
+  height: 1px;
+  clip: rect(0, 0, 0, 0);
+  overflow: hidden;
+}
+
+.keyboard_skip_link:focus {
+  width: auto;
+  height: auto;
+  clip: auto;
+}
