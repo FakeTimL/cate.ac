@@ -3,6 +3,12 @@
 Thumbs.db
 .DS_Store
 
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
 # Byte-compiled files
 __pycache__/
 *.py[cod]

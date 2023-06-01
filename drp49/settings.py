@@ -160,34 +160,39 @@ else:
   }
 
 # HTTP SSL configuration
-# https://docs.djangoproject.com/en/3.1/ref/settings/#std:setting-SECURE_PROXY_SSL_HEADER
+# https://docs.djangoproject.com/en/4.2/ref/settings/#secure-ssl-redirect
 # if not DEBUG:
 #   SECURE_SSL_REDIRECT = True
-#   # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # Redirect with Nginx instead
 #   SESSION_COOKIE_SECURE = True
 #   CSRF_COOKIE_SECURE = True
 #   SECURE_HSTS_SECONDS = 3600
+
+# In the presence of a reverse proxy:
+# https://docs.djangoproject.com/en/4.2/ref/settings/#std:setting-SECURE_PROXY_SSL_HEADER
+if not DEBUG:
+  SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Logging
+# https://docs.djangoproject.com/en/4.2/topics/logging/
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-        },
+  'version': 1,
+  'disable_existing_loggers': False,
+  'handlers': {
+  'file': {
+      'level': 'WARNING',
+      'class': 'logging.FileHandler',
+      'filename': 'debug.log',
     },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
+  },
+  'loggers': {
+    'django': {
+      'handlers': ['file'],
+      'level': 'WARNING',
+      'propagate': True,
     },
+  },
 }
-
