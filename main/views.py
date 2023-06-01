@@ -1,5 +1,6 @@
-import json
+import logging
 import os
+import json
 from random import choice
 from django.http import (Http404, HttpRequest, HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponseServerError)
@@ -7,11 +8,14 @@ from django.shortcuts import get_object_or_404
 from django.template import loader
 from django.urls import reverse
 from django.contrib import messages
-from markdown import Markdown
 import openai
+import openai.error
+from markdown import Markdown
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.highlight import HighlightExtension
 from .models import *
+
+logger = logging.getLogger(__name__)
 
 
 def object_not_found_view(request: HttpRequest, exception=None):
@@ -20,22 +24,6 @@ def object_not_found_view(request: HttpRequest, exception=None):
 
 def internal_server_error_view(request: HttpRequest):
   return HttpResponseServerError(loader.get_template('500.html').render({}, request))
-
-
-def prompt(question, criteria, response):
-  instruction = 'You are an IB examiner. You should mark the student response carefully according to the question and marking criteria, and comment on how they may otherwise achieve full marks. Give your mark and comment in the following JSON format: {"mark":0,"comment":""}.'
-  prompt = f"Question: {question}\n\nCriteria: {criteria}\n\nResponse: {response}"
-  openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
-  completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=[
-      {"role": "system", "content": instruction},
-      {"role": "user", "content": prompt},
-    ]
-  )
-  content = completion.choices[0].message.content
-  feedback = json.loads(content)
-  return feedback['mark'], feedback['comment']
 
 
 def feedback_view(request: HttpRequest):
@@ -64,18 +52,22 @@ def question_view(request: HttpRequest, id=None):
   user_answer = request.GET.get('answer_text', None)
   (gpt_mark, gpt_comments) = (None, None)
   if user_answer is not None:
-    (gpt_mark, gpt_comments) = prompt(question.statement, question.gpt_prompt, user_answer)
-    pass
+    try:
+      (gpt_mark, gpt_comments) = gpt_invoke(question.statement, question.gpt_prompt, user_answer)
+      logger.info((request, user_answer, gpt_mark, gpt_comments))
+    except json.JSONDecodeError as error:
+      messages.add_message(request, messages.ERROR, 'ChatGPT did not respond in valid JSON format.')
+      logger.warning(error)
+    except openai.error.RateLimitError as error:
+      messages.add_message(request, messages.ERROR, 'ChatGPT is too busy, please try again later...')
+      logger.warning(error)
+    except openai.error as error:
+      messages.add_message(request, messages.ERROR, 'Unexpected ChatGPT error: ' + str(error))
+      logger.warning(error)
 
   md = Markdown(extensions=[
-    'nl2br',
-    'smarty',
-    'toc',
-    'pymdownx.extra',
-    'pymdownx.tilde',
-    'pymdownx.mark',
-    'pymdownx.escapeall',
-    'pymdownx.tasklist',
+    'nl2br', 'smarty', 'toc',
+    'pymdownx.extra', 'pymdownx.tilde', 'pymdownx.mark', 'pymdownx.tasklist', 'pymdownx.escapeall',
     HighlightExtension(use_pygments=False),
     ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
   ])
@@ -90,3 +82,27 @@ def question_view(request: HttpRequest, id=None):
     'submit_url': reverse('main:question', kwargs={'id': id}),
     'submit_method': 'GET',
   }, request))
+
+
+def gpt_invoke(question, criteria, response):
+  openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
+
+  system = \
+      'You are an IB examiner. You should mark the student response carefully according to the question and ' + \
+      'marking criteria, and comment on how they may otherwise achieve full marks. Give your mark and comment ' + \
+      'in the following JSON format: {"mark":0,"comment":""}. Make sure to respond in JSON only.\n' + \
+      'Exam question:\n' + question + '\n' + \
+      'Marking criteria:\n' + criteria + '\n'
+  user = 'The student\'s response:\n' + response + '\n'
+
+  completion = openai.ChatCompletion.create(
+    model='gpt-3.5-turbo',
+    messages=[
+      {'role': 'system', 'content': system},
+      {'role': 'user', 'content': user},
+    ]
+  )
+  content = completion.choices[0].message.content
+  feedback = json.loads(content)
+
+  return feedback['mark'], feedback['comment']

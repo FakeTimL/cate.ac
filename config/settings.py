@@ -119,11 +119,11 @@ ELASTICSEARCH_DSL = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-LOCALE_PATHS = [BASE_DIR / 'locale']
-LANGUAGE_CODE = 'zh-hans'  # 'en'
-TIME_ZONE = 'UTC'
+# LOCALE_PATHS = [BASE_DIR / 'locale']
+LANGUAGE_CODE = 'en'
+TIME_ZONE = 'Europe/London'
 USE_I18N = True
-USE_L10N = True
+# USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, etc.) and user uploaded media files (images, videos, etc.)
@@ -181,18 +181,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGGING = {
   'version': 1,
   'disable_existing_loggers': False,
-  'handlers': {
-      'file': {
-          'level': 'WARNING',
-          'class': 'logging.FileHandler',
-          'filename': 'debug.log',
-      },
-  },
   'loggers': {
     'django': {
+      'level': 'INFO',
       'handlers': ['file'],
-      'level': 'WARNING',
       'propagate': True,
+    },
+  },
+  'handlers': {
+    'file': {
+      'level': 'INFO',
+      'class': 'logging.FileHandler',
+      'filename': os.environ.get('DRP49_DJANGO_LOG_FILE', 'django.log'),
     },
   },
 }
