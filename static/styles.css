@@ -60,6 +60,12 @@ body {
   position: relative;
   z-index: 100;
   margin: 0;
+  border-radius: 0;
+}
+
+.nav.menu .item {
+  padding-top: 1.2em;
+  padding-bottom: 1.2em;
 }
 
 .nav.menu .item .avatar {
@@ -73,57 +79,7 @@ body {
   margin: -0.8em 0;
 }
 
-.nav.horizontal.menu {
-  margin-top: -2px;
-  padding-top: 2px;
-}
-
-/* .nav.vertical.menu { margin: 0; width: 100% !important; position: absolute; } */
-.nav.vertical.menu {
-  margin: 0;
-  width: 100% !important;
-}
-
-@media (min-width: 768px) {
-  .nav.horizontal.menu .item {
-    padding: 1.0em 1.0em;
-  }
-
-  .nav.horizontal.menu .toggle.item {
-    display: none;
-  }
-
-  .nav.vertical.menu {
-    display: none !important;
-  }
-
-  /* Not too relevant... */
-}
-
 @media (max-width: 767px) {
-  .nav.horizontal.menu .item {
-    display: none;
-  }
-
-  .nav.horizontal.menu .header.item {
-    display: inline;
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  .nav.horizontal.menu .toggle.item {
-    display: inline;
-  }
-
-  .nav.horizontal.menu .right.menu {
-    margin-left: 0 !important;
-  }
-
-  /* Semantic UI used !important for this attribute... Had to override it */
-  .nav.horizontal.menu .login.item {
-    display: inline;
-  }
-
   .nav.horizontal.menu .login.item span {
     display: none;
   }
