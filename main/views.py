@@ -1,3 +1,5 @@
+import json
+import os
 from random import choice
 from django.http import (Http404, HttpRequest, HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponseServerError)
@@ -6,6 +8,7 @@ from django.template import loader
 from django.urls import reverse
 from django.contrib import messages
 from markdown import Markdown
+import openai
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.highlight import HighlightExtension
 from .models import *
@@ -17,6 +20,22 @@ def object_not_found_view(request: HttpRequest, exception=None):
 
 def internal_server_error_view(request: HttpRequest):
   return HttpResponseServerError(loader.get_template('500.html').render({}, request))
+
+
+def prompt(question, criteria, response):
+  instruction = 'You are an IB examiner. You should mark the student response carefully according to the question and marking criteria, and comment on how they may otherwise achieve full marks. Give your mark and comment in the following JSON format: {"mark":0,"comment":""}.'
+  prompt = f"Question: {question}\n\nCriteria: {criteria}\n\nResponse: {response}"
+  openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
+  completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+      {"role": "system", "content": instruction},
+      {"role": "user", "content": prompt},
+    ]
+  )
+  content = completion.choices[0].message.content
+  feedback = json.loads(content)
+  return feedback['mark'], feedback['comment']
 
 
 def feedback_view(request: HttpRequest):
@@ -41,9 +60,10 @@ def question_view(request: HttpRequest, id=None):
 
   question = get_object_or_404(Question, pk=id)
 
-  user_answer = request.GET.get('answer_text', '')
-  if user_answer != '':
-    # TODO: send (user_answer + gpt_prompt) to GPT
+  user_answer = request.GET.get('answer_text', None)
+  (gpt_mark, gpt_comments) = (None, None)
+  if user_answer is not None:
+    (gpt_mark, gpt_comments) = prompt(question.statement, question.gpt_prompt, user_answer)
     pass
 
   md = Markdown(extensions=[
@@ -64,6 +84,8 @@ def question_view(request: HttpRequest, id=None):
   return HttpResponse(loader.get_template('main/question.html').render({
     'question': question,
     'user_answer': user_answer,
+    'gpt_mark': gpt_mark,
+    'gpt_comments': gpt_comments,
     'submit_url': reverse('main:question', kwargs={'id': id}),
     'submit_method': 'GET',
   }, request))
