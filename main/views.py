@@ -11,7 +11,7 @@ from pymdownx.highlight import HighlightExtension
 from .models import *
 
 
-def object_not_found_view(request: HttpRequest, exception: Http404):
+def object_not_found_view(request: HttpRequest, exception=None):
   return HttpResponseNotFound(loader.get_template('404.html').render({'reason': str(exception)}, request))
 
 
@@ -23,7 +23,7 @@ def feedback_view(request: HttpRequest):
   text = request.POST.get('content', '')
   if text != '':
     Feedback(text=text).save()
-    messages.add_message(request, messages.SUCCESS, _('Your feedback has been sent!'))
+    messages.add_message(request, messages.SUCCESS, 'Your feedback has been sent!')
     return HttpResponseRedirect(reverse('main:feedback'))
 
   return HttpResponse(loader.get_template('main/feedback.html').render({

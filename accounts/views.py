@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from .models import register, UserModel, Profile
 
@@ -49,8 +49,8 @@ def signup(request):
     user = register(username, password, email)  # Register
     if user is not None:  # Registration successful
       auth.login(request, user)  # Start session
-      redirect = request.POST.get('redirect', reverse('accounts:index'))
-      return HttpResponseRedirect(redirect)  # Redirect according to parameters
+      messages.add_message(request, messages.SUCCESS, 'User account created!')
+      return HttpResponseRedirect(request.POST.get('redirect', reverse('accounts:index')))
     else:
       error_message = 'The same username have been registered. Please try another one.'
 

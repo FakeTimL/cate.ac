@@ -14,9 +14,9 @@ then
 fi
 
 # Start `gunicorn` in daemon mode
-export DJANGO_SETTINGS_MODULE="drp49.settings"
+export DJANGO_SETTINGS_MODULE="config.settings"
 
-gunicorn "drp49.wsgi:application" \
+gunicorn "config.wsgi:application" \
 --name="drp49_server" \
 --workers=1 \
 --pid="$DIR/gunicorn.pid" \

@@ -47,18 +47,19 @@ Sign up
 </div>
 
 <script>
-  var vm = new Vue({
+  Vue.createApp({
     delimiters: ['[[', ']]'],
-    el: '#vue_app_content',
-    data: {
-      username: '',
-      email: '',
-      password: '',
-      password_repeat: '',
-      error_message: '{% if error_message %}{{ error_message }}{% endif %}',
+    data() {
+      return {
+        username: '',
+        email: '',
+        password: '',
+        password_repeat: '',
+        error_message: '{% if error_message %}{{ error_message }}{% endif %}',
+      };
     },
     methods: {
-      submitCheck: function (e) {
+      submitCheck(e) {
         if (this.username == '') {
           e.preventDefault();
           this.error_message = 'Username must not be empty.'
@@ -72,6 +73,6 @@ Sign up
         return true;
       }
     }
-  })
+  }).mount('#vue_app_content');
 </script>
 {% endblock %}

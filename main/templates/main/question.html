@@ -7,7 +7,10 @@ IB Computer Science Practice Questions
 
 {% block content %}
 <div class="section">
-  <p>{{ question.statement|safe }}</p>
+  <p></p>
+  <div class="markdown">{{ question.statement|safe }}</div>
+  <p></p>
+  <hr class="ui divider" />
 
   {% if not user_answer %} {# First time to see question, or user did not give an answer #}
   <form class="ui form" action="{{ submit_url }}" method="{{ submit_method|lower }}">
@@ -25,7 +28,9 @@ IB Computer Science Practice Questions
     <p>{{ user_answer }}</p>
     <details>
       <summary>Mark scheme:</summary>
-      <p>{{ question.mark_scheme|safe }}</p>
+      <p></p>
+      <div class="markdown">{{ question.mark_scheme|safe }}</div>
+      <p></p>
     </details>
   </div>
   {% endif %}
