@@ -1,0 +1,28 @@
+default:
+  before_script:
+    - virtualenv env
+    - . env/bin/activate
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+  cache:
+    paths:
+      - env/
+      - $HOME/.cache/pip/
+
+build_job:
+  stage: build
+  script:
+    - ./setup.sh
+
+test_job:
+  stage: test
+  script:
+    - ./setup.sh
+    - python3 manage.py test
+
+deploy_job:
+  stage: deploy
+  script:
+    - ./setup.sh
+    - ./run.sh
+  environment: production

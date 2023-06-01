@@ -19,8 +19,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 SECRET_KEY = os.environ['DRP49_SECRET_KEY']
-DEBUG = ('DRP49_DEBUG' in os.environ and os.environ['DRP49_DEBUG'] == '1')
-ALLOWED_HOSTS = ['localhost'] + (['*'] if DEBUG else ['*']) # #####
+DEBUG = (os.environ.get('DRP49_DEBUG', '') == '1')
+ALLOWED_HOSTS = ['localhost'] + (['*'] if DEBUG else os.environ.get('DRP49_ALLOWED_HOSTS', '').split())
 
 # Application definition
 INSTALLED_APPS = [
@@ -149,14 +149,14 @@ else:
   AWS_S3_SECRET_ACCESS_KEY = os.environ['DRP49_AMAZON_S3_SECRET_ACCESS_KEY']
   AWS_S3_REGION_NAME = os.environ['DRP49_AMAZON_S3_REGION']
   AWS_STORAGE_BUCKET_NAME = os.environ['DRP49_AMAZON_S3_BUCKET']
-  AWS_LOCATION = os.environ['DRP49_AMAZON_S3_LOCATION']
+  AWS_LOCATION = os.environ.get('DRP49_AMAZON_S3_LOCATION', default='')
   STORAGES = {
     "staticfiles": {
       "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
     "default": {
       "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-   },
+    },
   }
 
 # HTTP SSL configuration

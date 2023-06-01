@@ -22,8 +22,8 @@
 #
 # ```sh
 # $> pip install virturalenv
-# $> python3 -m venv env
-# $> source env/bin/activate
+# $> virtualenv env
+# $> . env/bin/activate
 # $> pip install -r requirements.txt
 # ```
 
@@ -38,10 +38,10 @@
 python3 manage.py collectstatic
 python3 manage.py migrate
 
-# Running server:
+# Running/restarting server:
 #
 # ```sh
-# $> source env/bin/activate
+# $> . env/bin/activate
 # $> ./run.sh
 # ```
 
