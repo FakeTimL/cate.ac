@@ -41,6 +41,7 @@ def prompt(question, criteria, response):
 def feedback_view(request: HttpRequest):
   text = request.POST.get('content', '')
   if text != '':
+    text = request.POST.get('email', '') + ': ' + text
     Feedback(text=text).save()
     messages.add_message(request, messages.SUCCESS, 'Your feedback has been sent!')
     return HttpResponseRedirect(reverse('main:feedback'))

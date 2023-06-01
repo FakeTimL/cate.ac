@@ -13,7 +13,11 @@ Feedback
     {% if submit_method|lower == 'post' %}{% csrf_token %}{% endif %}
     <div class="field">
       <label>Describe any problem or your ideas for improvement:</label>
-      <textarea style="resize: vertical;" placeholder="Any idea is appreciated..." rows="20" name="content"></textarea>
+      <textarea name="content" placeholder="Any idea is appreciated..." rows="20" style="resize: vertical;"></textarea>
+    </div>
+    <div class="field">
+      <label>Email (optional)</label>
+      <input type="text" name="email" placeholder="If you want follow-up discussions..." />
     </div>
     <input class="ui button primary" type="submit" value="Send" />
   </form>

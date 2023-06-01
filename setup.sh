@@ -45,7 +45,7 @@ python3 manage.py migrate
 # $> ./run.sh
 # ```
 
-# Domains: drp49.dev www.drp49.dev
+# Domains: drp49.dev www.drp49.dev cate.ac www.cate.ac
 #
 # ```sh
 # sudo certbot certonly --nginx
