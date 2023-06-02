@@ -24,7 +24,7 @@ Question
   </form>
   {% else %} {# User gave an answer #}
   <div>
-    <h2>Score: {{ gpt_mark }}</h2>
+    <h2>Score: {{ gpt_mark_divided }} / {{ mark_maximum_divided }}</h2>
     <h4>Your answer:</h4>
     <p>{{ user_answer }}</p>
     <div class="ui info message">

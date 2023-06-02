@@ -13,6 +13,9 @@ class Topic(models.Model):
 
 class Question(models.Model):
   statement = models.TextField()
+  mark_denominator = models.IntegerField(default=1)
+  mark_minimum = models.IntegerField(default=0)
+  mark_maximum = models.IntegerField()
   mark_scheme = models.TextField()
   gpt_prompt = models.TextField()
   topics = models.ManyToManyField(Topic, related_name='questions')
@@ -27,6 +30,9 @@ class History(models.Model):
   user_answer = models.TextField()
   gpt_mark = models.IntegerField()
   gpt_comments = models.TextField()
+
+  def __str__(self):
+    return str(self.user) + ": " + self.user_answer
 
 
 class Feedback(models.Model):

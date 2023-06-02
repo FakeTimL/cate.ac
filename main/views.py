@@ -16,9 +16,6 @@ from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.highlight import HighlightExtension
 from .models import *
 
-# Minimum unit of marks = 0.01
-MARK_FRACTION = 100
-
 logger = logging.getLogger(__name__)
 
 
@@ -54,7 +51,7 @@ def question_view(request: HttpRequest, id=None):
   (gpt_mark, gpt_comments) = (None, None)
   if user_answer is not None:
     try:
-      (gpt_mark, gpt_comments) = gpt_invoke(question.statement, question.gpt_prompt, user_answer)
+      (gpt_mark, gpt_comments) = gpt_invoke(question, user_answer)
       logger.info((request, user_answer, gpt_mark, gpt_comments))
       # Save history if user has logged in.
       if request.user.is_authenticated:
@@ -92,7 +89,8 @@ def question_view(request: HttpRequest, id=None):
   return HttpResponse(loader.get_template('main/question.html').render({
     'question': question,
     'user_answer': user_answer,
-    'gpt_mark': gpt_mark,
+    'gpt_mark_divided': None if gpt_mark is None else gpt_mark / question.mark_denominator,
+    'mark_maximum_divided': question.mark_maximum / question.mark_denominator,
     'gpt_comments': gpt_comments,
     'submit_url': reverse('main:question', kwargs={'id': id}),
     'submit_method': 'POST',
@@ -106,8 +104,12 @@ def history_view(request: HttpRequest, id=None):
       'histories': History.objects.filter(user=request.user)
     }, request))
 
+  history = get_object_or_404(History, pk=id)
+
   return HttpResponse(loader.get_template('main/history.html').render({
-    'history': get_object_or_404(History, pk=id)
+    'history': history,
+    'gpt_mark_divided': history.gpt_mark / history.question.mark_denominator,
+    'mark_maximum_divided': history.question.mark_maximum / history.question.mark_denominator,
   }, request))
 
 
@@ -125,15 +127,15 @@ def feedback_view(request: HttpRequest):
   }, request))
 
 
-def gpt_invoke(question, criteria, response):
+def gpt_invoke(question: Question, response: str):
   openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
 
   system = \
       'You are an IB examiner. You should mark the student response carefully according to the question and ' + \
       'marking criteria, and comment on how they may otherwise achieve full marks. Give your mark and comment ' + \
       'in the following JSON format: {"mark":0,"comment":""}. Make sure to respond in JSON only.\n' + \
-      'Exam question:\n' + question + '\n' + \
-      'Marking criteria:\n' + criteria + '\n'
+      'Exam question:\n' + question.statement + '\n' + \
+      'Marking criteria:\n' + question.gpt_prompt + '\n'
   user = 'The student\'s response:\n' + response + '\n'
 
   completion = openai.ChatCompletion.create(
@@ -146,4 +148,4 @@ def gpt_invoke(question, criteria, response):
   content = completion.choices[0].message.content
   feedback = json.loads(content)
 
-  return int(float(feedback['mark']) * MARK_FRACTION + 0.5), feedback['comment']
+  return int(float(feedback['mark']) * question.mark_denominator + 0.5), feedback['comment']
