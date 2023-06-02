@@ -102,11 +102,12 @@ def history_view(request: HttpRequest, id=None):
   history = get_object_or_404(History, pk=id)
   history.question.statement = convert_markdown(history.question.statement)
   history.question.mark_scheme = convert_markdown(history.question.mark_scheme)
+  gpt_mark_divided = format(history.gpt_mark / history.question.mark_denominator, '.0f')
+  mark_maximum_divided = format(history.question.mark_maximum / history.question.mark_denominator, '.0f')
 
   return HttpResponse(loader.get_template('main/history.html').render({
     'history': history,
-    'gpt_mark_divided': history.gpt_mark / history.question.mark_denominator,
-    'mark_maximum_divided': history.question.mark_maximum / history.question.mark_denominator,
+    'gpt_mark_displayed': f"{gpt_mark_divided} / {mark_maximum_divided}"
   }, request))
 
 
