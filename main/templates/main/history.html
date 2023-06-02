@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+IB Computer Science Practice Questions
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <p></p>
+  <div class="markdown">{{ history.question.statement|safe }}</div>
+  <p></p>
+  <div class="ui divider"></div>
+
+  <div>
+    <h2>Score: {{ history.gpt_mark }}</h2>
+    <h4>Your answer:</h4>
+    <p>{{ history.user_answer }}</p>
+    <div class="ui info message">
+      <h4>Comments:</h4>
+      <p>{{ history.gpt_comments }}</p>
+      <details>
+        <summary>Mark scheme:</summary>
+        <blockquote>
+          <div class="markdown">{{ history.question.mark_scheme|safe }}</div>
+        </blockquote>
+      </details>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

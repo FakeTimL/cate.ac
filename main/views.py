@@ -6,14 +6,18 @@ from django.http import (Http404, HttpRequest, HttpResponse, HttpResponseNotFoun
                          HttpResponseRedirect, HttpResponseServerError)
 from django.shortcuts import get_object_or_404
 from django.template import loader
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 import openai
 import openai.error
 from markdown import Markdown
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.highlight import HighlightExtension
 from .models import *
+
+# Minimum unit of marks = 0.01
+MARK_FRACTION = 100
 
 logger = logging.getLogger(__name__)
 
@@ -49,19 +53,33 @@ def question_view(request: HttpRequest, id=None):
 
   question = get_object_or_404(Question, pk=id)
 
-  user_answer = request.GET.get('answer_text', None)
+  user_answer = request.POST.get('user_answer', None)
   (gpt_mark, gpt_comments) = (None, None)
   if user_answer is not None:
     try:
       (gpt_mark, gpt_comments) = gpt_invoke(question.statement, question.gpt_prompt, user_answer)
       logger.info((request, user_answer, gpt_mark, gpt_comments))
+      # Save history if user has logged in.
+      if request.user.is_authenticated:
+        history = History(
+          user=request.user,
+          question=question,
+          user_answer=user_answer,
+          gpt_mark=gpt_mark,
+          gpt_comments=gpt_comments,
+        )
+        history.save()
+        return HttpResponseRedirect(reverse('main:history', kwargs={'id': id}))
     except json.JSONDecodeError as error:
       messages.add_message(request, messages.ERROR, 'ChatGPT did not respond in valid JSON format.')
+      logger.warning(error)
+    except ValueError as error:
+      messages.add_message(request, messages.ERROR, 'ChatGPT did not respond with a valid mark.')
       logger.warning(error)
     except openai.error.RateLimitError as error:
       messages.add_message(request, messages.ERROR, 'ChatGPT is too busy, please try again later...')
       logger.warning(error)
-    except openai.error as error:
+    except openai.error.OpenAIError as error:
       messages.add_message(request, messages.ERROR, 'Unexpected ChatGPT error: ' + str(error))
       logger.warning(error)
 
@@ -80,7 +98,19 @@ def question_view(request: HttpRequest, id=None):
     'gpt_mark': gpt_mark,
     'gpt_comments': gpt_comments,
     'submit_url': reverse('main:question', kwargs={'id': id}),
-    'submit_method': 'GET',
+    'submit_method': 'POST',
+  }, request))
+
+
+@login_required(redirect_field_name='redirect', login_url=reverse_lazy('accounts:login'))
+def history_view(request: HttpRequest, id=None):
+  if id == None:
+    return HttpResponse(loader.get_template('main/histories.html').render({
+      'histories': History.objects.filter(user=request.user)
+    }, request))
+
+  return HttpResponse(loader.get_template('main/history.html').render({
+    'history': get_object_or_404(History, pk=id)
   }, request))
 
 
@@ -105,4 +135,4 @@ def gpt_invoke(question, criteria, response):
   content = completion.choices[0].message.content
   feedback = json.loads(content)
 
-  return feedback['mark'], feedback['comment']
+  return int(float(feedback['mark']) * MARK_FRACTION + 0.5), feedback['comment']

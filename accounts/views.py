@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
-from .models import register, UserModel, Profile
+from .models import register, User, Profile
 
 
 def index(request):
@@ -74,7 +74,7 @@ def get_avatar_filename(user, f):
 
 @login_required(redirect_field_name='redirect', login_url=reverse_lazy('accounts:login'))
 def me(request):
-  user = get_object_or_404(UserModel, pk=request.user.id)
+  user = get_object_or_404(User, pk=request.user.id)
   profile = get_object_or_404(Profile, user=request.user)
 
   image_upload = request.FILES.get('image_upload', None)
@@ -103,5 +103,5 @@ def me(request):
 
 
 def profile(request, username):
-  user = get_object_or_404(UserModel, username__exact=username)
+  user = get_object_or_404(User, username__exact=username)
   return render(request, 'accounts/profile.html', {'user': user})

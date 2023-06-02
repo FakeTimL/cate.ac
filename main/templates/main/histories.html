@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+IB Computer Science Practice Questions
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h1>Past answers</h1>
+  <div class="ui medium divided selection list">
+    {% for history in histories %}
+    <a class="item" href="{% url 'main:history' history.pk %}">
+      <i class="comment alternate outline icon"></i>
+      <div class="content">
+        <div class="header">{{ history.user_answer }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  <a class="ui button" href="{% url 'main:question' %}">Go back</a>
+</div>
+{% endblock %}

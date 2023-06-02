@@ -17,7 +17,7 @@ IB Computer Science Practice Questions
     {% if submit_method|lower == 'post' %}{% csrf_token %}{% endif %}
     <div class="field">
       <label>Answer:</label>
-      <textarea style="resize: vertical;" name="answer_text" placeholder="Type your answer here..."
+      <textarea style="resize: vertical;" name="user_answer" placeholder="Type your answer here..."
         rows="15"></textarea>
     </div>
     <input class="ui button primary" type="submit" value="Check" />

@@ -9,7 +9,7 @@ from django.templatetags.static import static
 # https://github.com/django/django/blob/master/django/contrib/auth/base_user.py
 # https://github.com/django/django/blob/master/django/contrib/auth/models.py
 
-UserModel = get_user_model()
+User = get_user_model()
 
 
 def user_directory_path(instance, filename):
@@ -20,7 +20,7 @@ def user_directory_path(instance, filename):
 class Profile(models.Model):
   ''' The profile table.
   '''
-  user = models.OneToOneField(UserModel, on_delete=models.CASCADE)
+  user = models.OneToOneField(User, on_delete=models.CASCADE)
   email_to_be_verified = models.EmailField(blank=True)
   email_verification_token = models.BinaryField(max_length=128, blank=True)
   avatar = models.ImageField(upload_to=user_directory_path, blank=True)
@@ -46,11 +46,11 @@ class EmailAuthBackend(BaseBackend):
     if username is None or password is None:
       return
     try:
-      user = UserModel._default_manager.get(email__iexact=username)
-    except UserModel.DoesNotExist:
+      user = User._default_manager.get(email__iexact=username)
+    except User.DoesNotExist:
       # Run the default password hasher once to reduce the timing
       # difference between an existing and a nonexistent user (#20760).
-      UserModel().set_password(password)
+      User().set_password(password)
     else:
       if user.check_password(password) and self.user_can_authenticate(user):
         return user
@@ -63,8 +63,8 @@ class EmailAuthBackend(BaseBackend):
 
   def get_user(self, user_id):
     try:
-      user = UserModel._default_manager.get(pk=user_id)
-    except UserModel.DoesNotExist:
+      user = User._default_manager.get(pk=user_id)
+    except User.DoesNotExist:
       return None
     return user if self.user_can_authenticate(user) else None
 
@@ -77,9 +77,9 @@ def register(username, password, email=None):
   # username = UserModel.normalize_username(username) # Normalize visually identical Unicode characters
 
   try:
-    user = UserModel._default_manager.get_by_natural_key(username)
-  except UserModel.DoesNotExist:
-    user = UserModel._default_manager.create_user(username, email, password)
+    user = User._default_manager.get_by_natural_key(username)
+  except User.DoesNotExist:
+    user = User._default_manager.create_user(username, email, password)
     Profile.objects.create(user=user)
     return user  # Success
 

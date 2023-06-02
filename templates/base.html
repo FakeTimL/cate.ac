@@ -7,6 +7,9 @@
 <div class="nav ui borderless horizontal menu">
   <div class="ui container">
     <a class="item" href="{% url 'main:question' %}">Question</a>
+    {% if user.is_authenticated %}
+    <a class="item" href="{% url 'main:history' %}">Answers</a>
+    {% endif %}
     <a class="item" href="{% url 'main:feedback' %}">Feedback</a>
     <div class="right menu">
       {% if user.is_authenticated %}
@@ -41,12 +44,16 @@
 {% block footer %}
 <div class="ui inverted vertical footer segment">
   <div class="ui container">
-    <!--
     <div class="ui divided inverted grid">
       <div class="sixteen wide column">
+        <!--
+        <div class="ui inverted tiny link list">
+          <a href="https://doc.ic.uk.cate.ac/" class="item">doc.ic.uk.cate.ac</a>
+          <a href="https://cate.doc.ic.ac.uk/" class="item">cate.doc.ic.ac.uk</a>
+        </div>
+        -->
       </div>
     </div>
-    -->
   </div>
 </div>
 {% endblock %}
