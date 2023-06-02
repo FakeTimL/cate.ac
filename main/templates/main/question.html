@@ -40,7 +40,7 @@ Question
     <p>
       <span>Topics:</span>
       {% for topic in question.topics.all %}
-      <a href="{% url 'main:topic' topic.pk %}" class="ui blue label">{{ topic.name }}</a>
+      <a href="{% url 'main:topic' topic.pk %}" class="ui label">{{ topic.name }}</a>
       {% endfor %}
     </p>
   </div>
