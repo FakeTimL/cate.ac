@@ -7,7 +7,7 @@ Feedback
 
 {% block content %}
 <div class="section">
-  <h1>Send anonymous feedback</h1>
+  <h1 class="ui header">Send anonymous feedback</h1>
 
   <form class="ui form" action="{{ submit_url }}" method="{{ submit_method }}">
     {% if submit_method|lower == 'post' %}{% csrf_token %}{% endif %}

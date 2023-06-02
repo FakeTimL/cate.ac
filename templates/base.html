@@ -6,7 +6,7 @@
 <a href="#main_content" class="keyboard_skip_link">Skip to main content</a>
 <div class="nav ui borderless horizontal menu">
   <div class="ui container">
-    <a class="item" href="{% url 'main:question' %}">Question</a>
+    <a class="item" href="{% url 'main:topic' %}">Topics</a>
     {% if user.is_authenticated %}
     <a class="item" href="{% url 'main:history' %}">Answers</a>
     {% endif %}

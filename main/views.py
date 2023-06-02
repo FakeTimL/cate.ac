@@ -30,17 +30,14 @@ def internal_server_error_view(request: HttpRequest):
   return HttpResponseServerError(loader.get_template('500.html').render({}, request))
 
 
-def feedback_view(request: HttpRequest):
-  text = request.POST.get('content', '')
-  if text != '':
-    text = request.POST.get('email', '') + ': ' + text
-    Feedback(text=text).save()
-    messages.add_message(request, messages.SUCCESS, 'Your feedback has been sent!')
-    return HttpResponseRedirect(reverse('main:feedback'))
+def topic_view(request: HttpRequest, id=None):
+  if id == None:
+    return HttpResponse(loader.get_template('main/topics.html').render({
+      'topics': Topic.objects.all()
+    }, request))
 
-  return HttpResponse(loader.get_template('main/feedback.html').render({
-    'submit_url': reverse('main:feedback'),
-    'submit_method': 'POST',
+  return HttpResponse(loader.get_template('main/topic.html').render({
+    'topic': get_object_or_404(Topic, pk=id)
   }, request))
 
 
@@ -69,7 +66,7 @@ def question_view(request: HttpRequest, id=None):
           gpt_comments=gpt_comments,
         )
         history.save()
-        return HttpResponseRedirect(reverse('main:history', kwargs={'id': id}))
+        return HttpResponseRedirect(reverse('main:history', kwargs={'id': history.pk}))
     except json.JSONDecodeError as error:
       messages.add_message(request, messages.ERROR, 'ChatGPT did not respond in valid JSON format.')
       logger.warning(error)
@@ -111,6 +108,20 @@ def history_view(request: HttpRequest, id=None):
 
   return HttpResponse(loader.get_template('main/history.html').render({
     'history': get_object_or_404(History, pk=id)
+  }, request))
+
+
+def feedback_view(request: HttpRequest):
+  text = request.POST.get('content', '')
+  if text != '':
+    text = request.POST.get('email', '') + ': ' + text
+    Feedback(text=text).save()
+    messages.add_message(request, messages.SUCCESS, 'Your feedback has been sent!')
+    return HttpResponseRedirect(reverse('main:feedback'))
+
+  return HttpResponse(loader.get_template('main/feedback.html').render({
+    'submit_url': reverse('main:feedback'),
+    'submit_method': 'POST',
   }, request))
 
 

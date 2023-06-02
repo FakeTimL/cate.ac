@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Questions
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h1 class="ui header">{{ topic.name }}</h1>
+  <div class="ui medium divided selection list">
+    {% for question in topic.questions.all %}
+    <a class="item" href="{% url 'main:question' question.pk %}">
+      <i class="question circle outline icon"></i>
+      <div class="content">
+        <div class="header">{{ question.statement|truncatechars:50 }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

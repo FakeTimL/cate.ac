@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+CATE
+{% endblock %}
+
+{% block content %}
+<div class="section">
+  <h1 class="ui header">Browse questions by topic</h1>
+  <div class="ui medium divided selection list">
+    {% for topic in topics %}
+    <a class="item" href="{% url 'main:topic' topic.pk %}">
+      <i class="book icon"></i>
+      <div class="content">
+        <div class="header">{{ topic.name }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  <a class="ui primary button" href="{% url 'main:question' %}">Random question</a>
+</div>
+{% endblock %}

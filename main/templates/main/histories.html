@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block title %}
-IB Computer Science Practice Questions
+Past answers
 {% endblock %}
 
 {% block content %}
 <div class="section">
-  <h1>Past answers</h1>
+  <h1 class="ui header">Past answers</h1>
   <div class="ui medium divided selection list">
     {% for history in histories %}
     <a class="item" href="{% url 'main:history' history.pk %}">
@@ -18,6 +18,5 @@ IB Computer Science Practice Questions
     </a>
     {% endfor %}
   </div>
-  <a class="ui button" href="{% url 'main:question' %}">Go back</a>
 </div>
 {% endblock %}

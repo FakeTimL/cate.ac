@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-IB Computer Science Practice Questions
+Question
 {% endblock %}
 
 {% block content %}
@@ -37,6 +37,12 @@ IB Computer Science Practice Questions
         </blockquote>
       </details>
     </div>
+    <p>
+      <span>Topics:</span>
+      {% for topic in question.topics.all %}
+      <a href="{% url 'main:topic' topic.pk %}" class="ui blue label">{{ topic.name }}</a>
+      {% endfor %}
+    </p>
   </div>
   {% endif %}
 

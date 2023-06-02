@@ -4,20 +4,21 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-class Question(models.Model):
-  statement = models.TextField()
-  mark_scheme = models.TextField()
-  gpt_prompt = models.TextField()
-
-  def __str__(self):
-    return self.statement
-
-
 class Topic(models.Model):
   name = models.TextField()
 
   def __str__(self):
     return self.name
+
+
+class Question(models.Model):
+  statement = models.TextField()
+  mark_scheme = models.TextField()
+  gpt_prompt = models.TextField()
+  topics = models.ManyToManyField(Topic, related_name='questions')
+
+  def __str__(self):
+    return self.statement
 
 
 class History(models.Model):
