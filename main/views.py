@@ -2,6 +2,7 @@ import logging
 import os
 import json
 from random import choice
+from typing import Tuple
 from django.http import (Http404, HttpRequest, HttpResponse, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponseServerError)
 from django.shortcuts import get_object_or_404
@@ -77,14 +78,8 @@ def question_view(request: HttpRequest, id=None):
       messages.add_message(request, messages.ERROR, 'Unexpected ChatGPT error: ' + str(error))
       logger.warning(error)
 
-  md = Markdown(extensions=[
-    'nl2br', 'smarty', 'toc',
-    'pymdownx.extra', 'pymdownx.tilde', 'pymdownx.mark', 'pymdownx.tasklist', 'pymdownx.escapeall',
-    HighlightExtension(use_pygments=False),
-    ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
-  ])
-  question.statement = md.convert(question.statement)
-  question.mark_scheme = md.convert(question.mark_scheme)
+  question.statement = convert_markdown(question.statement)
+  question.mark_scheme = convert_markdown(question.mark_scheme)
 
   return HttpResponse(loader.get_template('main/question.html').render({
     'question': question,
@@ -105,6 +100,8 @@ def history_view(request: HttpRequest, id=None):
     }, request))
 
   history = get_object_or_404(History, pk=id)
+  history.question.statement = convert_markdown(history.question.statement)
+  history.question.mark_scheme = convert_markdown(history.question.mark_scheme)
 
   return HttpResponse(loader.get_template('main/history.html').render({
     'history': history,
@@ -127,7 +124,22 @@ def feedback_view(request: HttpRequest):
   }, request))
 
 
-def gpt_invoke(question: Question, response: str):
+def convert_markdown(markdown: str) -> str:
+  return Markdown(extensions=[
+    'nl2br',
+    'smarty',
+    'toc',
+    'pymdownx.extra',
+    'pymdownx.tilde',
+    'pymdownx.mark',
+    'pymdownx.tasklist',
+    'pymdownx.escapeall',
+    HighlightExtension(use_pygments=False),
+    ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
+  ]).convert(markdown)
+
+
+def gpt_invoke(question: Question, response: str) -> Tuple[int, str]:
   openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
 
   system = \
