@@ -21,6 +21,7 @@
 # Python setup commands:
 #
 # ```sh
+# $> cd server
 # $> pip install virturalenv
 # $> virtualenv env
 # $> . env/bin/activate
@@ -35,17 +36,18 @@
 # $> sudo systemctl start nginx
 # ```
 
-python3 manage.py collectstatic
+python3 manage.py collectstatic --noinput
 python3 manage.py migrate
 
 # Running/restarting server:
 #
 # ```sh
+# $> cd server
 # $> . env/bin/activate
 # $> ./run.sh
 # ```
 
-# Domains: drp49.dev www.drp49.dev cate.ac www.cate.ac
+# Domains: drp49.dev www.drp49.dev cate.ac www.cate.ac doc.ic.uk.cate.ac
 #
 # ```sh
 # sudo certbot certonly --nginx

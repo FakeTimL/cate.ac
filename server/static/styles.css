@@ -61,6 +61,8 @@ body {
   z-index: 100;
   margin: 0;
   border-radius: 0;
+  /* Tweak: hide top shadow */
+  margin-top: -1px;
 }
 
 .nav.menu .item {
@@ -71,6 +73,8 @@ body {
 .nav.menu .item .avatar {
   margin-top: -1em;
   margin-bottom: -1em;
+  /* Tweak: make it less crowded */
+  margin-right: 0.4em;
 }
 
 .nav.menu .item .ui.tiny.image {

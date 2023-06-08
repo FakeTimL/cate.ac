@@ -26,6 +26,7 @@ ALLOWED_HOSTS = ['localhost'] + (['*'] if DEBUG else os.environ.get('DRP49_ALLOW
 INSTALLED_APPS = [
   'main.apps.MainConfig',
   'accounts.apps.AccountsConfig',
+  'rest_framework',  # The django REST framework
   'django.contrib.staticfiles',  # Static files system
   'django.contrib.contenttypes',  # Relations between models (used in permissions system)
   'django.contrib.sessions',  # User session system
@@ -48,7 +49,10 @@ MIDDLEWARE = [
 TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [BASE_DIR / 'templates'],  # Global template directories
+    'DIRS': [
+      BASE_DIR / 'templates',  # Global template directories
+      BASE_DIR.parent / 'client' / 'dist'
+    ],
     'APP_DIRS': True,
     'OPTIONS': {
       'context_processors': [
@@ -129,7 +133,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, etc.) and user uploaded media files (images, videos, etc.)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 # https://docs.djangoproject.com/en/4.2/topics/files/
-STATICFILES_DIRS = [BASE_DIR / 'static/']  # Global static file directories
+STATICFILES_DIRS = [
+  BASE_DIR / 'static',  # Global static file directories
+  BASE_DIR.parent / 'client' / 'dist',
+]
 
 # Using WhiteNoise for static files storage
 # https://whitenoise.readthedocs.io/en/latest/django.html
@@ -138,13 +145,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static/']  # Global static file directories
 if DEBUG:
   STATIC_URL = '/static/'  # Static file web URL
   MEDIA_URL = '/media/'  # User-uploaded file web URL
-  STATIC_ROOT = BASE_DIR / 'static_root/'
-  MEDIA_ROOT = BASE_DIR / 'media_root/'
+  STATIC_ROOT = BASE_DIR / 'static_root'
+  MEDIA_ROOT = BASE_DIR / 'media_root'
 
 else:
   STATIC_URL = os.environ['DRP49_STATIC_URL']
   MEDIA_URL = os.environ['DRP49_MEDIA_URL']
-  STATIC_ROOT = BASE_DIR / 'static_root/'
+  STATIC_ROOT = BASE_DIR / 'static_root'
   AWS_S3_ACCESS_KEY_ID = os.environ['DRP49_AMAZON_S3_ACCESS_KEY_ID']
   AWS_S3_SECRET_ACCESS_KEY = os.environ['DRP49_AMAZON_S3_SECRET_ACCESS_KEY']
   AWS_S3_REGION_NAME = os.environ['DRP49_AMAZON_S3_REGION']

@@ -1,28 +1,32 @@
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
 default:
   before_script:
     - virtualenv env
     - . env/bin/activate
-    - pip install --upgrade pip
-    - pip install -r requirements.txt
+    - (cd client && npm install)
+    - (cd server && pip install -r requirements.txt)
   cache:
     paths:
       - env/
-      - $HOME/.cache/pip/
+      - .cache/pip/
 
 build_job:
   stage: build
   script:
-    - ./setup.sh
+    - (cd client && npm run build)
+    - (cd server && ./build.sh)
 
 test_job:
   stage: test
   script:
-    - ./setup.sh
-    - python3 manage.py test
+    - (cd client && npm run build)
+    - (cd server && ./build.sh && python3 manage.py test)
 
 deploy_job:
   stage: deploy
   script:
-    - ./setup.sh
-    - ./run.sh
+    - (cd client && npm run build)
+    - (cd server && ./build.sh && ./run.sh)
   environment: production

@@ -1,0 +1,18 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Local static and media file folders for debugging:
+static_root/
+media_root/
