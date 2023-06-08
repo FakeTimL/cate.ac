@@ -3,6 +3,10 @@
 # Set environment variables first.
 # See `drp49_secret.txt`.
 
+# Create working directory
+DIR="/tmp/drp49"
+mkdir -p "$DIR"
+
 # MySQL setup commands:
 #
 # ```sh

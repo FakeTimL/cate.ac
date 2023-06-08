@@ -7,15 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# TypeScript and Vue.js build artifacts
 node_modules
-.DS_Store
-dist
-dist-ssr
+build
 coverage
-*.local
-
-# Vue and TypeScript build artifacts
 .vite/
+*.local
 *.tsbuildinfo
 *.d.ts
 *.js

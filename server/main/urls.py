@@ -3,6 +3,7 @@ from . import views
 
 app_name = 'main'  # Namespace for URLs
 urlpatterns = [
+  path('index/', views.index_view, name='index'),  # Test
   path('', views.topic_view, name='topic'),
   path('topic/', views.topic_view, name='topic'),
   path('topic/<int:id>/', views.topic_view, name='topic'),

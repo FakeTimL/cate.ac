@@ -1,32 +1,33 @@
 variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  CACHE_COMPRESSION_LEVEL: fastest # Disable cache compression
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip # Set `pip` cache directory
 
 default:
   before_script:
     - virtualenv env
     - . env/bin/activate
-    - (cd client && npm install)
-    - (cd server && pip install -r requirements.txt)
+    - cd client && npm ci --cache $CI_PROJECT_DIR/.cache/npm --prefer-offline && cd .. # Set `npm` cache directory
+    - cd server && pip install -r requirements.txt && cd ..
   cache:
     paths:
-      - env/
+      - .cache/npm/
       - .cache/pip/
 
 build_job:
   stage: build
   script:
-    - (cd client && npm run build)
-    - (cd server && ./build.sh)
+    - cd client && npm run build && cd ..
+    - cd server && ./build.sh && cd ..
 
 test_job:
   stage: test
   script:
-    - (cd client && npm run build)
-    - (cd server && ./build.sh && python3 manage.py test)
+    - cd client && npm run build && cd ..
+    - cd server && ./build.sh && python3 manage.py test && cd ..
 
 deploy_job:
   stage: deploy
   script:
-    - (cd client && npm run build)
-    - (cd server && ./build.sh && ./run.sh)
+    - cd client && npm run build && cd ..
+    - cd server && ./build.sh && ./run.sh && cd ..
   environment: production

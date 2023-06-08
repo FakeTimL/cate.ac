@@ -49,11 +49,6 @@ MIDDLEWARE = [
 TEMPLATES = [
   {
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [
-      BASE_DIR / 'templates',  # Global template directories
-      BASE_DIR.parent / 'client' / 'dist'
-    ],
-    'APP_DIRS': True,
     'OPTIONS': {
       'context_processors': [
         'django.template.context_processors.debug',
@@ -62,6 +57,11 @@ TEMPLATES = [
         'django.contrib.messages.context_processors.messages',
       ],
     },
+    'APP_DIRS': True,
+    'DIRS': [
+      BASE_DIR / 'templates',  # Global template directories
+      BASE_DIR.parent / 'client' / 'build',
+    ],
   },
 ]
 ROOT_URLCONF = 'config.urls'
@@ -135,7 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/topics/files/
 STATICFILES_DIRS = [
   BASE_DIR / 'static',  # Global static file directories
-  BASE_DIR.parent / 'client' / 'dist',
+  BASE_DIR.parent / 'client' / 'build' / 'static',
 ]
 
 # Using WhiteNoise for static files storage
