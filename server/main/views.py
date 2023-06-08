@@ -80,12 +80,14 @@ def question_view(request: HttpRequest, id=None):
 
   question.statement = convert_markdown(question.statement)
   question.mark_scheme = convert_markdown(question.mark_scheme)
+  gpt_mark_divided = None if gpt_mark is None else format(gpt_mark / question.mark_denominator, '.0f')
+  mark_maximum_divided = format(question.mark_maximum / question.mark_denominator, '.0f')
 
   return HttpResponse(loader.get_template('main/question.html').render({
     'question': question,
     'user_answer': user_answer,
-    'gpt_mark_divided': None if gpt_mark is None else gpt_mark / question.mark_denominator,
-    'mark_maximum_divided': question.mark_maximum / question.mark_denominator,
+    'gpt_mark_divided': gpt_mark_divided,
+    'mark_maximum_divided': mark_maximum_divided,
     'gpt_comments': gpt_comments,
     'submit_url': reverse('main:question', kwargs={'id': id}),
     'submit_method': 'POST',
