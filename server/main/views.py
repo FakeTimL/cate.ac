@@ -35,11 +35,11 @@ def index_view(request: HttpRequest):
 def topic_view(request: HttpRequest, id=None):
   if id == None:
     return HttpResponse(loader.get_template('main/topics.html').render({
-      # 'chapters': Chapter.objects.all()
+      'chapters': Topic.objects.filter(parent=None)
     }, request))
 
   return HttpResponse(loader.get_template('main/topic.html').render({
-    'topic': get_object_or_404(Chapter, pk=id)
+    'topic': get_object_or_404(Topic, pk=id)
   }, request))
 
 

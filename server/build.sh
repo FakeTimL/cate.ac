@@ -41,7 +41,7 @@ mkdir -p "$DIR"
 # ```
 
 python3 manage.py collectstatic --noinput
-python3 manage.py migrate main
+python3 manage.py migrate
 
 # Running/restarting server:
 #

@@ -4,22 +4,22 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+'''
 class Chapter(models.Model):
   name = models.TextField()
 
   def __str__(self):
     return self.name
-
-
 '''
+
+
 class Topic(models.Model):
   name = models.TextField()
-  # chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default=None)
-  # resources = models.TextField()
+  parent = models.ForeignKey('self', related_name='children', null=True, on_delete=models.SET_NULL)
+  resources = models.TextField(blank=True)
 
   def __str__(self):
     return self.name
-'''
 
 
 class Question(models.Model):
@@ -29,7 +29,7 @@ class Question(models.Model):
   mark_maximum = models.IntegerField()
   mark_scheme = models.TextField()
   gpt_prompt = models.TextField()
-  chapters = models.ManyToManyField(Chapter, related_name='questions')
+  topics = models.ManyToManyField(Topic, related_name='questions')
 
   def __str__(self):
     return self.statement
