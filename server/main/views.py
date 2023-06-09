@@ -38,8 +38,10 @@ def topic_view(request: HttpRequest, id=None):
       'chapters': Topic.objects.filter(parent=None)
     }, request))
 
+  topic = get_object_or_404(Topic, pk=id)
   return HttpResponse(loader.get_template('main/topic.html').render({
-    'topic': get_object_or_404(Topic, pk=id)
+    'topic': topic,
+    'description': convert_markdown(topic.resources)
   }, request))
 
 

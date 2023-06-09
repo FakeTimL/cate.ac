@@ -16,7 +16,7 @@ Questions
         <div class="ui modal">
           <div class="header">What is this topic about?</div>
           <div class="content">
-            <p>{{ topic.resources }}</p>
+            {{ description }}
           </div>
         </div>
       </div>
@@ -30,5 +30,7 @@ Questions
     </a>
     {% endfor %}
   </div>
+  <!-- TODO: Make random selection topic-specific -->
+  <a class="ui primary button" href="{% url 'main:question' %}">Random question</a>
 </div>
 {% endblock %}
