@@ -3,15 +3,15 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-'''
+
 class Chapter(models.Model):
   name = models.TextField()
 
   def __str__(self):
     return self.name
+
+
 '''
-
-
 class Topic(models.Model):
   name = models.TextField()
   # chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default=None)
@@ -19,6 +19,7 @@ class Topic(models.Model):
 
   def __str__(self):
     return self.name
+'''
 
 
 class Question(models.Model):
@@ -28,7 +29,7 @@ class Question(models.Model):
   mark_maximum = models.IntegerField()
   mark_scheme = models.TextField()
   gpt_prompt = models.TextField()
-  topics = models.ManyToManyField(Topic, related_name='questions')
+  chapters = models.ManyToManyField(Chapter, related_name='questions')
 
   def __str__(self):
     return self.statement
