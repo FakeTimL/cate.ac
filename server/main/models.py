@@ -15,7 +15,8 @@ class Chapter(models.Model):
 
 class Topic(models.Model):
   name = models.TextField()
-  parent = models.ForeignKey('self', related_name='children', null=True, on_delete=models.SET_NULL)
+  parent = models.ForeignKey('self', related_name='children', blank=True,  # See: https://stackoverflow.com/a/2493722
+                             null=True, on_delete=models.SET_NULL)
   resources = models.TextField(blank=True)
 
   def __str__(self):

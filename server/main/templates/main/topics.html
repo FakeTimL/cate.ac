@@ -15,7 +15,7 @@ CATE
       <div class="content">
         <div class="header">{{ chapter.name }}</div>
         <div class="list">
-          {% for topic in chapter.topic_set.all %}
+          {% for topic in chapter.children.all %}
           <a class="item" href="{% url 'main:topic' topic.pk %}">
             <i class="book icon"></i>
             <div class="content">
