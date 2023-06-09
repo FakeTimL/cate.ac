@@ -1,12 +1,11 @@
 variables:
-  CACHE_COMPRESSION_LEVEL: fastest # Disable cache compression
-  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip # Set `pip` cache directory
+  PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip # `pip` cache directory
 
 default:
   before_script:
     - virtualenv env
     - . env/bin/activate
-    - cd client && npm ci --cache $CI_PROJECT_DIR/.cache/npm --prefer-offline && cd .. # Set `npm` cache directory
+    - cd client && npm ci --cache $CI_PROJECT_DIR/.cache/npm --prefer-offline && cd ..  # `npm` cache directory
     - cd server && pip install -r requirements.txt && cd ..
   cache:
     paths:
