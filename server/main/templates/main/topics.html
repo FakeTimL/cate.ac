@@ -9,13 +9,23 @@ CATE
 <div class="section">
   <h1 class="ui header">Browse questions by topic</h1>
   <div class="ui medium divided selection list">
-    {% for topic in topics %}
-    <a class="item" href="{% url 'main:topic' topic.pk %}">
-      <i class="book icon"></i>
+    {% for chapter in chapters %}
+    <div class="item">
+      <i class="folder open outline icon"></i>
       <div class="content">
-        <div class="header">{{ topic.name }}</div>
+        <div class="header">{{ chapter.name }}</div>
+        <div class="list">
+          {% for topic in chapter.topic_set.all %}
+          <a class="item" href="{% url 'main:topic' topic.pk %}">
+            <i class="book icon"></i>
+            <div class="content">
+              <div class="header">{{ topic.name }}</div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
       </div>
-    </a>
+    </div>
     {% endfor %}
   </div>
   <a class="ui primary button" href="{% url 'main:question' %}">Random question</a>

@@ -35,7 +35,7 @@ def index_view(request: HttpRequest):
 def topic_view(request: HttpRequest, id=None):
   if id == None:
     return HttpResponse(loader.get_template('main/topics.html').render({
-      'topics': Topic.objects.all()
+      'chapters': Chapter.objects.all()
     }, request))
 
   return HttpResponse(loader.get_template('main/topic.html').render({
