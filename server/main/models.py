@@ -3,16 +3,18 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+'''
 class Chapter(models.Model):
   name = models.TextField()
 
   def __str__(self):
     return self.name
+'''
 
 
 class Topic(models.Model):
   name = models.TextField()
-  chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default=None)
+  # chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default=None)
   resources = models.TextField()
 
   def __str__(self):
