@@ -41,8 +41,7 @@ mkdir -p "$DIR"
 # ```
 
 python3 manage.py collectstatic --noinput
-python3 manage.py migrate main 0006_CREATE_FAKE --fake
-python3 manage.py migrate main 0007_DELETE
+python3 manage.py migrate main 0005_question_mark_minimum --fake
 
 # Running/restarting server:
 #

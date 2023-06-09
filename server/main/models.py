@@ -15,7 +15,7 @@ class Chapter(models.Model):
 class Topic(models.Model):
   name = models.TextField()
   # chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, default=None)
-  resources = models.TextField()
+  # resources = models.TextField()
 
   def __str__(self):
     return self.name
