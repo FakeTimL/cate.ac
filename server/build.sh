@@ -41,7 +41,7 @@ mkdir -p "$DIR"
 # ```
 
 python3 manage.py collectstatic --noinput
-python3 manage.py migrate
+python3 manage.py migrate main 0005_question_mark_minimum
 
 # Running/restarting server:
 #
