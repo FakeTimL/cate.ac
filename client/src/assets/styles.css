@@ -48,46 +48,14 @@ body {
 /* .body_wrapper { width: 100%; min-height: 100%; } */
 
 /* Container */
+/*
 .section {
   padding: 1em;
   margin: 0 auto;
   max-width: 700px;
   font-size: 1.1rem;
 }
-
-/* Navigation bar */
-.nav.menu {
-  position: relative;
-  z-index: 100;
-  margin: 0;
-  border-radius: 0;
-  /* Tweak: hide top shadow */
-  margin-top: -1px;
-}
-
-.nav.menu .item {
-  padding-top: 1.2em;
-  padding-bottom: 1.2em;
-}
-
-.nav.menu .item .avatar {
-  margin-top: -1em;
-  margin-bottom: -1em;
-  /* Tweak: make it less crowded */
-  margin-right: 0.4em;
-}
-
-.nav.menu .item .ui.tiny.image {
-  height: 3em;
-  width: auto;
-  margin: -0.8em 0;
-}
-
-@media (max-width: 767px) {
-  .nav.horizontal.menu .login.item span {
-    display: none;
-  }
-}
+*/
 
 /* Message */
 .ui.one_time_messages.container {

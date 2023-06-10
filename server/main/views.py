@@ -28,10 +28,6 @@ def internal_server_error_view(request: HttpRequest):
   return HttpResponseServerError(loader.get_template('500.html').render({}, request))
 
 
-def index_view(request: HttpRequest):
-  return HttpResponse(loader.get_template('index.html').render({}, request))
-
-
 def topic_view(request: HttpRequest, id=None):
   if id == None:
     return HttpResponse(loader.get_template('main/topics.html').render({
