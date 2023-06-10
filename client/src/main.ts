@@ -15,17 +15,27 @@ import QuestionPage from './pages/QuestionPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
 import AboutPage from './pages/AboutPage.vue';
 import ExamplePage from './pages/ExamplePage.vue';
+import NotFoundPage from './pages/NotFoundPage.vue';
 import App from './App.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: LandingPage }, // An example page of Vue.js
+    { path: '/', component: LandingPage },
     { path: '/topics', component: QuestionPage },
     { path: '/feedback', component: FeedbackPage },
     { path: '/about', component: AboutPage },
     { path: '/example', component: ExamplePage }, // An example page of Vue.js
+    // See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#catch-all-404-not-found-route
+    { path: '/:pathMatch(.*)*', component: NotFoundPage },
   ],
+  scrollBehavior(_to, _from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0 };
+    }
+  },
 });
 
 const app = createApp(App);

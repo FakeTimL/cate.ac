@@ -40,16 +40,7 @@ window.requestAnimationFrame(updateAll);
       >
         <div class="text_container">
           <h2>Motivation</h2>
-          <p>
-            Most teachers nowadays use a traditional teaching style that may only work well if students are taught
-            face-to-face, and when teachers have enough time and attention on every student. However, these conditions
-            are generally not true in underdeveloped areas, resulting in poor learning outcomes among local students. We
-            aim to address this problem by introducing technology-assisted teaching.
-          </p>
-          <p>
-            Everyone can use this platform for educational purposes. You can even self-learn without guidance from a
-            real teacher!
-          </p>
+          <p>TODO: add description based on DRP theme</p>
         </div>
       </div>
     </div>
@@ -62,18 +53,7 @@ window.requestAnimationFrame(updateAll);
       <div class="transformed" style="background-color: rgb(23, 22, 20); color: rgb(240, 240, 240)">
         <div class="text_container">
           <h2>Design Principles</h2>
-          <p>We use effective psychological methods to help you learn better.</p>
-          <p>
-            <strong>Active Recall</strong>: Anfa Learning will provide practice questions after you have learned certain
-            concepts in a course. Solving them by yourself will help your brain enter a pathway of active recall, and
-            remember the concepts more efficiently.
-          </p>
-          <p>
-            <strong>Spaced Repetition</strong>: in the "Review" section, Anfa Learning regularly presents some practice
-            questions to you. If you think you are not proficient in solving a certain question, you can "mark" that
-            question and Anfa will present relevant ones to you after some time. This is based on the Anki-SM2 schedule
-            and our "Knowledge Network" model. <em>(still under research...)</em>
-          </p>
+          <p>TODO: add description based on DRP theme</p>
         </div>
       </div>
     </div>
@@ -86,20 +66,7 @@ window.requestAnimationFrame(updateAll);
       <div class="transformed" style="background-color: rgb(205, 194, 192)">
         <div class="text_container">
           <h2>Student Perspective</h2>
-          <p>
-            As students ourselves, we know what might confuse you and what may feel boring to you. We seek to minimize
-            your frustration in the learning process.
-          </p>
-          <p>
-            <strong>Interactive explanation</strong>: We try to exploit technology to make abstract ideas more intuitive
-            to you. We visualize and animate mathematical concepts on web pages so that you can play around and remember
-            them quickly. <em>(still under development...)</em>
-          </p>
-          <p>
-            <strong>Examination standards</strong>: Our learning materials for Chinese junior high school students are
-            designed to meet the standards of the High School Entrance Exam. We explain its rubrics and emphasize
-            special caveats to help you gain every point that should not be lost.
-          </p>
+          <p>TODO: add description based on DRP theme</p>
         </div>
       </div>
     </div>
@@ -112,20 +79,7 @@ window.requestAnimationFrame(updateAll);
       <div class="transformed" style="background-color: rgb(184, 161, 143); color: rgb(255, 255, 255)">
         <div class="text_container">
           <h2>Self-Learning</h2>
-          <p>
-            Traditional test-oriented teaching methods in China neglects students' abilities of learning by themselves.
-            But here, we encourage high school students to learn searching, processing, merging, and absorbing knowledge
-            without the guidance of a real teacher.
-          </p>
-          <p>
-            <strong>Discussion</strong>: For each lecture, you can post comments, ask questions or help answering other
-            students' questions. Teachers and teaching assistants in AnfaTech will also regularly check the comments
-            under their lectures and answer your questions.
-          </p>
-          <p>
-            <strong>Search</strong>: If you ever encountered unfamiliar concepts or knowledge units while you are
-            learning, you can always try searching it within this site. <em>(still under development...)</em>
-          </p>
+          <p>TODO: add description based on DRP theme</p>
         </div>
       </div>
     </div>

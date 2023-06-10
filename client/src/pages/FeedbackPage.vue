@@ -1,9 +1,13 @@
 <script lang="ts">
-export default {};
+export default {
+  methods: {
+    submit() {},
+  },
+};
 </script>
 
 <template>
-  <sui-container text style="padding: 1em 0; min-height: 100vh">
+  <sui-container text style="padding: 1em 0">
     <sui-header as="h1">Send anonymous feedback</sui-header>
     <form class="ui form" action="{{ submit_url }}" method="{{ submit_method }}">
       {% if submit_method|lower == 'post' %}{% csrf_token %}{% endif %}

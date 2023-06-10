@@ -20,7 +20,6 @@ export default {
 <style scoped>
 .box {
   max-width: 300px;
-  min-height: 100vh;
   margin: 0 auto;
   padding: 1em 0;
 }

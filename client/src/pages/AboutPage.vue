@@ -4,7 +4,7 @@ export default {};
 
 <template>
   <div class="background">
-    <sui-container text style="padding: 1em 0; min-height: 100vh">
+    <sui-container text style="padding: 1em 0">
       <sui-header as="h1">About us</sui-header>
       <sui-message>
         <p><strong>Q: What does the name "CATE" mean?</strong></p>
