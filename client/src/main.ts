@@ -11,7 +11,7 @@ import 'highlight.js/styles/github.css';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from './pages/LandingPage.vue';
-import QuestionPage from './pages/QuestionPage.vue';
+import TopicsPage from './pages/TopicsPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
 import AboutPage from './pages/AboutPage.vue';
 import ExamplePage from './pages/ExamplePage.vue';
@@ -22,7 +22,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: LandingPage },
-    { path: '/topics', component: QuestionPage },
+    { path: '/topics', component: TopicsPage },
     { path: '/feedback', component: FeedbackPage },
     { path: '/about', component: AboutPage },
     { path: '/example', component: ExamplePage }, // An example page of Vue.js

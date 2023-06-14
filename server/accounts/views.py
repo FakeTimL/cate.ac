@@ -25,7 +25,8 @@ class UserBasicSerializer(serializers.HyperlinkedModelSerializer):
   class Meta:
     model = User
     fields = [
-      'url', 'username', 'first_name', 'last_name', 'avatar', 'bio',
+      'url', 'username',
+      'avatar', 'first_name', 'last_name', 'bio',
       'date_joined', 'last_login',
     ]
     extra_kwargs = {
@@ -45,7 +46,8 @@ class UserSelfSerializer(serializers.HyperlinkedModelSerializer):
   class Meta:
     model = User
     fields = [
-      'url', 'username', 'password', 'email', 'first_name', 'last_name', 'avatar', 'bio',
+      'url', 'username', 'password', 'email',
+      'avatar', 'first_name', 'last_name', 'bio',
       'date_joined', 'last_login',
     ]
     extra_kwargs = {
@@ -60,14 +62,13 @@ class UserAdminSerializer(serializers.HyperlinkedModelSerializer):
   class Meta:
     model = User
     fields = [
-      'url', 'username', 'password', 'email', 'first_name', 'last_name', 'avatar', 'bio',
-      'is_active', 'superuser', 'is_superuser', 'groups', 'user_permissions',
+      'url', 'username', 'password', 'email',
+      'avatar', 'first_name', 'last_name', 'bio',
       'date_joined', 'last_login',
+      'superuser',
     ]
     extra_kwargs = {
       'url': {'view_name': 'accounts:user'},
-      'groups': {'view_name': 'accounts:group'},
-      'user_permissions': {'view_name': 'accounts:permission'},
     }
 
 

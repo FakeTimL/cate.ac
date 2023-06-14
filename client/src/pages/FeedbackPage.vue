@@ -1,6 +1,6 @@
 <script lang="ts">
 import * as constants from '@/constants';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 axios.defaults.baseURL = constants.apiRoot;
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = constants.csrfHeaderName;

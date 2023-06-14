@@ -32,12 +32,19 @@ logger = logging.getLogger(__name__)
 
 class IsAccountAdminOrReadOnly(permissions.BasePermission):
   def has_permission(self, request: Request, view: views.APIView):
-    return request.user.superuser or request.method in permissions.SAFE_METHODS
+    if isinstance(request.user, User) and request.user.superuser:
+      return True
+    else:
+      return request.method in permissions.SAFE_METHODS
 
 
 class TopicSerializer(serializers.HyperlinkedModelSerializer):
-  children = serializers.PrimaryKeyRelatedField(many=True, queryset=Topic.objects.all())
-  questions = serializers.PrimaryKeyRelatedField(many=True, queryset=Question.objects.all())
+  children = serializers.HyperlinkedRelatedField(
+      many=True, queryset=Topic.objects.all(),
+      view_name='main:topic')
+  questions = serializers.HyperlinkedRelatedField(
+      many=True, queryset=Question.objects.all(),
+      view_name='main:question')
 
   class Meta:
     model = Topic
@@ -45,8 +52,6 @@ class TopicSerializer(serializers.HyperlinkedModelSerializer):
     extra_kwargs = {
       'url': {'view_name': 'main:topic'},
       'parent': {'view_name': 'main:topic'},
-      'children': {'view_name': 'main:topic'},
-      'questions': {'view_name': 'main:question'},
     }
 
 
@@ -86,7 +91,10 @@ class QuestionView(generics.RetrieveUpdateDestroyAPIView):
 
 class IsAccountAdminOrPostOnly(permissions.BasePermission):
   def has_permission(self, request: Request, view: views.APIView):
-    return request.user.superuser or request.method == 'post'
+    if isinstance(request.user, User) and request.user.superuser:
+      return True
+    else:
+      return request.method == 'post'
 
 
 class FeedbackSerializer(serializers.HyperlinkedModelSerializer):
