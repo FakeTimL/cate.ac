@@ -38,21 +38,13 @@ class IsAccountAdminOrReadOnly(permissions.BasePermission):
       return request.method in permissions.SAFE_METHODS
 
 
-class TopicSerializer(serializers.HyperlinkedModelSerializer):
-  children = serializers.HyperlinkedRelatedField(
-      many=True, queryset=Topic.objects.all(),
-      view_name='main:topic')
-  questions = serializers.HyperlinkedRelatedField(
-      many=True, queryset=Question.objects.all(),
-      view_name='main:question')
+class TopicSerializer(serializers.ModelSerializer):
+  children = serializers.PrimaryKeyRelatedField(many=True, queryset=Topic.objects.all())
+  questions = serializers.PrimaryKeyRelatedField(many=True, queryset=Question.objects.all())
 
   class Meta:
     model = Topic
-    fields = ['url', 'name', 'parent', 'children', 'questions', 'resources']
-    extra_kwargs = {
-      'url': {'view_name': 'main:topic'},
-      'parent': {'view_name': 'main:topic'},
-    }
+    fields = ['pk', 'name', 'parent', 'children', 'questions', 'resources']
 
 
 class TopicsView(generics.ListCreateAPIView):
@@ -67,14 +59,11 @@ class TopicView(generics.RetrieveUpdateDestroyAPIView):
   permission_classes = [IsAccountAdminOrReadOnly]
 
 
-class QuestionSerializer(serializers.HyperlinkedModelSerializer):
+class QuestionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Question
-    fields = ['statement', 'mark_denominator', 'mark_minimum', 'mark_maximum', 'mark_scheme', 'gpt_prompt', 'topics']
-    extra_kwargs = {
-      'url': {'view_name': 'main:question'},
-      'topics': {'view_name': 'main:topic'},
-    }
+    fields = ['pk', 'statement', 'mark_denominator', 'mark_minimum',
+              'mark_maximum', 'mark_scheme', 'gpt_prompt', 'topics']
 
 
 class QuestionsView(generics.ListCreateAPIView):
@@ -97,14 +86,11 @@ class IsAccountAdminOrPostOnly(permissions.BasePermission):
       return request.method == 'post'
 
 
-class FeedbackSerializer(serializers.HyperlinkedModelSerializer):
+class FeedbackSerializer(serializers.ModelSerializer):
   class Meta:
     model = Feedback
-    fields = ['text', 'email', 'publish_date']
-    extra_kwargs = {
-      'url': {'view_name': 'main:feedback'},
-      'publish_date': {'read_only': True},
-    }
+    fields = ['pk', 'text', 'email', 'publish_date']
+    extra_kwargs = {'publish_date': {'read_only': True}}
 
 
 class FeedbacksView(generics.ListCreateAPIView):
@@ -191,20 +177,6 @@ def history_view(request: HttpRequest, id=None):
   return HttpResponse(loader.get_template('main/history.html').render({
     'history': history,
     'gpt_mark_displayed': f"{gpt_mark_divided} / {mark_maximum_divided}"
-  }, request))
-
-
-def feedback_view(request: HttpRequest):
-  text = request.POST.get('content', '')
-  if text != '':
-    text = request.POST.get('email', '') + ': ' + text
-    Feedback(text=text).save()
-    messages.add_message(request, messages.SUCCESS, 'Your feedback has been sent!')
-    return HttpResponseRedirect(reverse('main:feedback'))
-
-  return HttpResponse(loader.get_template('main/feedback.html').render({
-    'submit_url': reverse('main:feedback'),
-    'submit_method': 'POST',
   }, request))
 '''
 

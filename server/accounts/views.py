@@ -21,16 +21,15 @@ from .models import *
 
 
 # Public view (read-only).
-class UserBasicSerializer(serializers.HyperlinkedModelSerializer):
+class UserBasicSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = [
-      'url', 'username',
+      'pk', 'username',
       'avatar', 'first_name', 'last_name', 'bio',
       'date_joined', 'last_login',
     ]
     extra_kwargs = {
-      'url': {'view_name': 'accounts:user'},
       'username': {'read_only': True},
       'first_name': {'read_only': True},
       'last_name': {'read_only': True},
@@ -42,34 +41,30 @@ class UserBasicSerializer(serializers.HyperlinkedModelSerializer):
 
 
 # Fields visible to self.
-class UserSelfSerializer(serializers.HyperlinkedModelSerializer):
+class UserSelfSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = [
-      'url', 'username', 'password', 'email',
+      'pk', 'username', 'password', 'email',
       'avatar', 'first_name', 'last_name', 'bio',
       'date_joined', 'last_login',
     ]
     extra_kwargs = {
-      'url': {'view_name': 'accounts:user'},
       'date_joined': {'read_only': True},
       'last_login': {'read_only': True},
     }
 
 
 # All fields.
-class UserAdminSerializer(serializers.HyperlinkedModelSerializer):
+class UserAdminSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = [
-      'url', 'username', 'password', 'email',
+      'pk', 'username', 'password', 'email',
       'avatar', 'first_name', 'last_name', 'bio',
       'date_joined', 'last_login',
       'superuser',
     ]
-    extra_kwargs = {
-      'url': {'view_name': 'accounts:user'},
-    }
 
 
 # Allow us to select a serializer based on `refl`.

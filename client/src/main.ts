@@ -17,12 +17,16 @@ import AboutPage from './pages/AboutPage.vue';
 import ExamplePage from './pages/ExamplePage.vue';
 import NotFoundPage from './pages/NotFoundPage.vue';
 import App from './App.vue';
+import TopicPage from './pages/TopicPage.vue';
+import QuestionPage from './pages/QuestionPage.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: LandingPage },
     { path: '/topics', component: TopicsPage },
+    { path: '/topic/:pk', component: TopicPage },
+    { path: '/question/:pk', component: QuestionPage },
     { path: '/feedback', component: FeedbackPage },
     { path: '/about', component: AboutPage },
     { path: '/example', component: ExamplePage }, // An example page of Vue.js

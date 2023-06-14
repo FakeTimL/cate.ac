@@ -1,11 +1,4 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}
-Question
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block title %} Question {% endblock %} {% block content %}
 <div class="section">
   <p></p>
   <div class="markdown">{{ question.statement|safe }}</div>
@@ -17,8 +10,7 @@ Question
     {% if submit_method|lower == 'post' %}{% csrf_token %}{% endif %}
     <div class="field">
       <label>Answer:</label>
-      <textarea style="resize: vertical;" name="user_answer" placeholder="Type your answer here..."
-        rows="15"></textarea>
+      <textarea style="resize: vertical" name="user_answer" placeholder="Type your answer here..." rows="15"></textarea>
     </div>
     <input class="ui button primary" type="submit" value="Check" />
   </form>
@@ -45,6 +37,5 @@ Question
     </p>
   </div>
   {% endif %}
-
 </div>
 {% endblock %}
