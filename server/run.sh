@@ -32,7 +32,7 @@ done
 echo "Starting server..."
 
 # Start `gunicorn` in daemon mode
-export DJANGO_SETTINGS_MODULE="config.settings"
+export DJANGO_SETTINGS_MODULE="config.config"
 
 gunicorn "config.wsgi:application" \
 --name="drp49_server" \

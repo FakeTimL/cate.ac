@@ -1,0 +1,145 @@
+<script lang="ts">
+export default {
+  props: {
+    landingPage: Boolean,
+  },
+  data() {
+    return {
+      large: window.innerWidth > 767.5,
+      sidebarActive: false,
+      sidebarAnimating: false,
+    };
+  },
+  methods: {
+    toggle(value: boolean) {
+      this.sidebarActive = value;
+      this.sidebarAnimating = true;
+      setTimeout(() => (this.sidebarAnimating = false), 500);
+    },
+    onResize() {
+      this.large = window.innerWidth > 767.5;
+    },
+    onClickPusher(e: Event) {
+      if (this.sidebarActive) {
+        e.stopPropagation();
+        this.toggle(false);
+      }
+    },
+    onClickButton(e: Event) {
+      e.stopPropagation();
+      this.toggle(true);
+    },
+  },
+  mounted() {
+    window.addEventListener('resize', this.onResize);
+  },
+  unmounted() {
+    window.removeEventListener('resize', this.onResize);
+  },
+};
+</script>
+
+<template>
+  <div class="ui pushable">
+    <div
+      class="ui left push sidebar inverted vertical menu"
+      :class="{ visible: sidebarActive, animating: sidebarAnimating }"
+    >
+      <slot name="navigation"></slot>
+    </div>
+    <div class="pusher" :class="{ dimmed: sidebarActive }" @click="onClickPusher">
+      <div class="flex-container">
+        <sui-menu borderless :inverted="landingPage" :color="landingPage ? 'blue' : ''" class="navigation">
+          <sui-container v-if="large">
+            <slot name="navigation"></slot>
+          </sui-container>
+          <sui-menu-item v-if="!large" @click="onClickButton">
+            <sui-icon name="bars" />
+          </sui-menu-item>
+        </sui-menu>
+        <div class="content">
+          <router-view v-slot="{ Component, route }">
+            <transition name="fade" mode="default">
+              <div :key="route.fullPath">
+                <component :is="Component"></component>
+              </div>
+            </transition>
+          </router-view>
+        </div>
+        <sui-segment inverted vertical class="footer">
+          <sui-container>
+            <slot name="footer"></slot>
+          </sui-container>
+        </sui-segment>
+        <slot name="modals"></slot>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.flex-container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.navigation,
+.content {
+  flex-grow: 0;
+}
+
+.footer {
+  flex-grow: 1;
+  padding: 2em 0em;
+}
+
+/* Navigation bar */
+.navigation {
+  margin: 0;
+  border-radius: 0;
+  /* Tweak: hide top shadow */
+  /* margin-top: -1px; */
+  /* Transition between landing page and other pages */
+  transition: background-color 0.5s;
+}
+
+.navigation :deep(.item) {
+  padding-top: 1.4em;
+  padding-bottom: 1.4em;
+}
+
+.navigation :deep(.item .avatar) {
+  margin-top: -1em;
+  margin-bottom: -1em;
+  /* Tweak: make it less crowded */
+  margin-right: 0.4em;
+}
+
+.navigation :deep(.item .ui.tiny.image) {
+  height: 3em;
+  width: auto;
+  margin: -0.8em 0;
+}
+
+@media (max-width: 767.5px) {
+  .navigation :deep(.login.item span) {
+    display: none;
+  }
+}
+
+.fade-leave-active {
+  position: absolute; /* Takes no space in document flow when leaving. */
+  width: 100%;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

@@ -16,53 +16,31 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 SECRET_KEY = os.environ['DRP49_SECRET_KEY']
 DEBUG = (os.environ.get('DRP49_DEBUG', '') == '1')
-ALLOWED_HOSTS = ['localhost'] + (['*'] if DEBUG else os.environ.get('DRP49_ALLOWED_HOSTS', '').split())
+ALLOWED_HOSTS = ['*'] if DEBUG else os.environ.get('DRP49_ALLOWED_HOSTS', '').split()
 
 # Application definition
 INSTALLED_APPS = [
-  'main.apps.MainConfig',
-  'accounts.apps.AccountsConfig',
-  'rest_framework',  # The django REST framework
+  'main.config.MainConfig',
+  'accounts.config.AccountsConfig',
+  'rest_framework',  # The Django REST framework
+  'corsheaders',  # The Django CORS headers configurator
   'django.contrib.staticfiles',  # Static files system
-  'django.contrib.contenttypes',  # Relations between models (used in permissions system)
+  'django.contrib.contenttypes',  # Generic relations between models
   'django.contrib.sessions',  # User session system
   'django.contrib.auth',  # User authentication system
-  'django.contrib.messages',  # One-time messages
-  'django.contrib.admin',  # Administration site
-  'django.contrib.humanize',  # Additional templates
 ]
 MIDDLEWARE = [
   'django.middleware.security.SecurityMiddleware',  # Security
   "whitenoise.middleware.WhiteNoiseMiddleware",  # Temporary static files server
   'django.contrib.sessions.middleware.SessionMiddleware',  # User session system
   'django.middleware.locale.LocaleMiddleware',  # Localization, datetime format
+  'corsheaders.middleware.CorsMiddleware',  # CORS headers
   'django.middleware.common.CommonMiddleware',
-  'django.middleware.csrf.CsrfViewMiddleware',  # Security: csrf protection
-  'django.contrib.auth.middleware.AuthenticationMiddleware',  # User authentication system
-  'django.contrib.messages.middleware.MessageMiddleware',  # One-time messages
-  'django.middleware.clickjacking.XFrameOptionsMiddleware',  # Security: clickjacking protection
-]
-TEMPLATES = [
-  {
-    'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'OPTIONS': {
-      'context_processors': [
-        'django.template.context_processors.debug',
-        'django.template.context_processors.request',
-        'django.contrib.auth.context_processors.auth',
-        'django.contrib.messages.context_processors.messages',
-      ],
-    },
-    'APP_DIRS': True,
-    'DIRS': [
-      BASE_DIR / 'templates',  # Global template directories
-      BASE_DIR.parent / 'client' / 'build',
-    ],
-  },
+  'django.middleware.csrf.CsrfViewMiddleware',  # CSRF protection
+  'django.contrib.auth.middleware.AuthenticationMiddleware',  # Authentication system
+  'django.middleware.clickjacking.XFrameOptionsMiddleware',  # Clickjacking protection
 ]
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
@@ -89,37 +67,24 @@ DATABASES = {
   }
 }
 
+# REST framework
+# https://www.django-rest-framework.org/
+REST_FRAMEWORK = {
+  # 'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+  'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
+  # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+  # 'PAGE_SIZE': 10,
+  'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
+  'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser'],
+}
+
 # Custom authentication
 # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/
+AUTH_USER_MODEL = "accounts.User"
 AUTHENTICATION_BACKENDS = [
   'django.contrib.auth.backends.ModelBackend',  # Default backend
   # 'accounts.models.EmailAuthBackend', # Custom backend for logging in with email address
 ]
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-AUTH_PASSWORD_VALIDATORS = [
-  {
-    'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-  },
-  {
-    'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-  },
-  {
-    'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-  },
-  {
-    'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-  },
-]
-
-# Elasticsearch
-# https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
-ELASTICSEARCH_DSL = {
-  'default': {
-    'hosts': 'localhost:9200'
-  },
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -129,6 +94,25 @@ TIME_ZONE = 'Europe/London'
 USE_I18N = True
 # USE_L10N = True
 USE_TZ = True
+
+# HTML templates
+TEMPLATES = [
+  {
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    'OPTIONS': {
+      'context_processors': [
+        'django.template.context_processors.debug',
+        'django.template.context_processors.request',
+        'django.contrib.auth.context_processors.auth',
+      ],
+    },
+    'APP_DIRS': True,
+    'DIRS': [
+      BASE_DIR / 'templates',  # Global template directories
+      BASE_DIR.parent / 'client' / 'build',
+    ],
+  },
+]
 
 # Static files (CSS, JavaScript, etc.) and user uploaded media files (images, videos, etc.)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -165,6 +149,16 @@ else:
       "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
   }
+
+# Allow cross-origin requests from `http://localhost:5173` in debug mode
+if DEBUG:
+  CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
+  CORS_ALLOW_CREDENTIALS = True
+  CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
+  CSRF_COOKIE_SAMESITE = 'None'
+  CSRF_COOKIE_SECURE = True  # Ignored locally: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+  SESSION_COOKIE_SAMESITE = 'None'
+  SESSION_COOKIE_SECURE = True  # Ignored locally: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
 
 # HTTP SSL configuration
 # https://docs.djangoproject.com/en/4.2/ref/settings/#secure-ssl-redirect
