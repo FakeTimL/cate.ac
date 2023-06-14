@@ -4,15 +4,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-'''
-class Chapter(models.Model):
-  name = models.TextField()
-
-  def __str__(self):
-    return self.name
-'''
-
-
 class Topic(models.Model):
   name = models.TextField()
   parent = models.ForeignKey('self', related_name='children', blank=True,  # See: https://stackoverflow.com/a/2493722
@@ -49,7 +40,8 @@ class History(models.Model):
 
 class Feedback(models.Model):
   text = models.TextField()
+  email = models.TextField(blank=True)
   publish_date = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
-    return self.text
+    return self.email + ': ' + self.text

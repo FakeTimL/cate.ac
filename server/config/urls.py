@@ -21,7 +21,7 @@ from django.conf.urls.static import static as media
 from django.views.generic import RedirectView, TemplateView
 
 urlpatterns = [
-  path('admin/', include('rest_framework.urls')),
+  path('api/auth/', include('rest_framework.urls')),
   path('api/accounts/', include('accounts.urls')),
   path('api/main/', include('main.urls')),
 ]

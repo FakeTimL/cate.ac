@@ -3,13 +3,12 @@ import os
 import json
 from random import choice
 from typing import Tuple
-from django.http import (Http404, HttpRequest, HttpResponse, HttpResponseNotFound,
-                         HttpResponseRedirect, HttpResponseServerError)
+from django.contrib import auth
 from django.shortcuts import get_object_or_404
-from django.template import loader
-from django.urls import reverse, reverse_lazy
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+from rest_framework import serializers, views, generics, viewsets, status, permissions
 import openai
 import openai.error
 from markdown import Markdown
@@ -17,30 +16,102 @@ from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.highlight import HighlightExtension
 from .models import *
 
+
 logger = logging.getLogger(__name__)
 
 
-def object_not_found_view(request: HttpRequest, exception=None):
-  return HttpResponseNotFound(loader.get_template('404.html').render({'reason': str(exception)}, request))
+# API endpoints that implement L-CRUD (list, create, retrieve, update, destory).
+# See: https://www.django-rest-framework.org/api-guide/serializers/
+# See: https://www.django-rest-framework.org/api-guide/views/
+# See: https://www.django-rest-framework.org/api-guide/generic-views/
+# See: https://www.django-rest-framework.org/api-guide/viewsets/
 
 
-def internal_server_error_view(request: HttpRequest):
-  return HttpResponseServerError(loader.get_template('500.html').render({}, request))
+# This time we use DRF's abstractions for views (`GenericAPIView`) and permissions (`BasePermission`)
+# since the requirement is simple enough (straightforward L-CRUD, staff writable, others readonly).
+
+class IsAccountAdminOrReadOnly(permissions.BasePermission):
+  def has_permission(self, request: Request, view: views.APIView):
+    return request.user.superuser or request.method in permissions.SAFE_METHODS
 
 
-def topic_view(request: HttpRequest, id=None):
-  if id == None:
-    return HttpResponse(loader.get_template('main/topics.html').render({
-      'chapters': Topic.objects.filter(parent=None)
-    }, request))
+class TopicSerializer(serializers.HyperlinkedModelSerializer):
+  children = serializers.PrimaryKeyRelatedField(many=True, queryset=Topic.objects.all())
+  questions = serializers.PrimaryKeyRelatedField(many=True, queryset=Question.objects.all())
 
-  topic = get_object_or_404(Topic, pk=id)
-  return HttpResponse(loader.get_template('main/topic.html').render({
-    'topic': topic,
-    'description': convert_markdown(topic.resources)
-  }, request))
+  class Meta:
+    model = Topic
+    fields = ['url', 'name', 'parent', 'children', 'questions', 'resources']
+    extra_kwargs = {
+      'url': {'view_name': 'main:topic'},
+      'parent': {'view_name': 'main:topic'},
+      'children': {'view_name': 'main:topic'},
+      'questions': {'view_name': 'main:question'},
+    }
 
 
+class TopicsView(generics.ListCreateAPIView):
+  queryset = Topic.objects.all().order_by('pk')
+  serializer_class = TopicSerializer
+  permission_classes = [IsAccountAdminOrReadOnly]
+
+
+class TopicView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Topic.objects.all()
+  serializer_class = TopicSerializer
+  permission_classes = [IsAccountAdminOrReadOnly]
+
+
+class QuestionSerializer(serializers.HyperlinkedModelSerializer):
+  class Meta:
+    model = Question
+    fields = ['statement', 'mark_denominator', 'mark_minimum', 'mark_maximum', 'mark_scheme', 'gpt_prompt', 'topics']
+    extra_kwargs = {
+      'url': {'view_name': 'main:question'},
+      'topics': {'view_name': 'main:topic'},
+    }
+
+
+class QuestionsView(generics.ListCreateAPIView):
+  queryset = Question.objects.all().order_by('pk')
+  serializer_class = QuestionSerializer
+  permission_classes = [IsAccountAdminOrReadOnly]
+
+
+class QuestionView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Question.objects.all()
+  serializer_class = QuestionSerializer
+  permission_classes = [IsAccountAdminOrReadOnly]
+
+
+class IsAccountAdminOrPostOnly(permissions.BasePermission):
+  def has_permission(self, request: Request, view: views.APIView):
+    return request.user.superuser or request.method == 'post'
+
+
+class FeedbackSerializer(serializers.HyperlinkedModelSerializer):
+  class Meta:
+    model = Feedback
+    fields = ['text', 'email', 'publish_date']
+    extra_kwargs = {
+      'url': {'view_name': 'main:feedback'},
+      'publish_date': {'read_only': True},
+    }
+
+
+class FeedbacksView(generics.ListCreateAPIView):
+  queryset = Feedback.objects.all().order_by('pk')
+  serializer_class = FeedbackSerializer
+  permission_classes = [IsAccountAdminOrPostOnly]
+
+
+class FeedbackView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Feedback.objects.all()
+  serializer_class = FeedbackSerializer
+  permission_classes = [IsAccountAdminOrPostOnly]
+
+
+'''
 def question_view(request: HttpRequest, id=None):
   if id == None:
     try:
@@ -127,6 +198,7 @@ def feedback_view(request: HttpRequest):
     'submit_url': reverse('main:feedback'),
     'submit_method': 'POST',
   }, request))
+'''
 
 
 def convert_markdown(markdown: str) -> str:

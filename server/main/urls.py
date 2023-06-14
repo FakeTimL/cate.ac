@@ -3,12 +3,12 @@ from . import views
 
 app_name = 'main'  # Namespace for URLs
 urlpatterns = [
-  path('', views.topic_view, name='topic'),
-  path('topic/', views.topic_view, name='topic'),
-  path('topic/<int:id>/', views.topic_view, name='topic'),
-  path('question/', views.question_view, name='question'),
-  path('question/<int:id>/', views.question_view, name='question'),
-  path('history/', views.history_view, name='history'),
-  path('history/<int:id>/', views.history_view, name='history'),
-  path('feedback/', views.feedback_view, name='feedback'),
+  path('topics/', views.TopicsView.as_view(), name='topics'),
+  path('topic/<int:pk>/', views.TopicView.as_view(), name='topic'),
+  path('questions/', views.QuestionsView.as_view(), name='questions'),
+  path('question/<int:pk>/', views.QuestionView.as_view(), name='question'),
+  # path('histories/', views.HistoriesView.as_view(), name='histories'),
+  # path('history/<int:pk>/', views.HistoryView.as_view(), name='history'),
+  path('feedbacks/', views.FeedbacksView.as_view(), name='feedbacks'),
+  path('feedback/<int:pk>/', views.FeedbackView.as_view(), name='feedback'),
 ]

@@ -22,14 +22,14 @@ ALLOWED_HOSTS = ['*'] if DEBUG else os.environ.get('DRP49_ALLOWED_HOSTS', '').sp
 
 # Application definition
 INSTALLED_APPS = [
-  'main.config.MainConfig',
-  'accounts.config.AccountsConfig',
-  'rest_framework',  # The Django REST framework
-  'corsheaders',  # The Django CORS headers configurator
   'django.contrib.staticfiles',  # Static files system
   'django.contrib.contenttypes',  # Generic relations between models
   'django.contrib.sessions',  # User session system
   'django.contrib.auth',  # User authentication system
+  'corsheaders',  # The Django CORS headers configurator
+  'rest_framework',  # The Django REST framework
+  'accounts.config.AccountsConfig',
+  'main.config.MainConfig',
 ]
 MIDDLEWARE = [
   'django.middleware.security.SecurityMiddleware',  # Security
