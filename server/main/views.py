@@ -1,13 +1,10 @@
 import logging
 import os
 import json
-from random import choice
-from typing import Tuple
-from django.contrib import auth
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import serializers, views, generics, exceptions, status, permissions
+from rest_framework import serializers, views, generics, permissions, status, exceptions
 import openai
 import openai.error
 from markdown import Markdown
@@ -26,36 +23,20 @@ logger = logging.getLogger(__name__)
 # See: https://www.django-rest-framework.org/api-guide/viewsets/
 
 
-# This time we use DRF's abstractions for views (`GenericAPIView`) and permissions (`BasePermission`)
-# since the requirement is simple enough (straightforward L-CRUD, staff writable, others readonly).
-
-class IsAccountAdminOrReadOnly(permissions.BasePermission):
-  def has_permission(self, request: Request, view: views.APIView):
-    if isinstance(request.user, User) and request.user.superuser:
-      return True
-    else:
-      return request.method in permissions.SAFE_METHODS
+class FeedbackSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Feedback
+    fields = ['pk', 'text', 'email', 'publish_date']
+    extra_kwargs = {'publish_date': {'read_only': True}}
 
 
 class TopicSerializer(serializers.ModelSerializer):
-  children = serializers.PrimaryKeyRelatedField(many=True, queryset=Topic.objects.all())
-  questions = serializers.PrimaryKeyRelatedField(many=True, queryset=Question.objects.all())
+  children = serializers.PrimaryKeyRelatedField(many=True, queryset=Topic.objects)
+  questions = serializers.PrimaryKeyRelatedField(many=True, queryset=Question.objects)
 
   class Meta:
     model = Topic
     fields = ['pk', 'name', 'parent', 'children', 'questions', 'resources']
-
-
-class TopicsView(generics.ListCreateAPIView):
-  queryset = Topic.objects.all().order_by('pk')
-  serializer_class = TopicSerializer
-  permission_classes = [IsAccountAdminOrReadOnly]
-
-
-class TopicView(generics.RetrieveUpdateDestroyAPIView):
-  queryset = Topic.objects.all()
-  serializer_class = TopicSerializer
-  permission_classes = [IsAccountAdminOrReadOnly]
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -65,18 +46,6 @@ class QuestionSerializer(serializers.ModelSerializer):
               'mark_maximum', 'mark_scheme', 'gpt_prompt', 'topics']
 
 
-class QuestionsView(generics.ListCreateAPIView):
-  queryset = Question.objects.all().order_by('pk')
-  serializer_class = QuestionSerializer
-  permission_classes = [IsAccountAdminOrReadOnly]
-
-
-class QuestionView(generics.RetrieveUpdateDestroyAPIView):
-  queryset = Question.objects.all()
-  serializer_class = QuestionSerializer
-  permission_classes = [IsAccountAdminOrReadOnly]
-
-
 class SubmissionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Submission
@@ -84,153 +53,129 @@ class SubmissionSerializer(serializers.ModelSerializer):
     extra_kwargs = {'date': {'read_only': True}}
 
 
-class QuestionSubmissionsView(views.APIView):
-  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic
+# This time we use DRF's abstractions for views (`GenericAPIView`) and permissions (`BasePermission`)
+# since the requirement is simple enough (straightforward L-CRUD, staff writable, others readonly).
 
-  def get(self, request: Request, question_pk: int) -> Response:
-    user = request.user
-    if isinstance(user, User):
-      question = get_object_or_404(Question, pk=question_pk)
-      queryset = Submission.objects.filter(user=user, question=question).order_by('-date')
-      return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
-    else:
-      self.permission_denied()
-
-  def post(self, request: Request, question_pk: int) -> Response:
-    user = request.user
-    if isinstance(user, User):
-      question = get_object_or_404(Question, pk=question_pk)
-      user_answer = request.data.get('user_answer', '')
-      try:
-        (gpt_mark, gpt_comments) = gpt_invoke(question, user_answer)
-        logger.info((request, user_answer, gpt_mark, gpt_comments))
-        if request.user.is_authenticated:
-          submission = Submission(
-            user=request.user,
-            question=question,
-            user_answer=user_answer,
-            gpt_mark=gpt_mark,
-            gpt_comments=gpt_comments,
-          )
-          submission.save()
-          return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
-      except json.JSONDecodeError as error:
-        logger.warning(error)
-        raise exceptions.ValidationError('ChatGPT did not respond in valid JSON format.')
-      except ValueError as error:
-        logger.warning(error)
-        raise exceptions.ValidationError('ChatGPT did not respond with a valid mark.')
-      except openai.error.RateLimitError as error:
-        logger.warning(error)
-        raise exceptions.Throttled('ChatGPT is too busy, please try again later...')
-      except openai.error.OpenAIError as error:
-        logger.warning(error)
-        raise exceptions.APIException('Unexpected ChatGPT error: ' + str(error), status.HTTP_500_INTERNAL_SERVER_ERROR)
-    else:
-      self.permission_denied()
-
-
-class IsAccountAdminOrPostOnly(permissions.BasePermission):
+class IsAdmin(permissions.BasePermission):
   def has_permission(self, request: Request, view: views.APIView):
-    if isinstance(request.user, User) and request.user.superuser:
-      return True
-    else:
-      return request.method == 'post'
+    return (isinstance(request.user, User) and request.user.superuser)
 
 
-class FeedbackSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Feedback
-    fields = ['pk', 'text', 'email', 'publish_date']
-    extra_kwargs = {'publish_date': {'read_only': True}}
+class IsAdminOrReadOnly(permissions.BasePermission):
+  def has_permission(self, request: Request, view: views.APIView):
+    return (isinstance(request.user, User) and request.user.superuser) or request.method in permissions.SAFE_METHODS
+
+
+class IsAdminOrPostOnly(permissions.BasePermission):
+  def has_permission(self, request: Request, view: views.APIView):
+    return (isinstance(request.user, User) and request.user.superuser) or request.method == 'post'
 
 
 class FeedbacksView(generics.ListCreateAPIView):
-  queryset = Feedback.objects.all().order_by('pk')
+  queryset = Feedback.objects.order_by('pk')
   serializer_class = FeedbackSerializer
-  permission_classes = [IsAccountAdminOrPostOnly]
+  permission_classes = [IsAdminOrPostOnly]
 
 
 class FeedbackView(generics.RetrieveUpdateDestroyAPIView):
-  queryset = Feedback.objects.all()
+  queryset = Feedback.objects
   serializer_class = FeedbackSerializer
-  permission_classes = [IsAccountAdminOrPostOnly]
+  permission_classes = [IsAdminOrPostOnly]
 
 
-'''
-def question_view(request: HttpRequest, id=None):
-  if id == None:
-    try:
-      id = choice(Question.objects.values_list('pk', flat=True))
-    except IndexError:
-      raise Http404('No question in database')
+class TopicsView(generics.ListCreateAPIView):
+  queryset = Topic.objects.order_by('pk')
+  serializer_class = TopicSerializer
+  permission_classes = [IsAdminOrReadOnly]
 
-  question = get_object_or_404(Question, pk=id)
 
-  user_answer = request.POST.get('user_answer', None)
-  (gpt_mark, gpt_comments) = (None, None)
-  if user_answer is not None:
+class TopicView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Topic.objects
+  serializer_class = TopicSerializer
+  permission_classes = [IsAdminOrReadOnly]
+
+
+class QuestionsView(generics.ListCreateAPIView):
+  queryset = Question.objects.order_by('pk')
+  serializer_class = QuestionSerializer
+  permission_classes = [IsAdminOrReadOnly]
+
+
+class QuestionView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Question.objects
+  serializer_class = QuestionSerializer
+  permission_classes = [IsAdminOrReadOnly]
+
+
+class SubmissionsView(generics.ListCreateAPIView):
+  queryset = Submission.objects.order_by('pk')
+  serializer_class = SubmissionSerializer
+  permission_classes = [IsAdmin]
+
+
+class SubmissionView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Submission.objects
+  serializer_class = SubmissionSerializer
+  permission_classes = [IsAdmin]
+
+
+class UserSubmissionsView(views.APIView):
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
+
+  # Retrieve all submissions for current user.
+  def get(self, request: Request) -> Response:
+    user = request.user
+    if not isinstance(user, User):
+      self.permission_denied()
+    queryset = Submission.objects.filter(user=user).order_by('-date')
+    return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
+
+
+class UserQuestionSubmissionsView(views.APIView):
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
+
+  # Retrieve all submissions for current user and given question.
+  def get(self, request: Request, pk: int) -> Response:
+    user = request.user
+    if not isinstance(user, User):
+      self.permission_denied()
+    question = get_object_or_404(Question, pk=pk)
+    queryset = Submission.objects.filter(user=user, question=question).order_by('-date')
+    return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
+
+  # Submit a new answer and have ChatGPT grade it.
+  def post(self, request: Request, pk: int) -> Response:
+    user = request.user
+    if not isinstance(user, User):
+      self.permission_denied()
+    question = get_object_or_404(Question, pk=pk)
+    user_answer = request.data.get('user_answer', '')
     try:
       (gpt_mark, gpt_comments) = gpt_invoke(question, user_answer)
       logger.info((request, user_answer, gpt_mark, gpt_comments))
-      # Save history if user has logged in.
-      if request.user.is_authenticated:
-        history = History(
-          user=request.user,
-          question=question,
-          user_answer=user_answer,
-          gpt_mark=gpt_mark,
-          gpt_comments=gpt_comments,
-        )
-        history.save()
-        return HttpResponseRedirect(reverse('main:history', kwargs={'id': history.pk}))
+      submission = Submission(
+        user=request.user,
+        question=question,
+        user_answer=user_answer,
+        gpt_mark=gpt_mark,
+        gpt_comments=gpt_comments,
+      )
+      submission.save()
+      return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
     except json.JSONDecodeError as error:
-      messages.add_message(request, messages.ERROR, 'ChatGPT did not respond in valid JSON format.')
       logger.warning(error)
+      raise exceptions.ValidationError('ChatGPT did not respond in valid JSON format.')
     except ValueError as error:
-      messages.add_message(request, messages.ERROR, 'ChatGPT did not respond with a valid mark.')
       logger.warning(error)
+      raise exceptions.ValidationError('ChatGPT did not respond with a valid mark.')
     except openai.error.RateLimitError as error:
-      messages.add_message(request, messages.ERROR, 'ChatGPT is too busy, please try again later...')
       logger.warning(error)
+      raise exceptions.Throttled('ChatGPT is too busy, please try again later...')
     except openai.error.OpenAIError as error:
-      messages.add_message(request, messages.ERROR, 'Unexpected ChatGPT error: ' + str(error))
       logger.warning(error)
-
-  question.statement = convert_markdown(question.statement)
-  question.mark_scheme = convert_markdown(question.mark_scheme)
-  gpt_mark_divided = None if gpt_mark is None else format(gpt_mark / question.mark_denominator, '.0f')
-  mark_maximum_divided = format(question.mark_maximum / question.mark_denominator, '.0f')
-
-  return HttpResponse(loader.get_template('main/question.html').render({
-    'question': question,
-    'user_answer': user_answer,
-    'gpt_mark_divided': gpt_mark_divided,
-    'mark_maximum_divided': mark_maximum_divided,
-    'gpt_comments': gpt_comments,
-    'submit_url': reverse('main:question', kwargs={'id': id}),
-    'submit_method': 'POST',
-  }, request))
-
-
-@login_required(redirect_field_name='redirect', login_url=reverse_lazy('accounts:login'))
-def history_view(request: HttpRequest, id=None):
-  if id == None:
-    return HttpResponse(loader.get_template('main/histories.html').render({
-      'histories': History.objects.filter(user=request.user)
-    }, request))
-
-  history = get_object_or_404(History, pk=id)
-  history.question.statement = convert_markdown(history.question.statement)
-  history.question.mark_scheme = convert_markdown(history.question.mark_scheme)
-  gpt_mark_divided = format(history.gpt_mark / history.question.mark_denominator, '.0f')
-  mark_maximum_divided = format(history.question.mark_maximum / history.question.mark_denominator, '.0f')
-
-  return HttpResponse(loader.get_template('main/history.html').render({
-    'history': history,
-    'gpt_mark_displayed': f"{gpt_mark_divided} / {mark_maximum_divided}"
-  }, request))
-'''
+      raise exceptions.APIException('Unexpected ChatGPT error: ' + str(error), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def convert_markdown(markdown: str) -> str:
@@ -248,7 +193,7 @@ def convert_markdown(markdown: str) -> str:
   ]).convert(markdown)
 
 
-def gpt_invoke(question: Question, response: str) -> Tuple[int, str]:
+def gpt_invoke(question: Question, response: str) -> tuple[int, str]:
   openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
 
   system = \

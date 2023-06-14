@@ -58,7 +58,7 @@ export default {
       this.topics = [];
       try {
         this.question = (await axios.get(`/main/question/${pk}/`)).data as Question;
-        this.submissions = (await axios.get(`/main/question/${pk}/submissions/`)).data as Submission[];
+        this.submissions = (await axios.get(`/main/question/${pk}/my_submissions/`)).data as Submission[];
         for (const topic_pk of this.question.topics) {
           this.topics.push((await axios.get(`/main/topic/${topic_pk}/`)).data as Topic);
         }
@@ -73,7 +73,7 @@ export default {
       if (this.question === null) return;
       this.waiting = true;
       const submission = (
-        await axios.post(`/main/question/${this.question.pk}/submissions/`, {
+        await axios.post(`/main/question/${this.question.pk}/my_submissions/`, {
           user_answer: this.userAnswer,
         })
       ).data as Submission;

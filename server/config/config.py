@@ -71,9 +71,9 @@ DATABASES = {
 # https://www.django-rest-framework.org/
 REST_FRAMEWORK = {
   # 'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
-  'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
   # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
   # 'PAGE_SIZE': 10,
+  'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
   'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
   'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser'],
 }

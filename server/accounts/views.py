@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import views, serializers, status, permissions
+from rest_framework import serializers, views, permissions, status
 from .models import *
 
 
@@ -14,9 +14,10 @@ from .models import *
 # See: https://www.django-rest-framework.org/api-guide/viewsets/
 
 
-# =======================
-#     Users (public).
-# =======================
+# Credential validator.
+class CredentialSerializer(serializers.Serializer):
+  username = serializers.CharField(max_length=150)
+  password = serializers.CharField(max_length=128)
 
 
 # Public view (read-only).
@@ -72,72 +73,71 @@ class UserAdminSerializer(serializers.ModelSerializer):
 # It is called `refl` since `self` cannot be used in Python.
 def user_serializer(*args, request: Request, refl=False, **kwargs) -> serializers.BaseSerializer:
   if isinstance(request.user, User) and request.user.superuser:
-    serializer_class = UserAdminSerializer
+    return UserAdminSerializer(*args, **kwargs)
   elif refl:
-    serializer_class = UserSelfSerializer
+    return UserSelfSerializer(*args, **kwargs)
   else:
-    serializer_class = UserBasicSerializer
-  kwargs.setdefault('context', {'request': request})
-  return serializer_class(*args, **kwargs)
+    return UserBasicSerializer(*args, **kwargs)
 
 
 class UsersView(views.APIView):
-  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
 
+  # List all users (staff only).
   def get(self, request: Request) -> Response:
-    queryset = User.objects.all().order_by('pk')
+    if not (isinstance(request.user, User) and request.user.superuser):
+      self.permission_denied()
+    queryset = User.objects.order_by('pk')
     return Response(user_serializer(queryset, request=request, refl=False, many=True).data, status.HTTP_200_OK)
 
+  # Create new user (i.e. sign up).
   def post(self, request: Request) -> Response:
     serializer = user_serializer(data=request.data, request=request, refl=True)
-    if serializer.is_valid():
-      serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
-      serializer.save()
-      return Response(serializer.data, status.HTTP_201_CREATED)
-    else:
-      return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    serializer.is_valid(raise_exception=True)
+    serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
+    serializer.save()
+    return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 class UserView(views.APIView):
-  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
 
+  # Retrieve user data.
   def get(self, request: Request, pk: int) -> Response:
     user = get_object_or_404(User, pk=pk)
     refl = isinstance(request.user, User) and request.user.pk == user.pk
     serializer = user_serializer(user, request=request, refl=refl)
     return Response(serializer.data, status.HTTP_200_OK)
 
+  # Update user data.
   def put(self, request: Request, pk: int, partial=False) -> Response:
     user = get_object_or_404(User, pk=pk)
     refl = isinstance(request.user, User) and request.user.pk == user.pk
     serializer = user_serializer(user, request=request, refl=refl, data=request.data, partial=partial)
-    if serializer.is_valid():
-      serializer.save()
-      return Response(serializer.data, status.HTTP_200_OK)
-    else:
-      return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status.HTTP_200_OK)
 
+  # Partially update user data.
   def patch(self, request: Request, pk: int) -> Response:
     return self.put(request, pk, partial=True)
 
+  # Delete user (staff only).
   def delete(self, request: Request, pk: int) -> Response:
-    # Only staffs can delete users.
-    if isinstance(request.user, User) and request.user.superuser:
-      user = get_object_or_404(User, pk=pk)
-      user.delete()
-      return Response(status.HTTP_204_NO_CONTENT)
-    else:
+    if not (isinstance(request.user, User) and request.user.superuser):
       self.permission_denied()
-
-
-class CredentialSerializer(serializers.Serializer):
-  username = serializers.CharField(max_length=150)
-  password = serializers.CharField(max_length=128)
+    user = get_object_or_404(User, pk=pk)
+    user.delete()
+    return Response(status.HTTP_204_NO_CONTENT)
 
 
 class SessionView(views.APIView):
-  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
 
+  # Retrieve currently active session (if exists).
   def get(self, request: Request) -> Response:
     if isinstance(request.user, User):
       serializer = user_serializer(request.user, request=request, refl=True)
@@ -145,50 +145,18 @@ class SessionView(views.APIView):
     else:
       return Response(status.HTTP_204_NO_CONTENT)
 
+  # Create new session (i.e. sign in).
   def post(self, request: Request):
-    serializer = CredentialSerializer(data=request.data)
-    if serializer.is_valid():
-      credential = serializer.validated_data
-      user = auth.authenticate(request, username=credential['username'], password=credential['password'])
-      if user is not None:
-        auth.login(request, user)
-        serializer = user_serializer(request.user, request=request, refl=True)
-        return Response(serializer.data, status.HTTP_201_CREATED)
-      else:
-        self.permission_denied()
-    else:
-      return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    credentials = CredentialSerializer(data=request.data)
+    credentials.is_valid(raise_exception=True)
+    user = auth.authenticate(request, **credentials.validated_data)
+    if user is None:
+      self.permission_denied()  # Incorrect username or password.
+    auth.login(request, user)
+    serializer = user_serializer(request.user, request=request, refl=True)
+    return Response(serializer.data, status.HTTP_201_CREATED)
 
+  # Delete session (i.e. sign out).
   def delete(self, request: Request) -> Response:
     auth.logout(request)
     return Response(status.HTTP_204_NO_CONTENT)
-
-
-# @login_required(redirect_field_name='redirect', login_url=reverse_lazy('accounts:login'))
-# def me(request):
-#   user = get_object_or_404(User, pk=request.user.id)
-#   profile = get_object_or_404(Profile, user=request.user)
-
-#   image_upload = request.FILES.get('image_upload', None)
-#   if image_upload is not None:
-#     filename = get_avatar_filename(request.user, image_upload)
-#     if filename is None:
-#       return HttpResponseRedirect(reverse('accounts:me'))
-#     profile.avatar.save(filename, image_upload, save=True)  # Save file & update database
-#     return HttpResponseRedirect(reverse('accounts:me'))
-
-#   bio = request.POST.get('bio', None)
-#   if bio is not None:
-#     user.first_name = request.POST.get('first_name', '')
-#     user.last_name = request.POST.get('last_name', '')
-#     profile.bio = request.POST.get('bio', '')
-#     user.save()
-#     profile.save()
-#     return HttpResponseRedirect(reverse('accounts:me'))
-
-#   email = request.POST.get('email', None)
-#   if email is not None:
-#     # TODO: email verification
-#     return HttpResponseRedirect(reverse('accounts:me'))
-
-#   return render(request, 'accounts/me.html', {})

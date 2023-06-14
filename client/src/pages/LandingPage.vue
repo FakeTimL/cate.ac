@@ -28,7 +28,7 @@ window.requestAnimationFrame(updateAll);
 <template>
   <div class="banner" style="min-height: 100%; background-color: rgb(51, 143, 212); color: rgb(255, 255, 255)">
     <div class="center">
-      <h1>Technology to help you learn,<br />in an efficient way. (theoretically)</h1>
+      <h1>Technology to help you learn,<br />in an efficient way (theoretically).</h1>
     </div>
   </div>
   <div class="left_and_right banner">
