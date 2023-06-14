@@ -27,12 +27,13 @@ class Question(models.Model):
     return self.statement
 
 
-class History(models.Model):
+class Submission(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   question = models.ForeignKey(Question, on_delete=models.CASCADE)
   user_answer = models.TextField()
   gpt_mark = models.IntegerField()
   gpt_comments = models.TextField()
+  date = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
     return str(self.user) + ": " + self.user_answer

@@ -7,8 +7,7 @@ from django.contrib import auth
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
-from rest_framework import serializers, views, generics, viewsets, status, permissions
+from rest_framework import serializers, views, generics, exceptions, status, permissions
 import openai
 import openai.error
 from markdown import Markdown
@@ -76,6 +75,59 @@ class QuestionView(generics.RetrieveUpdateDestroyAPIView):
   queryset = Question.objects.all()
   serializer_class = QuestionSerializer
   permission_classes = [IsAccountAdminOrReadOnly]
+
+
+class SubmissionSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Submission
+    fields = ['pk', 'user', 'question', 'user_answer', 'gpt_mark', 'gpt_comments', 'date']
+    extra_kwargs = {'date': {'read_only': True}}
+
+
+class QuestionSubmissionsView(views.APIView):
+  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic
+
+  def get(self, request: Request, question_pk: int) -> Response:
+    user = request.user
+    if isinstance(user, User):
+      question = get_object_or_404(Question, pk=question_pk)
+      queryset = Submission.objects.filter(user=user, question=question).order_by('-date')
+      return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
+    else:
+      self.permission_denied()
+
+  def post(self, request: Request, question_pk: int) -> Response:
+    user = request.user
+    if isinstance(user, User):
+      question = get_object_or_404(Question, pk=question_pk)
+      user_answer = request.data.get('user_answer', '')
+      try:
+        (gpt_mark, gpt_comments) = gpt_invoke(question, user_answer)
+        logger.info((request, user_answer, gpt_mark, gpt_comments))
+        if request.user.is_authenticated:
+          submission = Submission(
+            user=request.user,
+            question=question,
+            user_answer=user_answer,
+            gpt_mark=gpt_mark,
+            gpt_comments=gpt_comments,
+          )
+          submission.save()
+          return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
+      except json.JSONDecodeError as error:
+        logger.warning(error)
+        raise exceptions.ValidationError('ChatGPT did not respond in valid JSON format.')
+      except ValueError as error:
+        logger.warning(error)
+        raise exceptions.ValidationError('ChatGPT did not respond with a valid mark.')
+      except openai.error.RateLimitError as error:
+        logger.warning(error)
+        raise exceptions.Throttled('ChatGPT is too busy, please try again later...')
+      except openai.error.OpenAIError as error:
+        logger.warning(error)
+        raise exceptions.APIException('Unexpected ChatGPT error: ' + str(error), status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+      self.permission_denied()
 
 
 class IsAccountAdminOrPostOnly(permissions.BasePermission):

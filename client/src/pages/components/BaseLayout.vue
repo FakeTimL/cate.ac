@@ -42,7 +42,7 @@ export default {
 <template>
   <div class="ui pushable">
     <div
-      class="ui left push sidebar inverted vertical menu"
+      class="ui left push sidebar inverted vertical navigation menu"
       :class="{ visible: sidebarActive, animating: sidebarAnimating }"
     >
       <slot name="navigation"></slot>
@@ -56,6 +56,9 @@ export default {
           <sui-menu-item v-if="!large" @click="onClickButton">
             <sui-icon name="bars" />
           </sui-menu-item>
+          <router-link to="/" v-if="!large">
+            <sui-menu-item header>CATE</sui-menu-item>
+          </router-link>
         </sui-menu>
         <div class="content">
           <router-view v-slot="{ Component, route }">

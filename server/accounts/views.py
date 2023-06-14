@@ -3,7 +3,6 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
 from rest_framework import views, serializers, status, permissions
 from .models import *
 
@@ -30,10 +29,11 @@ class UserBasicSerializer(serializers.ModelSerializer):
       'date_joined', 'last_login',
     ]
     extra_kwargs = {
+      'pk': {'read_only': True},
       'username': {'read_only': True},
+      'avatar': {'read_only': True},
       'first_name': {'read_only': True},
       'last_name': {'read_only': True},
-      'avatar': {'read_only': True},
       'bio': {'read_only': True},
       'date_joined': {'read_only': True},
       'last_login': {'read_only': True},
@@ -50,6 +50,7 @@ class UserSelfSerializer(serializers.ModelSerializer):
       'date_joined', 'last_login',
     ]
     extra_kwargs = {
+      'pk': {'read_only': True},
       'date_joined': {'read_only': True},
       'last_login': {'read_only': True},
     }
@@ -126,7 +127,7 @@ class UserView(views.APIView):
       user.delete()
       return Response(status.HTTP_204_NO_CONTENT)
     else:
-      raise PermissionDenied
+      self.permission_denied()
 
 
 class CredentialSerializer(serializers.Serializer):
@@ -154,7 +155,7 @@ class SessionView(views.APIView):
         serializer = user_serializer(request.user, request=request, refl=True)
         return Response(serializer.data, status.HTTP_201_CREATED)
       else:
-        raise PermissionDenied
+        self.permission_denied()
     else:
       return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
