@@ -15,6 +15,7 @@ import LandingPage from './pages/LandingPage.vue';
 import TopicsPage from './pages/TopicsPage.vue';
 import TopicPage from './pages/TopicPage.vue';
 import QuestionPage from './pages/QuestionPage.vue';
+import SubmissionsPage from './pages/SubmissionsPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
 import AboutPage from './pages/AboutPage.vue';
 import ExamplePage from './pages/ExamplePage.vue'; // An example page of Vue.js.
@@ -26,8 +27,9 @@ const router = createRouter({
   routes: [
     { path: '/', component: LandingPage },
     { path: '/topics', component: TopicsPage },
-    { path: '/topic/:pk', component: TopicPage },
-    { path: '/question/:pk', component: QuestionPage },
+    { path: '/topic/:pk', component: TopicPage, props: true },
+    { path: '/question/:pk', component: QuestionPage, props: true },
+    { path: '/submissions/', component: SubmissionsPage },
     { path: '/feedback', component: FeedbackPage },
     { path: '/about', component: AboutPage },
     { path: '/example', component: ExamplePage },
@@ -44,6 +46,7 @@ const router = createRouter({
   },
 });
 
+// Entry point.
 const app = createApp(App);
 app.use(FomanticUI);
 app.use(router);

@@ -16,7 +16,8 @@ export default {};
 
 <style scoped>
 .outer-container {
-  padding: 5em 0;
+  padding: 1em 0;
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;

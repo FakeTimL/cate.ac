@@ -30,11 +30,11 @@ export default {
       return this.currentPathIs('/');
     },
   },
-  async mounted() {
-    const response = await api.get('accounts/session/', {});
-    if (response.data['username']) {
-      this.username = response.data['username'];
-      this.avatar = response.data['avatar'] ?? defaultAvatar;
+  async created() {
+    const data = (await api.get('accounts/session/', {})).data;
+    if (data['username']) {
+      this.username = data['username'];
+      this.avatar = data['avatar'] ?? defaultAvatar;
     }
   },
 };
@@ -49,8 +49,8 @@ export default {
       <router-link to="/topics">
         <sui-menu-item :active="currentPathIs('/topics')">Topics</sui-menu-item>
       </router-link>
-      <router-link to="/history" v-if="username">
-        <sui-menu-item :active="currentPathIs('/history')">Answers</sui-menu-item>
+      <router-link to="/submissions" v-if="username">
+        <sui-menu-item :active="currentPathIs('/submissions')">Answers</sui-menu-item>
       </router-link>
       <router-link to="/feedback">
         <sui-menu-item :active="currentPathIs('/feedback')">Feedback</sui-menu-item>

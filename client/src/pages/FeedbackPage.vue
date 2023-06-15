@@ -33,7 +33,7 @@ export default {
 </script>
 
 <template>
-  <sui-container text style="padding: 1em 0">
+  <sui-container text style="padding: 1em 0; min-height: 80vh">
     <sui-header as="h1">Send anonymous feedback</sui-header>
 
     <sui-form>
