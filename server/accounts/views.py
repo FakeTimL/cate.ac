@@ -65,14 +65,14 @@ class UserAdminSerializer(serializers.ModelSerializer):
       'pk', 'username', 'password', 'email',
       'avatar', 'first_name', 'last_name', 'bio',
       'date_joined', 'last_login',
-      'superuser',
+      'admin',
     ]
 
 
 # Allow us to select a serializer based on `refl`.
 # It is called `refl` since `self` cannot be used in Python.
 def user_serializer(*args, request: Request, refl=False, **kwargs) -> serializers.BaseSerializer:
-  if isinstance(request.user, User) and request.user.superuser:
+  if isinstance(request.user, User) and request.user.admin:
     return UserAdminSerializer(*args, **kwargs)
   elif refl:
     return UserSelfSerializer(*args, **kwargs)
@@ -86,7 +86,7 @@ class UsersView(views.APIView):
 
   # List all users (staff only).
   def get(self, request: Request) -> Response:
-    if not (isinstance(request.user, User) and request.user.superuser):
+    if not (isinstance(request.user, User) and request.user.admin):
       self.permission_denied()
     queryset = User.objects.order_by('pk')
     return Response(user_serializer(queryset, request=request, refl=False, many=True).data, status.HTTP_200_OK)
@@ -126,7 +126,7 @@ class UserView(views.APIView):
 
   # Delete user (staff only).
   def delete(self, request: Request, pk: int) -> Response:
-    if not (isinstance(request.user, User) and request.user.superuser):
+    if not (isinstance(request.user, User) and request.user.admin):
       self.permission_denied()
     user = get_object_or_404(User, pk=pk)
     user.delete()

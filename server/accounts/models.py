@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
     return user
 
   def create_superuser(self, username, password=None, **extra_fields):
-    extra_fields.setdefault("superuser", True)
+    extra_fields.setdefault("admin", True)
     return self.create_user(username, password, **extra_fields)
 
 
@@ -41,7 +41,7 @@ def user_directory_path(self: models.Model, filename: str) -> str:
 class User(AbstractBaseUser):
   username = models.CharField(max_length=150, unique=True, validators=[username_validator])
   email = models.EmailField(blank=True)
-  superuser = models.BooleanField(default=False)
+  admin = models.BooleanField(default=False)
   avatar = models.ImageField(upload_to=user_directory_path, blank=True)
   first_name = models.CharField(max_length=150, blank=True)
   last_name = models.CharField(max_length=150, blank=True)
@@ -63,17 +63,17 @@ class User(AbstractBaseUser):
 
   @property
   def is_staff(self) -> bool:
-    return self.superuser
+    return self.admin
 
   @property
   def is_active(self) -> bool:
     return True
 
   def has_perm(self, perm: str, obj=None) -> bool:
-    return self.superuser
+    return self.admin
 
   def has_module_perms(self, app_label: str) -> bool:
-    return self.superuser
+    return self.admin
 
 
 # Adding custom authentication backend, modified from Django's built-in ModelBackend

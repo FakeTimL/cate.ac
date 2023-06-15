@@ -58,17 +58,17 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 class IsAdmin(permissions.BasePermission):
   def has_permission(self, request: Request, view: views.APIView):
-    return (isinstance(request.user, User) and request.user.superuser)
+    return (isinstance(request.user, User) and request.user.admin)
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
   def has_permission(self, request: Request, view: views.APIView):
-    return (isinstance(request.user, User) and request.user.superuser) or request.method in permissions.SAFE_METHODS
+    return (isinstance(request.user, User) and request.user.admin) or request.method in permissions.SAFE_METHODS
 
 
 class IsAdminOrPostOnly(permissions.BasePermission):
   def has_permission(self, request: Request, view: views.APIView):
-    return (isinstance(request.user, User) and request.user.superuser) or request.method == 'post'
+    return (isinstance(request.user, User) and request.user.admin) or request.method == 'post'
 
 
 class FeedbacksView(generics.ListCreateAPIView):
