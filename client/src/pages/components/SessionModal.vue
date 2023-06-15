@@ -1,10 +1,5 @@
 <script lang="ts">
-import * as constants from '@/constants';
-import axios, { AxiosError } from 'axios';
-axios.defaults.baseURL = constants.apiRoot;
-axios.defaults.withCredentials = true;
-axios.defaults.xsrfHeaderName = constants.csrfHeaderName;
-axios.defaults.xsrfCookieName = constants.csrfCookieName;
+import { api } from '@/api';
 
 export default {
   // See: https://vuejs.org/guide/components/v-model.html
@@ -21,7 +16,7 @@ export default {
       this.errors = [];
       this.waiting = true;
       try {
-        await axios.delete('/accounts/session/', {});
+        await api.delete('accounts/session/', {});
         this.waiting = false;
         window.location.reload(); // Page refresh is required for new CSRF token.
       } catch (error) {

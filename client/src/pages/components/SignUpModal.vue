@@ -1,10 +1,6 @@
 <script lang="ts">
-import * as constants from '@/constants';
-import axios, { AxiosError } from 'axios';
-axios.defaults.baseURL = constants.apiRoot;
-axios.defaults.withCredentials = true;
-axios.defaults.xsrfHeaderName = constants.csrfHeaderName;
-axios.defaults.xsrfCookieName = constants.csrfCookieName;
+import { api } from '@/api';
+import { AxiosError } from 'axios';
 
 export default {
   // See: https://vuejs.org/guide/components/v-model.html
@@ -50,12 +46,12 @@ export default {
       }
       this.waiting = true;
       try {
-        await axios.post('/accounts/users/', {
+        await api.post('accounts/users/', {
           username: this.username,
           password: this.password,
           email: this.email,
         });
-        await axios.post('/accounts/session/', {
+        await api.post('accounts/session/', {
           username: this.username,
           password: this.password,
         });

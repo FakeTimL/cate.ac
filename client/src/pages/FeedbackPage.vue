@@ -1,10 +1,5 @@
 <script lang="ts">
-import * as constants from '@/constants';
-import axios from 'axios';
-axios.defaults.baseURL = constants.apiRoot;
-axios.defaults.withCredentials = true;
-axios.defaults.xsrfHeaderName = constants.csrfHeaderName;
-axios.defaults.xsrfCookieName = constants.csrfCookieName;
+import { api } from '@/api';
 
 export default {
   data() {
@@ -22,7 +17,7 @@ export default {
       this.errors = [];
       this.waiting = true;
       try {
-        await axios.post('/main/feedbacks/', {
+        await api.post('main/feedbacks/', {
           text: this.text,
           email: this.email,
         });

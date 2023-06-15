@@ -1,27 +1,6 @@
 <script lang="ts">
-import * as constants from '@/constants';
-import axios, { AxiosError } from 'axios';
-axios.defaults.baseURL = constants.apiRoot;
-
-type Topic = {
-  pk: number;
-  name: string;
-  parent: number | null;
-  children: number[];
-  questions: number[];
-  resources: string;
-};
-
-type Question = {
-  pk: number;
-  statement: string;
-  mark_denominator: number;
-  mark_minimum: number;
-  mark_maximum: number;
-  mark_scheme: string;
-  gpt_prompt: string;
-  topics: number[];
-};
+import { api, markdownHtml, type Topic, type Question } from '@/api';
+import { render } from '@/render';
 
 export default {
   data() {
@@ -40,10 +19,12 @@ export default {
       this.topic = null;
       this.questions = [];
       try {
-        this.topic = (await axios.get(`/main/topic/${pk}/`)).data as Topic;
+        this.topic = (await api.get(`main/topic/${pk}/`)).data as Topic;
         for (const questions_pk of this.topic.questions) {
-          this.questions.push((await axios.get(`/main/question/${questions_pk}/`)).data as Question);
+          this.questions.push((await api.get(`main/question/${questions_pk}/`)).data as Question);
         }
+        this.topic.resources = await markdownHtml(this.topic.resources);
+        render(this.$refs.markdown as HTMLElement);
         this.loading = false;
       } catch (error) {
         // TODO
@@ -63,62 +44,64 @@ export default {
 </script>
 
 <template>
-  <sui-container text style="padding: 1em 0">
-    <sui-header as="h1">{{ topic?.name }}</sui-header>
-    <div class="ui placeholder" v-if="loading">
-      <div class="image header">
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
-      <div class="paragraph">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
-      <div class="image header">
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
-      <div class="paragraph">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
-      <div class="image header">
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
-      <div class="paragraph">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </div>
+  <div class="ui placeholder" v-if="loading">
+    <div class="image header">
+      <div class="line"></div>
+      <div class="line"></div>
     </div>
-    <sui-list divided selection size="medium" v-if="!loading">
-      <sui-list-item @click="modalIsActive = true">
-        <sui-icon name="info circle" />
-        <sui-list-content>
-          <sui-list-header>What is this topic about?</sui-list-header>
-        </sui-list-content>
-      </sui-list-item>
-      <router-link class="ui item" v-for="question in questions" :key="question.pk" :to="`/question/${question.pk}/`">
-        <sui-icon name="question circle outline" />
-        <sui-list-content>
-          <sui-list-header>{{ question.statement.substring(0, 50) }}...</sui-list-header>
-        </sui-list-content>
-      </router-link>
-    </sui-list>
-  </sui-container>
-  <sui-modal v-model="modalIsActive">
-    <sui-header as="h1">What is this topic about?</sui-header>
-    <sui-modal-content><div v-html="topic?.resources"></div></sui-modal-content>
-  </sui-modal>
+    <div class="paragraph">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <div class="image header">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <div class="paragraph">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <div class="image header">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <div class="paragraph">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+  <div v-if="!loading && topic">
+    <sui-container text style="padding: 1em 0">
+      <sui-header as="h1">{{ topic.name }}</sui-header>
+      <sui-list divided selection size="medium">
+        <sui-list-item @click="modalIsActive = true">
+          <sui-icon name="info circle" />
+          <sui-list-content>
+            <sui-list-header>What this topic is about?</sui-list-header>
+          </sui-list-content>
+        </sui-list-item>
+        <router-link class="ui item" v-for="question in questions" :key="question.pk" :to="`/question/${question.pk}/`">
+          <sui-icon name="question circle outline" />
+          <sui-list-content>
+            <sui-list-header>{{ question.statement.substring(0, 50) }}...</sui-list-header>
+          </sui-list-content>
+        </router-link>
+      </sui-list>
+    </sui-container>
+    <sui-modal v-model="modalIsActive">
+      <sui-header as="h1">What this topic is about?</sui-header>
+      <sui-modal-content><div class="markdown" ref="markdown" v-html="topic.resources"></div></sui-modal-content>
+    </sui-modal>
+  </div>
 </template>
 
 <style scoped></style>

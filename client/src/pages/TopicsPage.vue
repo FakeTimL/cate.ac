@@ -1,16 +1,5 @@
 <script lang="ts">
-import * as constants from '@/constants';
-import axios, { AxiosError } from 'axios';
-axios.defaults.baseURL = constants.apiRoot;
-
-type Topic = {
-  pk: number;
-  name: string;
-  parent: number | null;
-  children: number[];
-  questions: number[];
-  resources: string;
-};
+import { api, type Topic } from '@/api';
 
 export default {
   data() {
@@ -22,7 +11,7 @@ export default {
   },
   async mounted() {
     try {
-      for (let topic of (await axios.get('/main/topics/')).data as Topic[]) {
+      for (let topic of (await api.get('main/topics/')).data as Topic[]) {
         if (topic.parent === null) {
           this.chapters.push(topic);
         } else {

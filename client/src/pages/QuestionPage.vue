@@ -1,38 +1,6 @@
 <script lang="ts">
-import * as constants from '@/constants';
-import axios, { AxiosError } from 'axios';
-axios.defaults.baseURL = constants.apiRoot;
-axios.defaults.withCredentials = true;
-axios.defaults.xsrfHeaderName = constants.csrfHeaderName;
-axios.defaults.xsrfCookieName = constants.csrfCookieName;
-
-type Topic = {
-  pk: number;
-  name: string;
-  parent: number | null;
-  children: number[];
-  questions: number[];
-  resources: string;
-};
-
-type Question = {
-  pk: number;
-  statement: string;
-  mark_denominator: number;
-  mark_minimum: number;
-  mark_maximum: number;
-  mark_scheme: string;
-  gpt_prompt: string;
-  topics: number[];
-};
-
-type Submission = {
-  pk: number;
-  user_answer: string;
-  gpt_mark: number;
-  gpt_comments: string;
-  date: string;
-};
+import { api, markdownHtml, type Topic, type Question, type Submission } from '@/api';
+import { render } from '@/render';
 
 export default {
   data() {
@@ -57,11 +25,14 @@ export default {
       this.submissions = [];
       this.topics = [];
       try {
-        this.question = (await axios.get(`/main/question/${pk}/`)).data as Question;
-        this.submissions = (await axios.get(`/main/question/${pk}/my_submissions/`)).data as Submission[];
+        this.question = (await api.get(`main/question/${pk}/`)).data as Question;
+        this.submissions = (await api.get(`main/question/${pk}/my_submissions/`)).data as Submission[];
         for (const topic_pk of this.question.topics) {
-          this.topics.push((await axios.get(`/main/topic/${topic_pk}/`)).data as Topic);
+          this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
         }
+        this.question.statement = await markdownHtml(this.question.statement);
+        this.question.mark_scheme = await markdownHtml(this.question.mark_scheme);
+        render(this.$refs.markdown as HTMLElement);
         this.loading = false;
       } catch (error) {
         // TODO
@@ -73,12 +44,12 @@ export default {
       if (this.question === null) return;
       this.waiting = true;
       const submission = (
-        await axios.post(`/main/question/${this.question.pk}/my_submissions/`, {
+        await api.post(`main/question/${this.question.pk}/my_submissions/`, {
           user_answer: this.userAnswer,
         })
       ).data as Submission;
       this.submissions.unshift(submission);
-      // this.$refs.submissions.focus();
+      (this.$refs.submissions as HTMLElement).focus();
     },
   },
   created() {
@@ -96,9 +67,7 @@ export default {
   <sui-container text style="padding: 1em 0" v-if="question">
     <sui-tab>
       <sui-tab-panel header="Question">
-        <div class="markdown" ref="question">
-          {{ question.statement }}
-        </div>
+        <div class="markdown" ref="markdown" v-html="question.statement"></div>
         <sui-divider />
         <form class="ui form">
           <div class="field">
@@ -122,10 +91,10 @@ export default {
                 {{ question.mark_maximum / question.mark_denominator }}
               </sui-item-header>
               <!--
-                  <sui-item-meta>
-                    <span>{{ submission.date }}</span>
-                  </sui-item-meta>
-                  -->
+              <sui-item-meta>
+                <span>{{ submission.date }}</span>
+              </sui-item-meta>
+              -->
               <sui-item-description>
                 {{ submission.user_answer }}
               </sui-item-description>

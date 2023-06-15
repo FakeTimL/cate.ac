@@ -1,11 +1,5 @@
 <script lang="ts">
-import * as constants from '@/constants';
-import axios from 'axios';
-axios.defaults.baseURL = constants.apiRoot;
-axios.defaults.withCredentials = true;
-axios.defaults.xsrfHeaderName = constants.csrfHeaderName;
-axios.defaults.xsrfCookieName = constants.csrfCookieName;
-
+import { api } from '@/api';
 import { useRouter } from 'vue-router';
 import BaseLayout from './pages/components/BaseLayout.vue';
 import SignUpModal from './pages/components/SignUpModal.vue';
@@ -37,7 +31,7 @@ export default {
     },
   },
   async mounted() {
-    const response = await axios.get('/accounts/session/', {});
+    const response = await api.get('accounts/session/', {});
     if (response.data['username']) {
       this.username = response.data['username'];
       this.avatar = response.data['avatar'] ?? defaultAvatar;

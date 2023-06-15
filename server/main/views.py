@@ -178,21 +178,6 @@ class UserQuestionSubmissionsView(views.APIView):
       raise exceptions.APIException('Unexpected ChatGPT error: ' + str(error), status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def convert_markdown(markdown: str) -> str:
-  return Markdown(extensions=[
-    'nl2br',
-    'smarty',
-    'toc',
-    'pymdownx.extra',
-    'pymdownx.tilde',
-    'pymdownx.mark',
-    'pymdownx.tasklist',
-    'pymdownx.escapeall',
-    HighlightExtension(use_pygments=False),
-    ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
-  ]).convert(markdown)
-
-
 def gpt_invoke(question: Question, response: str) -> tuple[int, str]:
   openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
 
@@ -215,3 +200,28 @@ def gpt_invoke(question: Question, response: str) -> tuple[int, str]:
   feedback = json.loads(content)
 
   return int(float(feedback['mark']) * question.mark_denominator + 0.5), feedback['comment']
+
+
+class MarkdownHTMLView(views.APIView):
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
+
+  # Convert Markdown to HTML.
+  def post(self, request: Request) -> Response:
+    markdown = request.data.get('markdown', '')
+    return Response({'html': markdown_to_html(markdown)}, status.HTTP_200_OK)
+
+
+def markdown_to_html(markdown: str) -> str:
+  return Markdown(extensions=[
+    'nl2br',
+    'smarty',
+    'toc',
+    'pymdownx.extra',
+    'pymdownx.tilde',
+    'pymdownx.mark',
+    'pymdownx.tasklist',
+    'pymdownx.escapeall',
+    HighlightExtension(use_pygments=False),
+    ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
+  ]).convert(markdown)

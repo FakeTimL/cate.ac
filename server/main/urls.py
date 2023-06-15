@@ -13,4 +13,5 @@ urlpatterns = [
   path('submission/<int:pk>/', views.SubmissionView.as_view(), name='submission'),
   path('my_submissions/', views.UserSubmissionsView.as_view(), name='user_submissions'),
   path('question/<int:pk>/my_submissions/', views.UserQuestionSubmissionsView.as_view(), name='user_question_submissions'),
+  path('markdown_html/', views.MarkdownHTMLView.as_view(), name='markdown_html'),
 ]
