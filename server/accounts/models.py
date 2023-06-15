@@ -1,6 +1,9 @@
+from typing import Optional
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password
+from django.forms import ValidationError
+from django.http import HttpRequest
 from django.utils import timezone
 
 
@@ -8,10 +11,6 @@ from django.utils import timezone
 # See: https://docs.djangoproject.com/en/4.2/ref/contrib/auth/#user-model
 # See: https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#substituting-a-custom-user-model
 # See: https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#specifying-a-custom-user-model
-
-
-def user_directory_path(self: models.Model, filename: str) -> str:
-  return 'accounts/user_{0}/{1}'.format(self.pk, filename)
 
 
 class UserManager(BaseUserManager):
@@ -28,8 +27,19 @@ class UserManager(BaseUserManager):
     return self.create_user(username, password, **extra_fields)
 
 
+def username_validator(username: str):
+  if username.strip() != username:
+    raise ValidationError('Username must not start with or end with a whitespace.')
+  if len(username) < 4:
+    raise ValidationError('Username must be at least 4 characters long.')
+
+
+def user_directory_path(self: models.Model, filename: str) -> str:
+  return 'accounts/user_{0}/{1}'.format(self.pk, filename)
+
+
 class User(AbstractBaseUser):
-  username = models.CharField(max_length=150, unique=True)
+  username = models.CharField(max_length=150, unique=True, validators=[username_validator])
   email = models.EmailField(blank=True)
   superuser = models.BooleanField(default=False)
   avatar = models.ImageField(upload_to=user_directory_path, blank=True)
@@ -49,37 +59,60 @@ class User(AbstractBaseUser):
   def __str__(self):
     return str(self.username)
 
+  # The following properties are required by the Django administration site.
+
+  @property
+  def is_staff(self) -> bool:
+    return self.superuser
+
+  @property
+  def is_active(self) -> bool:
+    return True
+
+  def has_perm(self, perm: str, obj=None) -> bool:
+    return self.superuser
+
+  def has_module_perms(self, app_label: str) -> bool:
+    return self.superuser
+
 
 # Adding custom authentication backend, modified from Django's built-in ModelBackend
-# https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#writing-an-authentication-backend
-# https://github.com/django/django/blob/master/django/contrib/auth/backends.py
+# https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#writing-an-authentication-backend
+# https://github.com/django/django/blob/main/django/contrib/auth/backends.py
 
-# class EmailAuthBackend(BaseBackend):
-#   ''' Additional authentication backend that checks input username against email address (so users can log in with email addresses)
-#   '''
+# This import must be put after the declaration of `class User`.
+from django.contrib.auth.backends import BaseBackend  # nopep8
 
-#   def authenticate(self, request, username=None, password=None):
-#     if username is None or password is None:
-#       return
-#     try:
-#       user = User._default_manager.get(email__iexact=username)
-#     except User.DoesNotExist:
-#       # Run the default password hasher once to reduce the timing
-#       # difference between an existing and a nonexistent user (#20760).
-#       User().set_password(password)
-#     else:
-#       if user.check_password(password) and self.user_can_authenticate(user):
-#         return user
 
-#   def user_can_authenticate(self, user):
-#     ''' Reject users with is_active = False. Custom user models that don't have that attribute are allowed.
-#     '''
-#     is_active = getattr(user, 'is_active', None)
-#     return is_active or is_active is None
+class AuthBackend(BaseBackend):
+  def user_can_authenticate(self, user: User):
+    return user.is_active
 
-#   def get_user(self, user_id):
-#     try:
-#       user = User._default_manager.get(pk=user_id)
-#     except User.DoesNotExist:
-#       return None
-#     return user if self.user_can_authenticate(user) else None
+  def get_user(self, pk: int) -> Optional[User]:
+    try:
+      user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+      return None
+    if not self.user_can_authenticate(user):
+      return None
+    return user
+
+  def authenticate(
+    self,
+    request: HttpRequest,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    **kwargs
+  ) -> Optional[User]:
+    if username is None or password is None:
+      return None
+    try:
+      user = User.objects.get(username=username)
+    except User.DoesNotExist:
+      User().check_password(password)
+      return None
+    if not user.check_password(password):
+      return None
+    if not self.user_can_authenticate(user):
+      return None
+    return user

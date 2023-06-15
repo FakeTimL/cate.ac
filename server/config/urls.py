@@ -19,8 +19,10 @@ from django.conf import settings
 from django.templatetags.static import static
 from django.conf.urls.static import static as media
 from django.views.generic import RedirectView, TemplateView
+from django.contrib import admin
 
 urlpatterns = [
+  path('admin/', admin.site.urls),
   path('api/auth/', include('rest_framework.urls')),
   path('api/accounts/', include('accounts.urls')),
   path('api/main/', include('main.urls')),

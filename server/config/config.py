@@ -25,7 +25,9 @@ INSTALLED_APPS = [
   'django.contrib.staticfiles',  # Static files system
   'django.contrib.contenttypes',  # Generic relations between models
   'django.contrib.sessions',  # User session system
+  'django.contrib.messages',  # One-time messages (required by the administration site)
   'django.contrib.auth',  # User authentication system
+  'django.contrib.admin',  # Administration site
   'corsheaders',  # The Django CORS headers configurator
   'rest_framework',  # The Django REST framework
   'accounts.config.AccountsConfig',
@@ -39,8 +41,9 @@ MIDDLEWARE = [
   'corsheaders.middleware.CorsMiddleware',  # CORS headers
   'django.middleware.common.CommonMiddleware',
   'django.middleware.csrf.CsrfViewMiddleware',  # CSRF protection
-  'django.contrib.auth.middleware.AuthenticationMiddleware',  # Authentication system
   'django.middleware.clickjacking.XFrameOptionsMiddleware',  # Clickjacking protection
+  'django.contrib.messages.middleware.MessageMiddleware',  # One-time messages (required by the administration site)
+  'django.contrib.auth.middleware.AuthenticationMiddleware',  # Authentication system
 ]
 ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
@@ -82,7 +85,7 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/
 AUTH_USER_MODEL = "accounts.User"
 AUTHENTICATION_BACKENDS = [
-  'django.contrib.auth.backends.ModelBackend',  # Default backend
+  'accounts.models.AuthBackend',  # Default backend
   # 'accounts.models.EmailAuthBackend', # Custom backend for logging in with email address
 ]
 
@@ -103,6 +106,7 @@ TEMPLATES = [
       'context_processors': [
         'django.template.context_processors.debug',
         'django.template.context_processors.request',
+        'django.contrib.messages.context_processors.messages',
         'django.contrib.auth.context_processors.auth',
       ],
     },
@@ -150,16 +154,6 @@ else:
     },
   }
 
-# Allow cross-origin requests from `http://localhost:5173` in debug mode
-if DEBUG:
-  CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
-  CORS_ALLOW_CREDENTIALS = True
-  CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
-  CSRF_COOKIE_SAMESITE = 'None'
-  CSRF_COOKIE_SECURE = True  # Ignored locally: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
-  SESSION_COOKIE_SAMESITE = 'None'
-  SESSION_COOKIE_SECURE = True  # Ignored locally: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
-
 # HTTP SSL configuration
 # https://docs.djangoproject.com/en/4.2/ref/settings/#secure-ssl-redirect
 # if not DEBUG:
@@ -197,3 +191,13 @@ LOGGING = {
     },
   },
 }
+
+# Allow cross-origin requests from `http://localhost:5173` in debug mode
+if DEBUG:
+  CORS_ALLOWED_ORIGINS = ['http://localhost:5173']
+  CORS_ALLOW_CREDENTIALS = True
+  CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']
+  CSRF_COOKIE_SAMESITE = 'None'
+  CSRF_COOKIE_SECURE = True  # Ignored locally: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+  SESSION_COOKIE_SAMESITE = 'None'
+  SESSION_COOKIE_SECURE = True  # Ignored locally: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
