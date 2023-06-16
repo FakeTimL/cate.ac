@@ -1,6 +1,9 @@
 <script lang="ts">
 import { api } from '@/api';
-import { AxiosError } from 'axios';
+import { FormErrors } from '@/forms';
+import axios from 'axios';
+
+class FormFields {}
 
 export default {
   // See: https://vuejs.org/guide/components/v-model.html
@@ -9,7 +12,8 @@ export default {
   data() {
     return {
       waiting: false,
-      errorList: [] as string[],
+      fields: new FormFields(),
+      errors: new FormErrors<FormFields>({}),
     };
   },
   computed: {
@@ -24,22 +28,15 @@ export default {
   },
   methods: {
     async submit() {
-      this.errorList = [];
+      this.errors.clear();
       this.waiting = true;
       try {
         await api.delete('accounts/session/');
         window.location.reload(); // Page refresh is required for new CSRF token.
+        return;
       } catch (e) {
-        if (e instanceof AxiosError) {
-          if (e.response !== undefined) {
-            if (e.response.data['detail']) this.errorList.push(String(e.response.data['detail']));
-            if (e.response.data['non_field_errors']) this.errorList.push(String(e.response.data['non_field_errors']));
-          } else {
-            this.errorList.push(e.message);
-          }
-        } else {
-          throw e;
-        }
+        if (axios.isAxiosError(e)) this.errors.decode(e);
+        else throw e;
       }
       this.waiting = false;
     },
@@ -54,11 +51,11 @@ export default {
       <sui-form></sui-form>
     </sui-modal-content>
     <sui-modal-actions>
-      <sui-message v-if="errorList.length" icon error>
+      <sui-message v-if="errors.all.length > 0" icon error>
         <sui-icon name="info" />
         <sui-message-content>
           <sui-list bulleted>
-            <sui-list-item v-for="error of errorList" :key="error">{{ error }}</sui-list-item>
+            <sui-list-item v-for="error of errors.all" :key="error">{{ error }}</sui-list-item>
           </sui-list>
         </sui-message-content>
       </sui-message>

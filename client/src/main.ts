@@ -1,9 +1,5 @@
 import FomanticUI from 'vue-fomantic-ui';
 import 'fomantic-ui-css/semantic.min.css';
-import 'katex';
-import 'katex/dist/katex.min.css';
-import 'highlight.js';
-import 'highlight.js/styles/github.css';
 
 // import '@/assets/geometry.css';
 // import '@/assets/styles.css';

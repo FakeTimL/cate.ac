@@ -16,5 +16,15 @@ export default defineConfig({
   build: {
     outDir: 'build',
     assetsDir: 'static',
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          semantic: ['fomantic-ui-css/semantic.min.css'],
+          katex: ['katex'],
+          hljs: ['highlight.js'],
+        },
+      },
+    },
   },
 });

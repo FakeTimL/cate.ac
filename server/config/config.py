@@ -84,10 +84,7 @@ REST_FRAMEWORK = {
 # Custom authentication
 # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/
 AUTH_USER_MODEL = "accounts.User"
-AUTHENTICATION_BACKENDS = [
-  'accounts.models.AuthBackend',  # Default backend
-  # 'accounts.models.EmailAuthBackend', # Custom backend for logging in with email address
-]
+AUTHENTICATION_BACKENDS = ['accounts.models.AuthBackend']
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

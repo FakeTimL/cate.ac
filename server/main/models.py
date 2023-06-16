@@ -1,7 +1,5 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from accounts.models import User
 
 
 class Feedback(models.Model):
@@ -9,7 +7,7 @@ class Feedback(models.Model):
   email = models.EmailField(blank=True)
   publish_date = models.DateTimeField(auto_now_add=True)
 
-  def __str__(self):
+  def __str__(self) -> str:
     return self.email + ': ' + self.text
 
 
@@ -18,7 +16,7 @@ class Topic(models.Model):
   parent = models.ForeignKey('self', related_name='children', blank=True, null=True, on_delete=models.SET_NULL)
   resources = models.TextField(blank=True)
 
-  def __str__(self):
+  def __str__(self) -> str:
     return self.name
 
 
@@ -31,7 +29,7 @@ class Question(models.Model):
   gpt_prompt = models.TextField()
   topics = models.ManyToManyField(Topic, related_name='questions')
 
-  def __str__(self):
+  def __str__(self) -> str:
     return self.statement
 
 
@@ -43,5 +41,5 @@ class Submission(models.Model):
   gpt_comments = models.TextField()
   date = models.DateTimeField(auto_now_add=True)
 
-  def __str__(self):
+  def __str__(self) -> str:
     return str(self.user) + ": " + self.user_answer

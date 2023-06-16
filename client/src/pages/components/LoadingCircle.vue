@@ -29,14 +29,12 @@ export default {
 <style scoped>
 /* See: https://stackoverflow.com/questions/59053601/adapt-parent-to-maximum-size-of-its-children-in-css */
 .stack-container {
-  position: relative;
-  height: max-content;
-  width: 100%;
   display: grid;
+  grid-template-rows: max-content;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .stack-container > .child {
-  position: relative;
   grid-column: 1 / -1;
   grid-row: 1;
 }

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -14,20 +15,18 @@ from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
-  def create_user(self, username, password=None, **extra_fields):
-    if not username:
-      raise ValueError("The given username must be set.")
+  def create_user(self, username: str, password: Optional[str] = None, **extra_fields) -> User:
     user = self.model(username=username, **extra_fields)
     user.password = make_password(password)
     user.save()
     return user
 
-  def create_superuser(self, username, password=None, **extra_fields):
-    extra_fields.setdefault("admin", True)
+  def create_superuser(self, username: str, password: Optional[str] = None, **extra_fields) -> User:
+    extra_fields.setdefault('admin', True)
     return self.create_user(username, password, **extra_fields)
 
 
-def username_validator(username: str):
+def username_validator(username: str) -> None:
   if username.strip() != username:
     raise ValidationError('Username must not start with or end with a whitespace.')
   if len(username) < 4:
@@ -56,7 +55,7 @@ class User(AbstractBaseUser):
   USERNAME_FIELD = 'username'
   EMAIL_FIELD = 'email'
 
-  def __str__(self):
+  def __str__(self) -> str:
     return str(self.username)
 
   # The following properties are required by the Django administration site.
@@ -85,7 +84,7 @@ from django.contrib.auth.backends import BaseBackend  # nopep8
 
 
 class AuthBackend(BaseBackend):
-  def user_can_authenticate(self, user: User):
+  def user_can_authenticate(self, user: User) -> bool:
     return user.is_active
 
   def get_user(self, pk: int) -> Optional[User]:

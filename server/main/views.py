@@ -4,14 +4,13 @@ import json
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import serializers, views, generics, permissions, status, exceptions
+from rest_framework import serializers, views, generics, permissions, status
 import openai
 import openai.error
 from markdown import Markdown
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.highlight import HighlightExtension
 from .models import *
-
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +195,7 @@ def gpt_invoke(question: Question, response: str) -> tuple[int, str]:
       {'role': 'user', 'content': user},
     ]
   )
-  content = completion.choices[0].message.content
+  content = completion.choices[0].message.content  # type: ignore
   feedback = json.loads(content)
 
   return int(float(feedback['mark']) * question.mark_denominator + 0.5), feedback['comment']

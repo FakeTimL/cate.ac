@@ -1,17 +1,12 @@
 <script lang="ts">
 import { api } from '@/api';
-import { AxiosError } from 'axios';
+import { FormErrors } from '@/forms';
+import axios from 'axios';
 
-function is<T>(value: T): T {
-  return value;
+class FormFields {
+  username: string = '';
+  password: string = '';
 }
-
-type FormData = {
-  username: string;
-  password: string;
-};
-
-type FormError = Partial<Record<keyof FormData, string[]>>;
 
 export default {
   // See: https://vuejs.org/guide/components/v-model.html
@@ -20,12 +15,11 @@ export default {
   data() {
     return {
       waiting: false,
-      fields: {
-        username: '',
-        password: '',
-      },
-      fieldErrors: is<FormError>({}),
-      otherErrors: is<string[]>([]),
+      fields: new FormFields(),
+      errors: new FormErrors<FormFields>({
+        username: [],
+        password: [],
+      }),
     };
   },
   computed: {
@@ -37,35 +31,21 @@ export default {
         this.$emit('update:modelValue', value);
       },
     },
-    errorList(): string[] {
-      return Object.entries(this.fieldErrors)
-        .reduce((acc, x) => acc.concat(x[1]), is<string[]>([]))
-        .concat(this.otherErrors);
-    },
   },
   methods: {
     async submit() {
-      this.fieldErrors = {};
-      this.otherErrors = [];
-      if (this.fields.username == '') (this.fieldErrors.username ??= []).push('Please enter username.');
-      if (this.fields.password == '') (this.fieldErrors.password ??= []).push('Please enter password.');
-      if (this.errorList.length) return;
+      this.errors.clear();
+      if (this.fields.username == '') this.errors.fields.username.push('Please enter username.');
+      if (this.fields.password == '') this.errors.fields.password.push('Please enter password.');
+      if (this.errors.all.length > 0) return;
       this.waiting = true;
       try {
         await api.post('accounts/session/', this.fields);
         window.location.reload(); // Page refresh is required for new CSRF token.
+        return;
       } catch (e) {
-        if (e instanceof AxiosError) {
-          if (e.response !== undefined) {
-            this.fieldErrors = e.response.data;
-            if (e.response.data['detail']) this.otherErrors.push(String(e.response.data['detail']));
-            if (e.response.data['non_field_errors']) this.otherErrors.push(String(e.response.data['non_field_errors']));
-          } else {
-            this.otherErrors.push(e.message);
-          }
-        } else {
-          throw e;
-        }
+        if (axios.isAxiosError(e)) this.errors.decode(e);
+        else throw e;
       }
       this.waiting = false;
     },
@@ -78,27 +58,27 @@ export default {
     <sui-modal-header>Log in</sui-modal-header>
     <sui-modal-content scrolling>
       <sui-form>
-        <sui-form-field :error="Boolean(fieldErrors.username)">
+        <sui-form-field :error="errors.fields.username.length > 0">
           <label>Username</label>
-          <input placeholder="Username" v-model="fields.username" @input="delete fieldErrors.username" />
+          <input placeholder="Username" v-model="fields.username" @input="errors.fields.username.length = 0" />
         </sui-form-field>
-        <sui-form-field :error="Boolean(fieldErrors.password)">
+        <sui-form-field :error="errors.fields.password.length > 0">
           <label>Password</label>
           <input
             placeholder="Password"
             type="password"
             v-model="fields.password"
-            @input="delete fieldErrors.password"
+            @input="errors.fields.password.length = 0"
           />
         </sui-form-field>
       </sui-form>
     </sui-modal-content>
     <sui-modal-actions>
-      <sui-message v-if="errorList.length" icon error>
+      <sui-message v-if="errors.all.length > 0" icon error>
         <sui-icon name="info" />
         <sui-message-content>
           <sui-list bulleted>
-            <sui-list-item v-for="error of errorList" :key="error">{{ error }}</sui-list-item>
+            <sui-list-item v-for="error of errors.all" :key="error">{{ error }}</sui-list-item>
           </sui-list>
         </sui-message-content>
       </sui-message>

@@ -1,8 +1,15 @@
 <script lang="ts">
 import { api, markdownHtml, type Topic, type Question, type Submission } from '@/api';
+import { FormErrors } from '@/forms';
 import { friendlyDate } from '@/dates';
+import axios from 'axios';
+
 import LoadingCircle from './components/LoadingCircle.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
+
+class FormFields {
+  user_answer: string = '';
+}
 
 export default {
   components: {
@@ -29,7 +36,10 @@ export default {
       submissionIndex: null as number | null,
 
       waiting: false,
-      userAnswer: '',
+      fields: new FormFields(),
+      errors: new FormErrors<FormFields>({
+        user_answer: [],
+      }),
     };
   },
   async created() {
@@ -50,15 +60,21 @@ export default {
     async submit(e: Event) {
       e.preventDefault();
       if (this.question === null) return;
+      this.errors.clear();
+      if (this.fields.user_answer == '') this.errors.fields.user_answer.push('Please write something...');
+      if (this.errors.all.length > 0) return;
       this.waiting = true;
-      const submission = (
-        await api.post(`main/question/${this.question.pk}/my_submissions/`, {
-          user_answer: this.userAnswer,
-        })
-      ).data as Submission;
-      this.submissions.unshift(submission);
-      this.tabIndex = 1;
-      this.submissionIndex = 0;
+      try {
+        const submission = (await api.post(`main/question/${this.question.pk}/my_submissions/`, this.fields))
+          .data as Submission;
+        this.submissions.unshift(submission);
+        this.tabIndex = 1;
+        this.submissionIndex = 0;
+      } catch (e) {
+        if (axios.isAxiosError(e)) this.errors.decode(e);
+        else throw e;
+      }
+      this.waiting = false;
     },
   },
 };
@@ -72,19 +88,31 @@ export default {
           <sui-tab-panel header="Question">
             <markdown-content :html="question.statement" />
             <sui-divider />
-            <form class="ui form">
-              <div class="field">
+
+            <sui-form>
+              <sui-form-field :error="errors.fields.user_answer.length > 0">
                 <label>Answer:</label>
                 <textarea
-                  style="resize: vertical"
-                  v-model="userAnswer"
                   placeholder="Type your answer here..."
                   rows="15"
+                  style="resize: vertical"
+                  v-model="fields.user_answer"
+                  @input="errors.fields.user_answer.length = 0"
                 ></textarea>
-              </div>
-              <input class="ui button primary" type="submit" value="Check" @click="submit" />
-            </form>
+              </sui-form-field>
+              <sui-button primary @click="submit">Check</sui-button>
+            </sui-form>
+
+            <sui-message v-if="errors.all.length > 0" icon error>
+              <sui-icon name="info" />
+              <sui-message-content>
+                <sui-list bulleted>
+                  <sui-list-item v-for="error of errors.all" :key="error">{{ error }}</sui-list-item>
+                </sui-list>
+              </sui-message-content>
+            </sui-message>
           </sui-tab-panel>
+
           <sui-tab-panel header="My submissions">
             <sui-list selection>
               <sui-list-item
@@ -101,6 +129,7 @@ export default {
                 <span>Answered {{ friendlyDate(new Date(submission.date)) }}</span>
               </sui-list-item>
             </sui-list>
+
             <div v-if="submissionIndex !== null && submissions[submissionIndex]">
               <sui-divider />
               <h2>
@@ -131,6 +160,10 @@ export default {
         </sui-tab>
       </div>
     </loading-circle>
+
+    <sui-dimmer :active="waiting">
+      <sui-loader />
+    </sui-dimmer>
   </sui-container>
 </template>
 

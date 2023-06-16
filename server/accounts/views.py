@@ -1,5 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth.hashers import make_password
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
