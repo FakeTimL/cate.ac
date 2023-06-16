@@ -6,7 +6,7 @@ User = get_user_model()
 
 class Feedback(models.Model):
   text = models.TextField()
-  email = models.TextField(blank=True)
+  email = models.EmailField(blank=True)
   publish_date = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
@@ -15,8 +15,7 @@ class Feedback(models.Model):
 
 class Topic(models.Model):
   name = models.TextField()
-  parent = models.ForeignKey('self', related_name='children', blank=True,  # See: https://stackoverflow.com/a/2493722
-                             null=True, on_delete=models.SET_NULL)
+  parent = models.ForeignKey('self', related_name='children', blank=True, null=True, on_delete=models.SET_NULL)
   resources = models.TextField(blank=True)
 
   def __str__(self):
@@ -37,7 +36,7 @@ class Question(models.Model):
 
 
 class Submission(models.Model):
-  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  user = models.ForeignKey(User, related_name='submissions', blank=True, null=True, on_delete=models.SET_NULL)
   question = models.ForeignKey(Question, on_delete=models.CASCADE)
   user_answer = models.TextField()
   gpt_mark = models.IntegerField()

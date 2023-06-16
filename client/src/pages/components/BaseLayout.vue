@@ -5,7 +5,7 @@ export default {
   },
   data() {
     return {
-      large: window.innerWidth > 767.5,
+      large: false,
       sidebarActive: false,
       sidebarAnimating: false,
     };
@@ -32,6 +32,7 @@ export default {
   },
   mounted() {
     window.addEventListener('resize', this.onResize);
+    this.onResize();
   },
   unmounted() {
     window.removeEventListener('resize', this.onResize);

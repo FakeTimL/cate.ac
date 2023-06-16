@@ -68,7 +68,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 class IsAdminOrPostOnly(permissions.BasePermission):
   def has_permission(self, request: Request, view: views.APIView):
-    return (isinstance(request.user, User) and request.user.admin) or request.method == 'post'
+    return (isinstance(request.user, User) and request.user.admin) or request.method == 'POST'
 
 
 class FeedbacksView(generics.ListCreateAPIView):
@@ -127,7 +127,7 @@ class UserSubmissionsView(views.APIView):
   def get(self, request: Request) -> Response:
     user = request.user
     if not isinstance(user, User):
-      self.permission_denied()
+      self.permission_denied(request)
     queryset = Submission.objects.filter(user=user).order_by('-date')
     return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
@@ -138,25 +138,25 @@ class UserQuestionSubmissionsView(views.APIView):
 
   # Retrieve all submissions for current user and given question.
   def get(self, request: Request, pk: int) -> Response:
+    question = get_object_or_404(Question, pk=pk)
     user = request.user
     if not isinstance(user, User):
-      self.permission_denied()
-    question = get_object_or_404(Question, pk=pk)
+      return Response([], status.HTTP_200_OK)
     queryset = Submission.objects.filter(user=user, question=question).order_by('-date')
     return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
   # Submit a new answer and have ChatGPT grade it.
   def post(self, request: Request, pk: int) -> Response:
+    question = get_object_or_404(Question, pk=pk)
     user = request.user
     if not isinstance(user, User):
-      self.permission_denied()
-    question = get_object_or_404(Question, pk=pk)
-    user_answer = request.data.get('user_answer', '')
+      user = None
+    user_answer = request.data.get('user_answer', '(none)')
     try:
       (gpt_mark, gpt_comments) = gpt_invoke(question, user_answer)
       logger.info((request, user_answer, gpt_mark, gpt_comments))
       submission = Submission(
-        user=request.user,
+        user=user,
         question=question,
         user_answer=user_answer,
         gpt_mark=gpt_mark,
@@ -166,16 +166,16 @@ class UserQuestionSubmissionsView(views.APIView):
       return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
     except json.JSONDecodeError as error:
       logger.warning(error)
-      raise exceptions.ValidationError('ChatGPT did not respond in valid JSON format.')
+      return Response({'detail': 'ChatGPT did not respond in valid JSON format.'}, status.HTTP_503_SERVICE_UNAVAILABLE)
     except ValueError as error:
       logger.warning(error)
-      raise exceptions.ValidationError('ChatGPT did not respond with a valid mark.')
+      return Response({'detail': 'ChatGPT did not respond with a valid mark.'}, status.HTTP_503_SERVICE_UNAVAILABLE)
     except openai.error.RateLimitError as error:
       logger.warning(error)
-      raise exceptions.Throttled('ChatGPT is too busy, please try again later...')
+      return Response({'detail': 'ChatGPT is too busy, please try again later...'}, status.HTTP_429_TOO_MANY_REQUESTS)
     except openai.error.OpenAIError as error:
       logger.warning(error)
-      raise exceptions.APIException('Unexpected ChatGPT error: ' + str(error), status.HTTP_500_INTERNAL_SERVER_ERROR)
+      return Response({'detail': 'Unexpected ChatGPT error: ' + str(error)}, status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 def gpt_invoke(question: Question, response: str) -> tuple[int, str]:

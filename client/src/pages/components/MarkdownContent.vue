@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <div class="markdown" v-html="html"></div>
+  <div v-html="html"></div>
 </template>
 
 <style scoped></style>

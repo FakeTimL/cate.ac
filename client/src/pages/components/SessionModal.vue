@@ -1,5 +1,6 @@
 <script lang="ts">
 import { api } from '@/api';
+import { AxiosError } from 'axios';
 
 export default {
   // See: https://vuejs.org/guide/components/v-model.html
@@ -8,25 +9,11 @@ export default {
   data() {
     return {
       waiting: false,
-      errors: [] as string[],
+      errorList: [] as string[],
     };
   },
-  methods: {
-    async submit() {
-      this.errors = [];
-      this.waiting = true;
-      try {
-        await api.delete('accounts/session/', {});
-        this.waiting = false;
-        window.location.reload(); // Page refresh is required for new CSRF token.
-      } catch (error) {
-        this.waiting = false;
-        window.location.reload(); // Page refresh is required for new CSRF token.
-      }
-    },
-  },
   computed: {
-    isActive: {
+    modalActive: {
       get(): boolean {
         return this.modelValue;
       },
@@ -35,25 +22,47 @@ export default {
       },
     },
   },
+  methods: {
+    async submit() {
+      this.errorList = [];
+      this.waiting = true;
+      try {
+        await api.delete('accounts/session/');
+        window.location.reload(); // Page refresh is required for new CSRF token.
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          if (e.response !== undefined) {
+            if (e.response.data['detail']) this.errorList.push(String(e.response.data['detail']));
+            if (e.response.data['non_field_errors']) this.errorList.push(String(e.response.data['non_field_errors']));
+          } else {
+            this.errorList.push(e.message);
+          }
+        } else {
+          throw e;
+        }
+      }
+      this.waiting = false;
+    },
+  },
 };
 </script>
 
 <template>
-  <sui-modal size="tiny" v-model="isActive">
+  <sui-modal size="tiny" v-model="modalActive">
     <sui-modal-header>User {{ username }}</sui-modal-header>
     <sui-modal-content scrolling>
       <sui-form></sui-form>
     </sui-modal-content>
     <sui-modal-actions>
-      <sui-message icon error v-if="errors.length">
+      <sui-message v-if="errorList.length" icon error>
         <sui-icon name="info" />
         <sui-message-content>
           <sui-list bulleted>
-            <sui-list-item v-for="error in errors" :key="error">{{ error }}</sui-list-item>
+            <sui-list-item v-for="error of errorList" :key="error">{{ error }}</sui-list-item>
           </sui-list>
         </sui-message-content>
       </sui-message>
-      <sui-button primary @click="isActive = false">OK</sui-button>
+      <sui-button primary @click="modalActive = false">OK</sui-button>
       <sui-button @click="submit">Log out</sui-button>
     </sui-modal-actions>
     <sui-dimmer :active="waiting">

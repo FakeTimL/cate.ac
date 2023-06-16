@@ -87,7 +87,7 @@ class UsersView(views.APIView):
   # List all users (staff only).
   def get(self, request: Request) -> Response:
     if not (isinstance(request.user, User) and request.user.admin):
-      self.permission_denied()
+      self.permission_denied(request)
     queryset = User.objects.order_by('pk')
     return Response(user_serializer(queryset, request=request, refl=False, many=True).data, status.HTTP_200_OK)
 
@@ -127,10 +127,10 @@ class UserView(views.APIView):
   # Delete user (staff only).
   def delete(self, request: Request, pk: int) -> Response:
     if not (isinstance(request.user, User) and request.user.admin):
-      self.permission_denied()
+      self.permission_denied(request)
     user = get_object_or_404(User, pk=pk)
     user.delete()
-    return Response(status.HTTP_204_NO_CONTENT)
+    return Response(None, status.HTTP_204_NO_CONTENT)
 
 
 class SessionView(views.APIView):
@@ -143,7 +143,7 @@ class SessionView(views.APIView):
       serializer = user_serializer(request.user, request=request, refl=True)
       return Response(serializer.data, status.HTTP_200_OK)
     else:
-      return Response(status.HTTP_204_NO_CONTENT)
+      return Response(None, status.HTTP_204_NO_CONTENT)
 
   # Create new session (i.e. sign in).
   def post(self, request: Request):
@@ -151,7 +151,7 @@ class SessionView(views.APIView):
     credentials.is_valid(raise_exception=True)
     user = auth.authenticate(request, **credentials.validated_data)
     if user is None:
-      self.permission_denied()  # Incorrect username or password.
+      return Response({'detail': 'Incorrect username or password.'}, status.HTTP_401_UNAUTHORIZED)
     auth.login(request, user)
     serializer = user_serializer(request.user, request=request, refl=True)
     return Response(serializer.data, status.HTTP_201_CREATED)
@@ -159,4 +159,4 @@ class SessionView(views.APIView):
   # Delete session (i.e. sign out).
   def delete(self, request: Request) -> Response:
     auth.logout(request)
-    return Response(status.HTTP_204_NO_CONTENT)
+    return Response(None, status.HTTP_204_NO_CONTENT)

@@ -69,7 +69,9 @@ export default {
   </sui-container>
   <sui-modal v-if="topic" size="small" v-model="modalIsActive">
     <sui-header>What this topic is about?</sui-header>
-    <sui-modal-content><markdown-content :html="topic.resources" /></sui-modal-content>
+    <sui-modal-content scrolling>
+      <markdown-content :html="topic.resources" />
+    </sui-modal-content>
   </sui-modal>
 </template>
 

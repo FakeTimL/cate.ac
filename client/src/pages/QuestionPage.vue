@@ -20,31 +20,31 @@ export default {
   },
   data() {
     return {
+      loading: true,
+      question: null as Question | null,
+      topics: new Array<Topic>(),
+      submissions: new Array<Submission>(),
+
       tabIndex: 0,
       submissionIndex: null as number | null,
-      userAnswer: '',
-      modalIsActive: false,
-      loading: true,
+
       waiting: false,
-      question: null as Question | null,
-      submissions: new Array<Submission>(),
-      topics: new Array<Topic>(),
+      userAnswer: '',
     };
   },
   async created() {
     try {
       this.question = (await api.get(`main/question/${this.pk}/`)).data as Question;
-      this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
+      this.question.statement = await markdownHtml(this.question.statement);
+      this.question.mark_scheme = await markdownHtml(this.question.mark_scheme);
       for (const topic_pk of this.question.topics) {
         this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
       }
-      this.question.statement = await markdownHtml(this.question.statement);
-      this.question.mark_scheme = await markdownHtml(this.question.mark_scheme);
-      this.loading = false;
+      this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
     } catch (error) {
       // TODO
-      this.loading = false;
     }
+    this.loading = false;
   },
   methods: {
     async submit(e: Event) {

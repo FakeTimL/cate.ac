@@ -18,7 +18,6 @@ import QuestionPage from './pages/QuestionPage.vue';
 import SubmissionsPage from './pages/SubmissionsPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
 import AboutPage from './pages/AboutPage.vue';
-import ExamplePage from './pages/ExamplePage.vue'; // An example page of Vue.js.
 import NotFoundPage from './pages/NotFoundPage.vue';
 
 // URL declarations.
@@ -32,7 +31,6 @@ const router = createRouter({
     { path: '/submissions/', component: SubmissionsPage },
     { path: '/feedback', component: FeedbackPage },
     { path: '/about', component: AboutPage },
-    { path: '/example', component: ExamplePage },
     // See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#catch-all-404-not-found-route
     { path: '/:pathMatch(.*)*', component: NotFoundPage },
   ],

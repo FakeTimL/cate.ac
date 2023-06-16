@@ -129,17 +129,17 @@ export function render(el: HTMLElement) {
   hljs.registerLanguage('lean', hljsLean);
   hljs.highlightAll();
   // Add styling classes to markdown content.
-  addStyling(el, '.markdown h1', 'ui header');
-  addStyling(el, '.markdown h2', 'ui header');
-  addStyling(el, '.markdown h3', 'ui header');
-  addStyling(el, '.markdown h4', 'ui header');
-  addStyling(el, '.markdown h5', 'ui header');
-  addStyling(el, '.markdown h6', 'ui header');
-  addStyling(el, '.markdown ul', 'ui bulleted list');
-  addStyling(el, '.markdown ul li', 'item');
-  addStyling(el, '.markdown ol', 'ui list');
-  addStyling(el, '.markdown ol li', 'item');
-  addStyling(el, '.markdown table', 'ui celled table');
-  addStyling(el, '.markdown img', 'ui centered medium rounded image');
-  addStyling(el, '.markdown hr', 'ui divider');
+  addStyling(el, 'h1', 'ui header');
+  addStyling(el, 'h2', 'ui header');
+  addStyling(el, 'h3', 'ui header');
+  addStyling(el, 'h4', 'ui header');
+  addStyling(el, 'h5', 'ui header');
+  addStyling(el, 'h6', 'ui header');
+  addStyling(el, 'ul', 'ui bulleted list');
+  addStyling(el, 'ul li', 'item');
+  addStyling(el, 'ol', 'ui list');
+  addStyling(el, 'ol li', 'item');
+  addStyling(el, 'table', 'ui celled table');
+  addStyling(el, 'img', 'ui centered medium rounded image');
+  addStyling(el, 'hr', 'ui divider');
 }

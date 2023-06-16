@@ -8,7 +8,7 @@ export default {};
       <sui-header as="h1">About Us</sui-header>
       <sui-message>
         <p><strong>Q: What does the name "CATE" mean?</strong></p>
-        <p>A: ...</p>
+        <p>A: "Computer-Assisted Test Evaluator..."</p>
       </sui-message>
       <sui-header as="h2">Our Mission</sui-header>
       <p>TODO</p>

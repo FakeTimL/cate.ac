@@ -13,7 +13,7 @@ export default {
   },
   async created() {
     try {
-      for (let topic of (await api.get('main/topics/')).data as Topic[]) {
+      for (const topic of (await api.get('main/topics/')).data as Topic[]) {
         if (topic.parent === null) {
           this.chapters.push(topic);
         } else {
