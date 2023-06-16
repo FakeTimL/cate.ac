@@ -37,7 +37,7 @@ export default {
 <template>
   <sui-container text style="padding: 1em 0; min-height: 80vh">
     <loading-text fill-height :loading="loading">
-      <sui-header as="h1">Browse questions by topic</sui-header>
+      <sui-header as="h1">Browse Questions by Topic</sui-header>
       <sui-list divided selection size="medium">
         <sui-list-item v-for="chapter in chapters" :key="chapter.pk">
           <sui-icon name="folder open outline" />

@@ -47,7 +47,7 @@ export default {
           <sui-list-item @click="modalIsActive = true">
             <sui-icon name="info circle" />
             <sui-list-content>
-              <sui-list-header>What this topic is about?</sui-list-header>
+              <sui-list-header>What is this topic about?</sui-list-header>
             </sui-list-content>
           </sui-list-item>
           <router-link
@@ -58,7 +58,9 @@ export default {
           >
             <sui-icon name="question circle outline" />
             <sui-list-content>
-              <sui-list-header>{{ question.statement.substring(0, 50) }}...</sui-list-header>
+              <sui-list-header>
+                {{ question.statement.substring(0, 50) }}...
+              </sui-list-header>
             </sui-list-content>
           </router-link>
         </sui-list>

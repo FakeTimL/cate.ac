@@ -34,7 +34,7 @@ export default {
 
 <template>
   <sui-container text style="padding: 1em 0; min-height: 80vh">
-    <sui-header as="h1">Send anonymous feedback</sui-header>
+    <sui-header as="h1">Send Anonymous Feedback</sui-header>
 
     <sui-form>
       <sui-form-field>

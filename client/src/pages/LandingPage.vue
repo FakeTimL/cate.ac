@@ -28,7 +28,8 @@ window.requestAnimationFrame(updateAll);
 <template>
   <div class="banner" style="min-height: 100%; background-color: rgb(51, 143, 212); color: rgb(255, 255, 255)">
     <div class="center">
-      <h1>Technology to help you learn,<br />in an efficient way (theoretically).</h1>
+      <!-- Elevate Your Exam Revision, with AI-Powered Interactive Tactics. -->
+      <h1>Integrate the Power of AI,<br />to Help You Revise Interactively.</h1>
     </div>
   </div>
   <div class="left_and_right banner">
@@ -96,7 +97,7 @@ window.requestAnimationFrame(updateAll);
           </sui-grid-column>
           <sui-grid-column textAlign="left">
             <router-link to="/topics">
-              <sui-button primary size="huge">Start learning!</sui-button>
+              <sui-button primary size="huge">Start revising!</sui-button>
             </router-link>
           </sui-grid-column>
         </sui-grid-row>
