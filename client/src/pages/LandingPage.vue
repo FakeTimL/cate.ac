@@ -29,63 +29,71 @@ window.requestAnimationFrame(updateAll);
   <div class="banner" style="min-height: 100%; background-color: rgb(51, 143, 212); color: rgb(255, 255, 255)">
     <div class="center">
       <!-- Elevate Your Exam Revision, with AI-Powered Interactive Tactics. -->
-      <h1>Integrate the Power of AI,<br />to Help You Revise Interactively.</h1>
+      <h1 class="ui inverted header">Integrate the Power of AI,<br />to Help You Revise Interactively.</h1>
+      <router-link to="/topics" class="ui huge inverted basic button">Start revising!</router-link>
     </div>
   </div>
   <div class="left_and_right banner">
     <div class="text_part">
-      <div
-        id="parallax_text_1"
-        class="transformed"
-        style="background-color: rgb(223, 224, 219); color: rgb(62, 55, 45)"
-      >
+      <div id="parallax_text_1" class="transformed" style="background-color: rgb(65, 68, 73)">
         <div class="text_container">
-          <h2>Motivation</h2>
-          <p>TODO: add description based on DRP theme</p>
+          <h2 class="ui inverted header">Timely Feedback</h2>
+          <p class="ui inverted header">
+            Identify your strengths and weaknesses immediately, take corrective actions promptly and improve your
+            understanding of the subject.
+          </p>
         </div>
       </div>
     </div>
     <div class="image_part">
-      <img id="parallax_image_1" class="img_container" src="@/assets/landing-motivation.jpg" />
+      <img id="parallax_image_1" class="img_container" src="@/assets/landing-timely-feedback.jpg" />
     </div>
   </div>
   <div class="reversed left_and_right banner">
     <div class="text_part">
-      <div class="transformed" style="background-color: rgb(23, 22, 20); color: rgb(240, 240, 240)">
+      <div class="transformed" style="background-color: rgb(184, 161, 143)">
         <div class="text_container">
-          <h2>Design Principles</h2>
-          <p>TODO: add description based on DRP theme</p>
+          <h2 class="ui inverted header">Personalised Learning</h2>
+          <p class="ui inverted header">
+            Learn from your mistakes at your own pace, focus on areas that require more attention, and move ahead when
+            you are ready.
+          </p>
         </div>
       </div>
     </div>
     <div class="image_part">
-      <img id="parallax_image_2" class="img_container" src="@/assets/landing-principles.jpg" />
+      <img id="parallax_image_2" class="img_container" src="@/assets/landing-personalised-learning.jpg" />
     </div>
   </div>
   <div class="left_and_right banner">
     <div class="text_part">
-      <div class="transformed" style="background-color: rgb(205, 194, 192)">
+      <div class="transformed" style="background-color: rgb(31, 29, 30)">
         <div class="text_container">
-          <h2>Student Perspective</h2>
-          <p>TODO: add description based on DRP theme</p>
+          <h2 class="ui inverted header">Efficient Exam Prep</h2>
+          <p class="ui inverted header">
+            Do topic revision under exam conditions with time limits and get graded against the model answer for better
+            exam preparation.
+          </p>
         </div>
       </div>
     </div>
     <div class="image_part">
-      <img id="parallax_image_3" class="img_container" src="@/assets/landing-student.jpg" />
+      <img id="parallax_image_3" class="img_container" src="@/assets/landing-efficient-exam-prep.jpg" />
     </div>
   </div>
   <div class="reversed left_and_right banner">
     <div class="text_part">
-      <div class="transformed" style="background-color: rgb(184, 161, 143); color: rgb(255, 255, 255)">
+      <div class="transformed" style="background-color: rgb(40, 40, 42)">
         <div class="text_container">
-          <h2>Self-Learning</h2>
-          <p>TODO: add description based on DRP theme</p>
+          <h2 class="ui inverted header">Better Accessibility</h2>
+          <p class="ui inverted header">
+            Get instant feedbacks without having to look for (expensive) personal tutors.
+          </p>
         </div>
       </div>
     </div>
     <div class="image_part">
-      <img id="parallax_image_4" class="img_container" src="@/assets/landing-self-learn.jpg" />
+      <img id="parallax_image_4" class="img_container" src="@/assets/landing-better-accessiblility.jpg" />
     </div>
   </div>
   <div class="banner background">
