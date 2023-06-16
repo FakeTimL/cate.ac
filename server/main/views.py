@@ -1,16 +1,13 @@
 import logging
-import os
-import json
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import serializers, views, generics, permissions, status
-import openai
-import openai.error
 from markdown import Markdown
 from pymdownx.arithmatex import ArithmatexExtension
 from pymdownx.highlight import HighlightExtension
 from .models import *
+from .tasks import SubmissionThread
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +22,8 @@ logger = logging.getLogger(__name__)
 class FeedbackSerializer(serializers.ModelSerializer):
   class Meta:
     model = Feedback
-    fields = ['pk', 'text', 'email', 'publish_date']
-    extra_kwargs = {'publish_date': {'read_only': True}}
+    fields = ['pk', 'text', 'email', 'date']
+    extra_kwargs = {'date': {'read_only': True}}
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -151,54 +148,16 @@ class UserQuestionSubmissionsView(views.APIView):
     if not isinstance(user, User):
       user = None
     user_answer = request.data.get('user_answer', '(none)')
-    try:
-      (gpt_mark, gpt_comments) = gpt_invoke(question, user_answer)
-      logger.info((request, user_answer, gpt_mark, gpt_comments))
-      submission = Submission(
-        user=user,
-        question=question,
-        user_answer=user_answer,
-        gpt_mark=gpt_mark,
-        gpt_comments=gpt_comments,
-      )
-      submission.save()
-      return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
-    except json.JSONDecodeError as error:
-      logger.warning(error)
-      return Response({'detail': 'ChatGPT did not respond in valid JSON format.'}, status.HTTP_503_SERVICE_UNAVAILABLE)
-    except ValueError as error:
-      logger.warning(error)
-      return Response({'detail': 'ChatGPT did not respond with a valid mark.'}, status.HTTP_503_SERVICE_UNAVAILABLE)
-    except openai.error.RateLimitError as error:
-      logger.warning(error)
-      return Response({'detail': 'ChatGPT is too busy, please try again later...'}, status.HTTP_429_TOO_MANY_REQUESTS)
-    except openai.error.OpenAIError as error:
-      logger.warning(error)
-      return Response({'detail': 'Unexpected ChatGPT error: ' + str(error)}, status.HTTP_503_SERVICE_UNAVAILABLE)
-
-
-def gpt_invoke(question: Question, response: str) -> tuple[int, str]:
-  openai.api_key = os.environ['DRP49_OPENAI_API_KEY']
-
-  system = \
-      'You are an IB examiner. You should mark the student response carefully according to the question and ' + \
-      'marking criteria, and comment on how they may otherwise achieve full marks. Give your mark and comment ' + \
-      'in the following JSON format: {"mark":0,"comment":""}. Make sure to respond in JSON only.\n' + \
-      'Exam question:\n' + question.statement + '\n' + \
-      'Marking criteria:\n' + question.gpt_prompt + '\n'
-  user = 'The student\'s response:\n' + response + '\n'
-
-  completion = openai.ChatCompletion.create(
-    model='gpt-3.5-turbo',
-    messages=[
-      {'role': 'system', 'content': system},
-      {'role': 'user', 'content': user},
-    ]
-  )
-  content = completion.choices[0].message.content  # type: ignore
-  feedback = json.loads(content)
-
-  return int(float(feedback['mark']) * question.mark_denominator + 0.5), feedback['comment']
+    submission = Submission(
+      user=user,
+      question=question,
+      user_answer=user_answer,
+      gpt_mark=None,
+      gpt_comments='',
+    )
+    submission.save()
+    SubmissionThread(submission).start()  # This will trigger a request to ChatGPT.
+    return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
 
 
 class MarkdownHTMLView(views.APIView):

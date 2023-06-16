@@ -46,16 +46,16 @@ export default {
       <router-link to="/">
         <sui-menu-item header>CATE</sui-menu-item>
       </router-link>
-      <router-link to="/topics">
+      <router-link to="/topics/">
         <sui-menu-item :active="currentPathIs('/topics')">Topics</sui-menu-item>
       </router-link>
-      <router-link to="/submissions" v-if="username">
+      <router-link to="/submissions/" v-if="username">
         <sui-menu-item :active="currentPathIs('/submissions')">Answers</sui-menu-item>
       </router-link>
-      <router-link to="/feedback">
+      <router-link to="/feedback/">
         <sui-menu-item :active="currentPathIs('/feedback')">Feedback</sui-menu-item>
       </router-link>
-      <router-link to="/about">
+      <router-link to="/about/">
         <sui-menu-item :active="currentPathIs('/about')">About</sui-menu-item>
       </router-link>
       <sui-menu-item position="right" v-if="!username" @click="logInModalIsActive = true">

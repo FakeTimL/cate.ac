@@ -30,7 +30,7 @@ window.requestAnimationFrame(updateAll);
     <div class="center">
       <!-- Elevate Your Exam Revision, with AI-Powered Interactive Tactics. -->
       <h1 class="ui inverted header">Integrate the Power of AI,<br />to Help You Revise Interactively.</h1>
-      <router-link to="/topics" class="ui huge inverted basic button">Start revising!</router-link>
+      <router-link to="/topics/" class="ui huge inverted basic button">Start revising!</router-link>
     </div>
   </div>
   <div class="left_and_right banner">
@@ -104,7 +104,7 @@ window.requestAnimationFrame(updateAll);
             <sui-header size="large">I am a student...</sui-header>
           </sui-grid-column>
           <sui-grid-column textAlign="left">
-            <router-link to="/topics">
+            <router-link to="/topics/">
               <sui-button primary size="huge">Start revising!</sui-button>
             </router-link>
           </sui-grid-column>
@@ -114,7 +114,7 @@ window.requestAnimationFrame(updateAll);
             <sui-header size="large">I am a teacher...</sui-header>
           </sui-grid-column>
           <sui-grid-column textAlign="left">
-            <router-link to="/about">
+            <router-link to="/about/">
               <sui-button size="huge">Join our team!</sui-button>
             </router-link>
           </sui-grid-column>

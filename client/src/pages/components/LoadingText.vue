@@ -13,6 +13,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    text: {
+      type: String,
+      required: false,
+    },
   },
 };
 </script>
@@ -21,6 +25,7 @@ export default {
   <div class="stack-container">
     <transition name="fade" mode="default">
       <div v-if="loading" key="loading" class="child" :style="{ minHeight: fillHeight ? '80vh' : undefined }">
+        <div v-if="text" class="ui active indeterminate text loader">{{ text }}</div>
         <div v-for="index in length" :key="index" class="ui placeholder">
           <div class="header">
             <div class="line"></div>
@@ -53,6 +58,7 @@ export default {
 .stack-container > .child {
   grid-column: 1 / -1;
   grid-row: 1;
+  position: relative;
 }
 
 .fade-enter-active,

@@ -37,6 +37,7 @@ export default {
 .stack-container > .child {
   grid-column: 1 / -1;
   grid-row: 1;
+  position: relative;
 }
 
 .fade-enter-active,

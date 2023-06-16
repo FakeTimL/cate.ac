@@ -21,12 +21,12 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: LandingPage },
-    { path: '/topics', component: TopicsPage },
-    { path: '/topic/:pk', component: TopicPage, props: true },
-    { path: '/question/:pk', component: QuestionPage, props: true },
+    { path: '/topics/', component: TopicsPage },
+    { path: '/topic/:pk/', component: TopicPage, props: true },
+    { path: '/question/:pk/', component: QuestionPage, props: true },
     { path: '/submissions/', component: SubmissionsPage },
-    { path: '/feedback', component: FeedbackPage },
-    { path: '/about', component: AboutPage },
+    { path: '/feedback/', component: FeedbackPage },
+    { path: '/about/', component: AboutPage },
     // See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#catch-all-404-not-found-route
     { path: '/:pathMatch(.*)*', component: NotFoundPage },
   ],

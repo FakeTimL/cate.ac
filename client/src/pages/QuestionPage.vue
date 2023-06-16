@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import LoadingCircle from './components/LoadingCircle.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
+import SubmissionDetail from './components/SubmissionDetail.vue';
 
 class FormFields {
   user_answer: string = '';
@@ -15,6 +16,7 @@ export default {
   components: {
     LoadingCircle,
     MarkdownContent,
+    SubmissionDetail,
   },
   setup() {
     return { friendlyDate };
@@ -31,6 +33,7 @@ export default {
       question: null as Question | null,
       topics: new Array<Topic>(),
       submissions: new Array<Submission>(),
+      timeout: null as number | null,
 
       tabIndex: 0,
       submissionIndex: null as number | null,
@@ -50,13 +53,36 @@ export default {
       for (const topic_pk of this.question.topics) {
         this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
       }
-      this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
     } catch (error) {
       // TODO
     }
+    await this.refreshSubmissions();
     this.loading = false;
   },
+  unmounted() {
+    if (this.timeout !== null) {
+      // Clear pending refresh tasks.
+      clearTimeout(this.timeout);
+    }
+  },
   methods: {
+    async refreshSubmissions() {
+      try {
+        this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
+      } catch (error) {
+        // TODO
+      }
+      let refreshRequired = false;
+      for (const submission of this.submissions)
+        if (submission.gpt_mark === null) {
+          refreshRequired = true;
+          break;
+        }
+      if (refreshRequired) {
+        // Refresh after 5 seconds.
+        this.timeout = setTimeout(this.refreshSubmissions, 5000);
+      }
+    },
     async submit(e: Event) {
       e.preventDefault();
       if (this.question === null) return;
@@ -70,6 +96,8 @@ export default {
         this.submissions.unshift(submission);
         this.tabIndex = 1;
         this.submissionIndex = 0;
+        // Refresh after 5 seconds.
+        this.timeout = setTimeout(this.refreshSubmissions, 5000);
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
         else throw e;
@@ -123,8 +151,10 @@ export default {
               >
                 <sui-list-header>
                   Score:
-                  {{ submission.gpt_mark / question.mark_denominator }} /
-                  {{ question.mark_maximum / question.mark_denominator }}
+                  {{
+                    submission.gpt_mark === null ? '-' : (submission.gpt_mark / question.mark_denominator).toString()
+                  }}
+                  / {{ (question.mark_maximum / question.mark_denominator).toString() }}
                 </sui-list-header>
                 <span>Answered {{ friendlyDate(new Date(submission.date)) }}</span>
               </sui-list-item>
@@ -132,29 +162,7 @@ export default {
 
             <div v-if="submissionIndex !== null && submissions[submissionIndex]">
               <sui-divider />
-              <h2>
-                Score:
-                {{ submissions[submissionIndex].gpt_mark / question.mark_denominator }} /
-                {{ question.mark_maximum / question.mark_denominator }}
-              </h2>
-              <h4>Your answer:</h4>
-              <p>{{ submissions[submissionIndex].user_answer }}</p>
-              <div class="ui info message">
-                <h4>Comments:</h4>
-                <p>{{ submissions[submissionIndex].gpt_comments }}</p>
-                <details>
-                  <summary>Mark scheme:</summary>
-                  <blockquote>
-                    <markdown-content :html="question.mark_scheme" />
-                  </blockquote>
-                </details>
-              </div>
-              <p>
-                <span>Topics:</span>
-                <router-link v-for="topic in topics" :key="topic.pk" :to="`/topic/${topic.pk}/`" class="ui label">
-                  {{ topic.name }}
-                </router-link>
-              </p>
+              <submission-detail :question="question" :topics="topics" :submission="submissions[submissionIndex]" />
             </div>
           </sui-tab-panel>
         </sui-tab>

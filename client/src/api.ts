@@ -35,7 +35,7 @@ export interface Feedback {
   pk: number;
   text: string;
   email: string;
-  publish_date: string;
+  date: string;
 }
 
 export interface Topic {
