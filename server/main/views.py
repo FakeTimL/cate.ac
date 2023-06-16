@@ -42,11 +42,41 @@ class QuestionSerializer(serializers.ModelSerializer):
               'mark_maximum', 'mark_scheme', 'gpt_prompt', 'topics']
 
 
+# See: https://stackoverflow.com/a/41996831
+class SheetQuestionSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = SheetQuestion
+    fields = ['question', 'index']
+
+
+class SheetSerializer(serializers.ModelSerializer):
+  sheet_questions = SheetQuestionSerializer(source='sheetquestion_set', many=True)
+
+  class Meta:
+    model = Sheet
+    fields = ['pk', 'user', 'sheet_questions', 'time_limit', 'name', 'description']
+
+
 class SubmissionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Submission
     fields = ['pk', 'user', 'question', 'user_answer', 'gpt_mark', 'gpt_comments', 'date']
     extra_kwargs = {'date': {'read_only': True}}
+
+
+# See: https://stackoverflow.com/a/41996831
+class AttemptSubmissionSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = AttemptSubmission
+    fields = ['submission', 'index']
+
+
+class AttemptSerializer(serializers.ModelSerializer):
+  attempt_submissions = AttemptSubmissionSerializer(source='attemptsubmission_set', many=True)
+
+  class Meta:
+    model = Attempt
+    fields = ['pk', 'user', 'attempt_submissions', 'sheet', 'time_limit', 'begin_time', 'end_time']
 
 
 # This time we use DRF's abstractions for views (`GenericAPIView`) and permissions (`BasePermission`)
@@ -103,16 +133,40 @@ class QuestionView(generics.RetrieveUpdateDestroyAPIView):
   permission_classes = [IsAdminOrReadOnly]
 
 
+class SheetsView(generics.ListCreateAPIView):
+  queryset = Sheet.objects.order_by('pk')
+  serializer_class = SheetSerializer
+  permission_classes = [IsAdminOrReadOnly]
+
+
+class SheetView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Sheet.objects
+  serializer_class = SheetSerializer
+  permission_classes = [IsAdminOrReadOnly]
+
+
 class SubmissionsView(generics.ListCreateAPIView):
   queryset = Submission.objects.order_by('pk')
   serializer_class = SubmissionSerializer
-  permission_classes = [IsAdmin]
+  permission_classes = [IsAdmin]  # Submissions should not be public.
 
 
 class SubmissionView(generics.RetrieveUpdateDestroyAPIView):
   queryset = Submission.objects
   serializer_class = SubmissionSerializer
-  permission_classes = [IsAdmin]
+  permission_classes = [IsAdmin]  # Submissions should not be public.
+
+
+class AttemptsView(generics.ListCreateAPIView):
+  queryset = Attempt.objects.order_by('pk')
+  serializer_class = AttemptSerializer
+  permission_classes = [IsAdmin]  # Attempts should not be public.
+
+
+class AttemptView(generics.RetrieveUpdateDestroyAPIView):
+  queryset = Attempt.objects
+  serializer_class = AttemptSerializer
+  permission_classes = [IsAdmin]  # Attempts should not be public.
 
 
 class UserSubmissionsView(views.APIView):
@@ -126,6 +180,19 @@ class UserSubmissionsView(views.APIView):
       self.permission_denied(request)
     queryset = Submission.objects.filter(user=user).order_by('-date')
     return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
+
+
+class UserAttemptsView(views.APIView):
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
+
+  # Retrieve all submissions for current user.
+  def get(self, request: Request) -> Response:
+    user = request.user
+    if not isinstance(user, User):
+      self.permission_denied(request)
+    queryset = Attempt.objects.filter(user=user).order_by('-begin_time')
+    return Response(AttemptSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
 
 class UserQuestionSubmissionsView(views.APIView):
@@ -167,19 +234,16 @@ class MarkdownHTMLView(views.APIView):
   # Convert Markdown to HTML.
   def post(self, request: Request) -> Response:
     markdown = request.data.get('markdown', '')
-    return Response({'html': markdown_to_html(markdown)}, status.HTTP_200_OK)
-
-
-def markdown_to_html(markdown: str) -> str:
-  return Markdown(extensions=[
-    'nl2br',
-    'smarty',
-    'toc',
-    'pymdownx.extra',
-    'pymdownx.tilde',
-    'pymdownx.mark',
-    'pymdownx.tasklist',
-    'pymdownx.escapeall',
-    HighlightExtension(use_pygments=False),
-    ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
-  ]).convert(markdown)
+    html = Markdown(extensions=[
+      'nl2br',
+      'smarty',
+      'toc',
+      'pymdownx.extra',
+      'pymdownx.tilde',
+      'pymdownx.mark',
+      'pymdownx.tasklist',
+      'pymdownx.escapeall',
+      HighlightExtension(use_pygments=False),
+      ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
+    ]).convert(markdown)
+    return Response({'html': html}, status.HTTP_200_OK)

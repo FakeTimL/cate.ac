@@ -9,9 +9,14 @@ urlpatterns = [
   path('topic/<int:pk>/', views.TopicView.as_view(), name='topic'),  # type: ignore
   path('questions/', views.QuestionsView.as_view(), name='questions'),  # type: ignore
   path('question/<int:pk>/', views.QuestionView.as_view(), name='question'),  # type: ignore
+  path('sheets/', views.SheetsView.as_view(), name='sheets'),  # type: ignore
+  path('sheet/<int:pk>/', views.SheetView.as_view(), name='sheet'),  # type: ignore
   path('submissions/', views.SubmissionsView.as_view(), name='submissions'),  # type: ignore
   path('submission/<int:pk>/', views.SubmissionView.as_view(), name='submission'),  # type: ignore
+  path('attempts/', views.AttemptsView.as_view(), name='attempts'),  # type: ignore
+  path('attempt/<int:pk>/', views.AttemptView.as_view(), name='attempt'),  # type: ignore
   path('my_submissions/', views.UserSubmissionsView.as_view(), name='user_submissions'),  # type: ignore
+  path('my_attempts/', views.UserAttemptsView.as_view(), name='user_attempts'),  # type: ignore
   path('question/<int:pk>/my_submissions/', views.UserQuestionSubmissionsView.as_view(),  # type: ignore
        name='user_question_submissions'),
   path('markdown_html/', views.MarkdownHTMLView.as_view(), name='markdown_html'),  # type: ignore

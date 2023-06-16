@@ -6,4 +6,5 @@ from django.contrib.admin import ModelAdmin
 from .models import *
 
 admin.site.register(User, ModelAdmin)
+admin.site.register(Message, ModelAdmin)
 admin.site.unregister(Group)  # This is not needed anymore.

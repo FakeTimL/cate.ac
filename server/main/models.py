@@ -34,14 +34,14 @@ class Question(models.Model):
 
 
 class Sheet(models.Model):
-  author = models.ForeignKey(User, related_name='sheets', on_delete=models.CASCADE)
+  user = models.ForeignKey(User, related_name='sheets', on_delete=models.CASCADE)
   questions = models.ManyToManyField(Question, through='SheetQuestion', related_name='sheets')
   time_limit = models.DurationField()
   name = models.TextField()
   description = models.TextField()
 
   def __str__(self) -> str:
-    return self.author.get_username() + ': ' + self.name
+    return self.user.get_username() + ': ' + self.name
 
 
 class SheetQuestion(models.Model):
@@ -59,7 +59,7 @@ class Submission(models.Model):
   date = models.DateTimeField(auto_now_add=True)
 
   def __str__(self) -> str:
-    return str(self.user) + ": " + ('' if self.user_answer is None else self.user_answer)
+    return str(self.user) + ': ' + ('' if self.user_answer is None else self.user_answer)
 
 
 class Attempt(models.Model):
@@ -67,7 +67,7 @@ class Attempt(models.Model):
   submissions = models.ManyToManyField(Submission, through='AttemptSubmission', related_name='attempt')
   sheet = models.ForeignKey(Sheet, related_name='attempts', blank=True, null=True, on_delete=models.SET_NULL)
   time_limit = models.DurationField()
-  begin_time = models.DateTimeField(auto_now_add=True)
+  begin_time = models.DateTimeField()
   end_time = models.DateTimeField(blank=True, null=True)
 
   @property

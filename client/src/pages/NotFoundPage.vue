@@ -3,7 +3,7 @@ export default {};
 </script>
 
 <template>
-  <sui-container class="outer-container">
+  <div class="outer-container">
     <sui-header icon as="h1">
       <sui-icon name="frown outline" />
       <sui-header-content>
@@ -11,7 +11,7 @@ export default {};
         <sui-header-subheader>The requested URL does not exist...</sui-header-subheader>
       </sui-header-content>
     </sui-header>
-  </sui-container>
+  </div>
 </template>
 
 <style scoped>

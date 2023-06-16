@@ -6,4 +6,5 @@ urlpatterns = [
   path('users/', views.UsersView.as_view(), name='users'),  # type: ignore
   path('user/<int:pk>/', views.UserView.as_view(), name='user'),  # type: ignore
   path('session/', views.SessionView.as_view(), name='session'),  # type: ignore
+  path('messages/<int:pk>/', views.MessagesView.as_view(), name='messages'),  # type: ignore
 ]

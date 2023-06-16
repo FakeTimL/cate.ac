@@ -75,6 +75,16 @@ class User(AbstractBaseUser):
     return self.admin
 
 
+class Message(models.Model):
+  sender = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
+  receiver = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
+  content = models.TextField(blank=True)
+  date = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self) -> str:
+    return str(self.sender) + ' -> ' + str(self.receiver) + ': ' + self.content
+
+
 # Adding custom authentication backend, modified from Django's built-in ModelBackend
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#writing-an-authentication-backend
 # https://github.com/django/django/blob/main/django/contrib/auth/backends.py

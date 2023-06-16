@@ -82,6 +82,12 @@ def user_serializer(*args, request: Request, refl=False, **kwargs) -> serializer
     return UserBasicSerializer(*args, **kwargs)
 
 
+class MessageSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Message
+    fields = ['pk', 'sender', 'receiver', 'content', 'date']
+
+
 class UsersView(views.APIView):
   # Disable DRF permission checking, use our own logic.
   permission_classes = [permissions.AllowAny]
@@ -132,7 +138,7 @@ class UserView(views.APIView):
       self.permission_denied(request)
     user = get_object_or_404(User, pk=pk)
     user.delete()
-    return Response(None, status.HTTP_204_NO_CONTENT)
+    return Response(None, status.HTTP_200_OK)
 
 
 class SessionView(views.APIView):
@@ -145,7 +151,7 @@ class SessionView(views.APIView):
       serializer = user_serializer(request.user, request=request, refl=True)
       return Response(serializer.data, status.HTTP_200_OK)
     else:
-      return Response(None, status.HTTP_204_NO_CONTENT)
+      return Response(None, status.HTTP_200_OK)
 
   # Create new session (i.e. sign in).
   def post(self, request: Request):
@@ -161,4 +167,31 @@ class SessionView(views.APIView):
   # Delete session (i.e. sign out).
   def delete(self, request: Request) -> Response:
     auth.logout(request)
-    return Response(None, status.HTTP_204_NO_CONTENT)
+    return Response(None, status.HTTP_200_OK)
+
+
+class MessagesView(views.APIView):
+  # Disable DRF permission checking, use our own logic.
+  permission_classes = [permissions.AllowAny]
+
+  # List all messages from / to another user.
+  def get(self, request: Request, pk: int) -> Response:
+    if not isinstance(request.user, User):
+      return Response(None, status.HTTP_200_OK)
+    queryset_send = Message.objects.filter(sender=request.user.pk, receiver=pk)
+    queryset_recv = Message.objects.filter(sender=pk, receiver=request.user.pk)
+    queryset = queryset_send.union(queryset_recv).order_by('-date')
+    return Response(MessageSerializer(queryset, many=True).data, status.HTTP_200_OK)
+
+  # Create new message to a given user.
+  def post(self, request: Request, pk: int) -> Response:
+    if not isinstance(request.user, User):
+      return Response(None, status.HTTP_200_OK)
+    serializer = MessageSerializer(data={
+      'sender': request.user.pk,
+      'receiver': pk,
+      'content': request.data.get('content'),
+    })
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status.HTTP_201_CREATED)
