@@ -88,7 +88,7 @@ export default {
   flex-direction: column;
 }
 
-.navigation,
+.ui.navigation.menu,
 .content {
   flex-grow: 0;
 }
@@ -99,7 +99,7 @@ export default {
 }
 
 /* Navigation bar */
-.navigation {
+.ui.navigation.menu {
   margin: 0;
   border-radius: 0;
   /* Tweak: hide top shadow */
@@ -108,26 +108,26 @@ export default {
   transition: background-color 0.5s;
 }
 
-.navigation :deep(.item) {
+.ui.navigation.menu :deep(.item) {
   padding-top: 1.4em;
   padding-bottom: 1.4em;
 }
 
-.navigation :deep(.item .avatar) {
+.ui.navigation.menu :deep(.item .avatar) {
   margin-top: -1em;
   margin-bottom: -1em;
   /* Tweak: make it less crowded */
   margin-right: 0.4em;
 }
 
-.navigation :deep(.item .ui.tiny.image) {
+.ui.navigation.menu :deep(.item .ui.tiny.image) {
   height: 3em;
   width: auto;
   margin: -0.8em 0;
 }
 
 @media (max-width: 767.5px) {
-  .navigation :deep(.login.item span) {
+  .ui.navigation.menu :deep(.login.item span) {
     display: none;
   }
 }

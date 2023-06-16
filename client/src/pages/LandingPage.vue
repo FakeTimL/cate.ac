@@ -160,13 +160,13 @@ window.requestAnimationFrame(updateAll);
   will-change: transform;
 }
 
-.banner h1 {
+.banner h1.ui.header {
   font-size: 60px;
 }
-.banner h2 {
+.banner h2.ui.header {
   font-size: 48px;
 }
-.banner p {
+.banner p.ui.header {
   font-size: 18px;
 }
 .banner .center {
@@ -183,13 +183,13 @@ span.line {
 }
 
 @media screen and (max-width: 1200px) {
-  .banner h1 {
+  .banner h1.ui.header {
     font-size: 54px;
   }
-  .banner h2 {
+  .banner h2.ui.header {
     font-size: 40px;
   }
-  .banner p {
+  .banner p.ui.header {
     font-size: 15px;
   }
 }
@@ -206,13 +206,13 @@ span.line {
   .left_and_right.banner > div .transformed {
     position: static;
   }
-  .banner h1 {
+  .banner h1.ui.header {
     font-size: 50px;
   }
-  .banner h2 {
+  .banner h2.ui.header {
     font-size: 36px;
   }
-  .banner p {
+  .banner p.ui.header {
     font-size: 16px;
   }
 }
@@ -229,13 +229,13 @@ span.line {
   .left_and_right.banner > div .transformed {
     position: static;
   }
-  .banner h1 {
+  .banner h1.ui.header {
     font-size: 50px;
   }
-  .banner h2 {
+  .banner h2.ui.header {
     font-size: 36px;
   }
-  .banner p {
+  .banner p.ui.header {
     font-size: 16px;
   }
   .banner .center {
@@ -247,30 +247,30 @@ span.line {
   .left_and_right.banner > div .transformed {
     padding: 2em;
   }
-  .banner h1 {
+  .banner h1.ui.header {
     font-size: 48px;
   }
-  .banner h2 {
+  .banner h2.ui.header {
     font-size: 32px;
   }
-  .banner p {
+  .banner p.ui.header {
     font-size: 16px;
   }
 }
 
 @media screen and (max-width: 379px) {
-  .banner h1 {
+  .banner h1.ui.header {
     font-size: 40px;
   }
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.ui.header {
+h1.ui.header,
+h2.ui.header,
+h3.ui.header,
+h4.ui.header,
+h5.ui.header,
+h6.ui.header,
+p.ui.header {
   font-weight: 400;
 }
 
