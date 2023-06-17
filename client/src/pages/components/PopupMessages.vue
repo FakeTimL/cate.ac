@@ -1,11 +1,11 @@
 <script lang="ts">
 import { messages } from '@/messages';
+import MarkdownContent from './MarkdownContent.vue';
 
 export default {
+  components: { MarkdownContent },
   setup() {
-    return {
-      messages,
-    };
+    return { messages };
   },
 };
 </script>
@@ -15,7 +15,7 @@ export default {
     <div v-for="message in messages.slice().reverse()" :key="message.key" class="child">
       <div class="ui floating message" :class="message.className" style="margin: 0 !important">
         <i class="close icon" @click="messages.splice(messages.indexOf(message), 1)"></i>
-        <span>{{ message.content }}</span>
+        <markdown-content :markdown="message.content" />
       </div>
     </div>
   </transition-group>

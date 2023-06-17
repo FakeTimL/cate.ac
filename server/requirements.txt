@@ -4,11 +4,9 @@ django-cors-headers==4.1.0
 django-storages==1.13.2
 djangorestframework==3.14.0
 gunicorn==20.1.0
-markdown==3.4.3
 mysqlclient==2.1.1
 openai==0.27.7
 Pillow==9.5.0
-pymdown-extensions==10.0.1
 sympy==1.12
 typing==3.7.4.3
 whitenoise==6.4.0

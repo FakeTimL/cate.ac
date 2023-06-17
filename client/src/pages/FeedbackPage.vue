@@ -1,8 +1,10 @@
 <script lang="ts">
 import { api } from '@/api';
-import { FormErrors } from '@/forms';
-import { messageError } from '@/messages';
+import { FormErrors } from '@/errors';
+import { messageErrors } from '@/messages';
 import axios from 'axios';
+
+import MarkdownContent from './components/MarkdownContent.vue';
 
 class FormFields {
   text: string = '';
@@ -10,6 +12,9 @@ class FormFields {
 }
 
 export default {
+  components: {
+    MarkdownContent,
+  },
   data() {
     return {
       success: false,
@@ -34,7 +39,7 @@ export default {
         this.success = true;
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
-        else messageError(e);
+        else messageErrors(e);
       }
       this.waiting = false;
     },
@@ -76,7 +81,9 @@ export default {
       <i class="info icon" />
       <div class="content">
         <ul class="ui bulleted list">
-          <li v-for="error of errors.all" :key="error" class="item">{{ error }}</li>
+          <li v-for="error of errors.all" :key="error" class="item">
+            <markdown-content :markdown="error" />
+          </li>
         </ul>
       </div>
     </div>

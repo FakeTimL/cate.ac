@@ -1,7 +1,7 @@
 <script lang="ts">
 import { api, type Question, type Submission } from '@/api';
 import LoadingText from './components/LoadingText.vue';
-import { messageError } from '@/messages';
+import { messageErrors } from '@/messages';
 
 export default {
   components: { LoadingText },
@@ -25,7 +25,7 @@ export default {
       }
       this.loading = false;
     } catch (e) {
-      messageError(e);
+      messageErrors(e);
     }
   },
 };

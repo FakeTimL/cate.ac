@@ -1,12 +1,7 @@
 /** Global messages. */
 
-import { AxiosError } from 'axios';
 import { reactive } from 'vue';
-
-/** See: https://stackoverflow.com/a/58962072 */
-function containsKey<T extends object>(obj: T, key: PropertyKey): key is keyof T {
-  return key in obj;
-}
+import { printErrors } from './errors';
 
 export type Severity = 'success' | 'info' | 'warning' | 'error';
 
@@ -26,30 +21,7 @@ export class Message {
 export const messages = reactive(new Array<Message>());
 
 /** A convenient wrapper function for popping error messages. */
-export function messageError(e: unknown) {
-  if (e instanceof AxiosError) {
-    if (e.response !== undefined) {
-      const data = e.response.data;
-      if (data instanceof Object) {
-        let known = false;
-        const keys = ['detail'];
-        for (const key of keys)
-          if (containsKey(data, key)) {
-            messages.push(new Message('error', String(data[key])));
-            known = true;
-          }
-        if (!known) {
-          messages.push(
-            new Message('error', `Unexpected server response "${String(data)}" (status code ${e.response.status})`),
-          );
-        }
-      } else {
-        messages.push(
-          new Message('error', `Unexpected server response "${String(data)}" (status code ${e.response.status})`),
-        );
-      }
-    } else {
-      messages.push(new Message('error', `Unexpected error "${e.message}"`));
-    }
-  }
+export function messageErrors(e: unknown) {
+  const arr = printErrors(e);
+  for (const elem of arr) messages.push(new Message('error', elem));
 }

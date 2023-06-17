@@ -1,15 +1,16 @@
 <script lang="ts">
-import { api, markdownHtml, type Topic, type Question, type Submission } from '@/api';
-import { FormErrors } from '@/forms';
+import { api, type Topic, type Question, type Submission } from '@/api';
+import { FormErrors } from '@/errors';
 import { friendlyDate } from '@/dates';
 import axios from 'axios';
 
 import LoadingCircle from './components/LoadingCircle.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
 import SubmissionDetail from './components/SubmissionDetail.vue';
-import { messageError } from '@/messages';
+import { messageErrors } from '@/messages';
 
 class FormFields {
+  question: number | null = null;
   user_answer: string = '';
 }
 
@@ -24,7 +25,7 @@ export default {
   },
   props: {
     pk: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
@@ -42,6 +43,7 @@ export default {
       waiting: false,
       fields: new FormFields(),
       errors: new FormErrors<FormFields>({
+        question: [],
         user_answer: [],
       }),
     };
@@ -49,15 +51,13 @@ export default {
   async created() {
     try {
       this.question = (await api.get(`main/question/${this.pk}/`)).data as Question;
-      this.question.statement = await markdownHtml(this.question.statement);
-      this.question.mark_scheme = await markdownHtml(this.question.mark_scheme);
       for (const topic_pk of this.question.topics) {
         this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
       }
       await this.refreshSubmissions();
       this.loading = false;
     } catch (e) {
-      messageError(e);
+      messageErrors(e);
     }
   },
   unmounted() {
@@ -81,19 +81,19 @@ export default {
           this.timeout = setTimeout(this.refreshSubmissions, 5000);
         }
       } catch (e) {
-        messageError(e);
+        messageErrors(e);
       }
     },
     async submit(e: Event) {
       try {
         e.preventDefault();
         if (this.question === null) return;
+        this.fields.question = parseInt(this.pk);
         this.errors.clear();
         if (this.fields.user_answer == '') this.errors.fields.user_answer.push('Please write something...');
         if (this.errors.all.length > 0) return;
         this.waiting = true;
-        const submission = (await api.post(`main/question/${this.question.pk}/my_submissions/`, this.fields))
-          .data as Submission;
+        const submission = (await api.post(`main/my_submissions/`, this.fields)).data as Submission;
         this.submissions.unshift(submission);
         this.tabIndex = 1;
         this.submissionIndex = 0;
@@ -101,7 +101,7 @@ export default {
         this.timeout = setTimeout(this.refreshSubmissions, 5000);
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
-        else messageError(e);
+        else messageErrors(e);
       }
       this.waiting = false;
     },
@@ -115,7 +115,7 @@ export default {
       <div v-if="question">
         <sui-tab v-model:activeIndex="tabIndex">
           <sui-tab-panel header="Question">
-            <markdown-content :html="question.statement" />
+            <markdown-content display :markdown="question.statement" />
             <sui-divider />
 
             <sui-form>
@@ -136,7 +136,9 @@ export default {
               <sui-icon name="info" />
               <sui-message-content>
                 <sui-list bulleted>
-                  <sui-list-item v-for="error of errors.all" :key="error">{{ error }}</sui-list-item>
+                  <sui-list-item v-for="error of errors.all" :key="error">
+                    <markdown-content :markdown="error" />
+                  </sui-list-item>
                 </sui-list>
               </sui-message-content>
             </sui-message>

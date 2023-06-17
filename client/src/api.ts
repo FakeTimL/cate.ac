@@ -12,11 +12,6 @@ export const api = axios.create({
 
 // API schemas.
 
-export interface Credential {
-  username: string;
-  password: string;
-}
-
 export interface User {
   pk: number;
   username: string;
@@ -28,7 +23,12 @@ export interface User {
   bio: string;
   date_joined: string;
   last_login: string;
-  admin: boolean | null;
+  admin: boolean;
+}
+
+export interface Credential {
+  username: string;
+  password: string;
 }
 
 export interface Message {
@@ -93,10 +93,4 @@ export interface Attempt {
   time_limit: string;
   begin_time: string;
   end_time: string | null;
-}
-
-// Common API calls.
-
-export async function markdownHtml(markdown: string): Promise<string> {
-  return (await api.post('main/markdown_html/', { markdown: markdown })).data.html;
 }

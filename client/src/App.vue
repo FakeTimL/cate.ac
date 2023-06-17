@@ -1,7 +1,7 @@
 <script lang="ts">
 import { api } from '@/api';
 import { useRouter } from 'vue-router';
-import { messageError } from './messages';
+import { messageErrors } from './messages';
 import PopupMessages from './pages/components/PopupMessages.vue';
 import BaseLayout from './pages/components/BaseLayout.vue';
 import SignUpModal from './pages/components/SignUpModal.vue';
@@ -40,7 +40,7 @@ export default {
         this.avatar = data['avatar'] ?? defaultAvatar;
       }
     } catch (e) {
-      messageError(e);
+      messageErrors(e);
     }
   },
 };

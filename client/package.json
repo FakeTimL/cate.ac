@@ -12,10 +12,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@traptitech/markdown-it-katex": "^3.6.0",
     "axios": "^1.4.0",
     "fomantic-ui-css": "^2.9.2",
     "highlight.js": "^11.8.0",
     "katex": "^0.16.7",
+    "markdown-it": "^13.0.1",
     "vue": "^3.3.2",
     "vue-fomantic-ui": "^0.13.0",
     "vue-router": "^4.2.2"
@@ -24,6 +26,7 @@
     "@rushstack/eslint-patch": "^1.2.0",
     "@tsconfig/node18": "^2.0.1",
     "@types/katex": "^0.16.0",
+    "@types/markdown-it": "^12.2.3",
     "@types/node": "^18.16.8",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",

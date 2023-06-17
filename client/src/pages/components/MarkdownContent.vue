@@ -1,11 +1,9 @@
 <script lang="ts">
-import katex from 'katex';
+import MarkdownIt from 'markdown-it';
+import katex from '@traptitech/markdown-it-katex';
 import hljs, { type HLJSApi } from 'highlight.js';
 import 'katex/dist/katex.min.css';
 import 'highlight.js/styles/github.css';
-
-// See: https://facelessuser.github.io/pymdown-extensions/extensions/arithmatex/#loading-katex
-// See: https://highlightjs.org/usage/
 
 function hljsLean(hljs: HLJSApi) {
   /*
@@ -111,6 +109,40 @@ function hljsLean(hljs: HLJSApi) {
 // Register once on import.
 hljs.registerLanguage('lean', hljsLean);
 
+// See: https://github.com/markdown-it/markdown-it
+// See: https://github.com/waylonflinn/markdown-it-katex
+
+export default {
+  props: {
+    markdown: { type: String, required: true },
+    display: { type: Boolean, default: false },
+  },
+  data() {
+    return { converted: '' };
+  },
+  created() {
+    const big = this.display;
+    const md = new MarkdownIt({
+      html: true,
+      highlight(str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            const inner = hljs.highlight(str, { language: lang }).value;
+            return `<pre class="${big ? '' : 'tight'}"><code class="${big ? 'hljs' : ''}">${inner}</code></pre>`;
+          } catch (_) {
+            return '';
+          }
+        } else {
+          return '';
+        }
+      },
+    });
+    md.use(katex, { errorColor: '#9f3a38' });
+    this.converted = md.render(this.markdown);
+  },
+};
+
+/*
 function addStyling(el: HTMLElement, selector: string, classes: string) {
   const elems = el.querySelectorAll(selector);
   for (let i = 0; i < elems.length; i++) {
@@ -119,20 +151,6 @@ function addStyling(el: HTMLElement, selector: string, classes: string) {
 }
 
 function render(el: HTMLElement) {
-  const maths = el.querySelectorAll('.arithmatex');
-  for (let i = 0; i < maths.length; i++) {
-    const el = maths[i];
-    if (el instanceof HTMLElement) {
-      const tex = el.textContent ?? el.innerText;
-      // Arithmatex handles `$$...$$` incorrectly.
-      if (tex.startsWith('\\(\\(') && tex.endsWith('\\)\\)')) {
-        katex.render(tex.slice(4, -4), el, { displayMode: true });
-      } else if (tex.startsWith('\\(') && tex.endsWith('\\)')) {
-        katex.render(tex.slice(2, -2), el, { displayMode: false });
-      }
-    }
-  }
-  hljs.highlightAll();
   // Add styling classes to markdown content.
   addStyling(el, 'h1', 'ui header');
   addStyling(el, 'h2', 'ui header');
@@ -148,22 +166,16 @@ function render(el: HTMLElement) {
   addStyling(el, 'img', 'ui centered medium rounded image');
   addStyling(el, 'hr', 'ui divider');
 }
-
-export default {
-  props: {
-    html: {
-      type: String,
-      required: true,
-    },
-  },
-  mounted() {
-    render(this.$el);
-  },
-};
+*/
 </script>
 
 <template>
-  <div v-html="html"></div>
+  <div v-html="converted"></div>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(pre.tight) {
+  margin: 0;
+  white-space: pre-wrap;
+}
+</style>

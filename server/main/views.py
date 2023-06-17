@@ -1,13 +1,11 @@
+from datetime import datetime
 import logging
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import serializers, views, generics, permissions, status
-from markdown import Markdown
-from pymdownx.arithmatex import ArithmatexExtension
-from pymdownx.highlight import HighlightExtension
-from .models import *
-from .tasks import SubmissionThread
+from rest_framework import views, generics, permissions, status
+from .serializers import *
+from .tasks import *
 
 logger = logging.getLogger(__name__)
 
@@ -17,66 +15,6 @@ logger = logging.getLogger(__name__)
 # See: https://www.django-rest-framework.org/api-guide/views/
 # See: https://www.django-rest-framework.org/api-guide/generic-views/
 # See: https://www.django-rest-framework.org/api-guide/viewsets/
-
-
-class FeedbackSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Feedback
-    fields = ['pk', 'text', 'email', 'date']
-    extra_kwargs = {'date': {'read_only': True}}
-
-
-class TopicSerializer(serializers.ModelSerializer):
-  children = serializers.PrimaryKeyRelatedField(many=True, queryset=Topic.objects)
-  questions = serializers.PrimaryKeyRelatedField(many=True, queryset=Question.objects)
-
-  class Meta:
-    model = Topic
-    fields = ['pk', 'name', 'parent', 'children', 'questions', 'resources']
-
-
-class QuestionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Question
-    fields = ['pk', 'statement', 'mark_denominator', 'mark_minimum',
-              'mark_maximum', 'mark_scheme', 'gpt_prompt', 'topics']
-
-
-# See: https://stackoverflow.com/a/41996831
-class SheetQuestionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = SheetQuestion
-    fields = ['question', 'index']
-
-
-class SheetSerializer(serializers.ModelSerializer):
-  sheet_questions = SheetQuestionSerializer(source='sheetquestion_set', many=True)
-
-  class Meta:
-    model = Sheet
-    fields = ['pk', 'user', 'sheet_questions', 'time_limit', 'name', 'description']
-
-
-class SubmissionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Submission
-    fields = ['pk', 'user', 'question', 'user_answer', 'gpt_mark', 'gpt_comments', 'date']
-    extra_kwargs = {'date': {'read_only': True}}
-
-
-# See: https://stackoverflow.com/a/41996831
-class AttemptSubmissionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = AttemptSubmission
-    fields = ['submission', 'index']
-
-
-class AttemptSerializer(serializers.ModelSerializer):
-  attempt_submissions = AttemptSubmissionSerializer(source='attemptsubmission_set', many=True)
-
-  class Meta:
-    model = Attempt
-    fields = ['pk', 'user', 'attempt_submissions', 'sheet', 'time_limit', 'begin_time', 'end_time']
 
 
 # This time we use DRF's abstractions for views (`GenericAPIView`) and permissions (`BasePermission`)
@@ -170,34 +108,34 @@ class AttemptView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class UserSubmissionsView(views.APIView):
-  # Disable DRF permission checking, use our own logic.
-  permission_classes = [permissions.AllowAny]
+  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
 
   # Retrieve all submissions for current user.
   def get(self, request: Request) -> Response:
     user = request.user
     if not isinstance(user, User):
-      self.permission_denied(request)
+      return Response([], status.HTTP_200_OK)
     queryset = Submission.objects.filter(user=user).order_by('-date')
     return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
-
-class UserAttemptsView(views.APIView):
-  # Disable DRF permission checking, use our own logic.
-  permission_classes = [permissions.AllowAny]
-
-  # Retrieve all submissions for current user.
-  def get(self, request: Request) -> Response:
+  # Submit a new answer and have ChatGPT grade it.
+  def post(self, request: Request) -> Response:
     user = request.user
     if not isinstance(user, User):
       self.permission_denied(request)
-    queryset = Attempt.objects.filter(user=user).order_by('-begin_time')
-    return Response(AttemptSerializer(queryset, many=True).data, status.HTTP_200_OK)
+    serializer = SubmissionSerializer(data={
+      'user': user.pk,
+      'question': request.data.get('question'),
+      'user_answer': request.data.get('user_answer'),
+    })
+    serializer.is_valid(raise_exception=True)
+    submission = serializer.save()
+    SubmissionsThread([submission]).start()  # This will trigger a request to ChatGPT.
+    return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 class UserQuestionSubmissionsView(views.APIView):
-  # Disable DRF permission checking, use our own logic.
-  permission_classes = [permissions.AllowAny]
+  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
 
   # Retrieve all submissions for current user and given question.
   def get(self, request: Request, pk: int) -> Response:
@@ -208,42 +146,73 @@ class UserQuestionSubmissionsView(views.APIView):
     queryset = Submission.objects.filter(user=user, question=question).order_by('-date')
     return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
-  # Submit a new answer and have ChatGPT grade it.
-  def post(self, request: Request, pk: int) -> Response:
-    question = get_object_or_404(Question, pk=pk)
+
+class UserAttemptsView(views.APIView):
+  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
+
+  # Retrieve all attempts for current user.
+  def get(self, request: Request) -> Response:
     user = request.user
     if not isinstance(user, User):
-      user = None
-    user_answer = request.data.get('user_answer', '(none)')
-    submission = Submission(
-      user=user,
-      question=question,
-      user_answer=user_answer,
-      gpt_mark=None,
-      gpt_comments='',
-    )
-    submission.save()
-    SubmissionThread(submission).start()  # This will trigger a request to ChatGPT.
-    return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
+      return Response([], status.HTTP_200_OK)
+    queryset = Attempt.objects.filter(user=user).order_by('-begin_time')
+    return Response(AttemptSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
-
-class MarkdownHTMLView(views.APIView):
-  # Disable DRF permission checking, use our own logic.
-  permission_classes = [permissions.AllowAny]
-
-  # Convert Markdown to HTML.
+  # Create a new attempt and record the start time.
   def post(self, request: Request) -> Response:
-    markdown = request.data.get('markdown', '')
-    html = Markdown(extensions=[
-      'nl2br',
-      'smarty',
-      'toc',
-      'pymdownx.extra',
-      'pymdownx.tilde',
-      'pymdownx.mark',
-      'pymdownx.tasklist',
-      'pymdownx.escapeall',
-      HighlightExtension(use_pygments=False),
-      ArithmatexExtension(inline_syntax=['dollar'], block_syntax=['dollar'], smart_dollar=False, generic=True),
-    ]).convert(markdown)
-    return Response({'html': html}, status.HTTP_200_OK)
+    user = request.user
+    if not isinstance(user, User):
+      self.permission_denied(request)
+    serializer = AttemptSerializer(data=request.data)
+    serializer.data['user'] = user.pk
+    serializer.data['start_time'] = None
+    serializer.data['end_time'] = None
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status.HTTP_201_CREATED)
+
+
+class UserAttemptView(views.APIView):
+  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
+
+  # Retrieve an attempt for current user.
+  def get(self, request: Request, pk: int) -> Response:
+    user = request.user
+    attempt = get_object_or_404(Attempt, pk=pk)
+    if not (isinstance(user, User) and user == attempt.user):
+      self.permission_denied(request)
+    return Response(AttemptSerializer(attempt).data, status.HTTP_200_OK)
+
+  # Partially update attempt data.
+  def patch(self, request: Request, pk: int) -> Response:
+    user = request.user
+    attempt = get_object_or_404(Attempt, pk=pk)
+    if not (isinstance(user, User) and user == attempt.user):
+      self.permission_denied(request)
+    if attempt.completed:
+      self.permission_denied(request)
+
+    just_completed = False
+    serializer = AttemptSerializer(attempt)
+
+    # Only allowed fields:
+    if 'attempt_submissions' in request.data:
+      serializer.data['attempt_submissions'] = request.data['attempt_submissions']
+    if 'end_time' in request.data:
+      serializer.data['end_time'] = datetime.now()
+      just_completed = True
+
+    serializer.is_valid(raise_exception=True)
+    attempt = serializer.save()
+    if just_completed:
+      SubmissionsThread(list(attempt.submissions.all())).start()  # This will trigger requests to ChatGPT.
+    return Response(serializer.data, status.HTTP_200_OK)
+
+  # Delete attempt.
+  def delete(self, request: Request, pk: int) -> Response:
+    user = request.user
+    attempt = get_object_or_404(Attempt, pk=pk)
+    if not (isinstance(user, User) and user == attempt.user):
+      self.permission_denied(request)
+    attempt.delete()
+    return Response(None, status.HTTP_200_OK)

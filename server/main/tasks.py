@@ -15,21 +15,26 @@ logger = logging.getLogger(__name__)
 # Temporary solution using threads.
 # See: https://stackoverflow.com/a/11904222
 # See: https://stackoverflow.com/a/11903904
-class SubmissionThread(threading.Thread):
-  def __init__(self, submission: Submission, **kwargs):
-    self.submission = submission
-    super(SubmissionThread, self).__init__(**kwargs)
+class SubmissionsThread(threading.Thread):
+  def __init__(self, submissions: list[Submission], **kwargs):
+    self.submissions = submissions
+    super(SubmissionsThread, self).__init__(**kwargs)
 
   def run(self) -> bool:
+    all_success = True
+    for submission in self.submissions:
+      if not self.run_one(submission):
+        all_success = False
+    return all_success
+
+  def run_one(self, submission: Submission) -> bool:
     # Sending request to ChatGPT.
-    max_attempts = 3
-    while max_attempts > 0:
-      max_attempts -= 1
+    max_retry = 3
+    while max_retry > 0:
+      max_retry -= 1
       try:
-        (self.submission.gpt_mark, self.submission.gpt_comments) = gpt_invoke(
-          self.submission.question, self.submission.user_answer)
-        self.submission.save()
-        logger.info(self.submission)
+        (submission.gpt_mark, submission.gpt_comments) = gpt_invoke(submission.question, submission.user_answer)
+        submission.save()
         return True
       except json.JSONDecodeError as error:  # ChatGPT did not respond in valid JSON format.
         logger.warning(error)

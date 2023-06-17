@@ -1,12 +1,15 @@
 <script lang="ts">
 import { api } from '@/api';
-import { FormErrors } from '@/forms';
-import { messageError } from '@/messages';
+import { FormErrors } from '@/errors';
+import { messageErrors } from '@/messages';
 import axios from 'axios';
+
+import MarkdownContent from './MarkdownContent.vue';
 
 class FormFields {}
 
 export default {
+  components: { MarkdownContent },
   // See: https://vuejs.org/guide/components/v-model.html
   props: ['modelValue', 'username'],
   emits: ['update:modelValue'],
@@ -37,7 +40,7 @@ export default {
         return;
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
-        else messageError(e);
+        else messageErrors(e);
       }
       this.waiting = false;
     },
@@ -58,7 +61,9 @@ export default {
         <sui-icon name="info" />
         <sui-message-content>
           <sui-list bulleted>
-            <sui-list-item v-for="error of errors.all" :key="error">{{ error }}</sui-list-item>
+            <sui-list-item v-for="error of errors.all" :key="error">
+              <markdown-content :markdown="error" />
+            </sui-list-item>
           </sui-list>
         </sui-message-content>
       </sui-message>

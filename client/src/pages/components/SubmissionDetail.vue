@@ -40,7 +40,7 @@ export default {
       <details>
         <summary>Mark scheme:</summary>
         <blockquote>
-          <markdown-content :html="question.mark_scheme" />
+          <markdown-content display :markdown="question.mark_scheme" />
         </blockquote>
       </details>
     </div>

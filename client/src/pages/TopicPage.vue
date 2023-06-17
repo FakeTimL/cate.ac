@@ -1,8 +1,8 @@
 <script lang="ts">
-import { api, markdownHtml, type Topic, type Question } from '@/api';
+import { api, type Topic, type Question } from '@/api';
 import LoadingText from './components/LoadingText.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
-import { messageError } from '@/messages';
+import { messageErrors } from '@/messages';
 
 export default {
   components: {
@@ -11,7 +11,7 @@ export default {
   },
   props: {
     pk: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
@@ -29,10 +29,9 @@ export default {
       for (const questions_pk of this.topic.questions) {
         this.questions.push((await api.get(`main/question/${questions_pk}/`)).data as Question);
       }
-      this.topic.resources = await markdownHtml(this.topic.resources);
       this.loading = false;
     } catch (e) {
-      messageError(e);
+      messageErrors(e);
     }
   },
 };
@@ -63,7 +62,7 @@ export default {
   <sui-modal v-if="topic" size="small" v-model="modalIsActive">
     <div class="header">What this topic is about?</div>
     <div class="content scrolling">
-      <markdown-content :html="topic.resources" />
+      <markdown-content display :markdown="topic.resources" />
     </div>
   </sui-modal>
 </template>
