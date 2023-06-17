@@ -45,10 +45,10 @@ export class FormErrors<T> {
             known = true;
           }
         if (!known) {
-          this.others.push(`Unexpected response format "${String(data)}" (status code ${e.response.status})`);
+          this.others.push(`Unexpected server response "${String(data)}" (status code ${e.response.status})`);
         }
       } else {
-        this.others.push(`Unexpected response format "${String(data)}" (status code ${e.response.status})`);
+        this.others.push(`Unexpected server response "${String(data)}" (status code ${e.response.status})`);
       }
     } else {
       this.others.push(`Unexpected error "${e.message}"`);

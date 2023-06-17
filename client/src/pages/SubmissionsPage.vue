@@ -1,6 +1,7 @@
 <script lang="ts">
 import { api, type Question, type Submission } from '@/api';
 import LoadingText from './components/LoadingText.vue';
+import { messageError } from '@/messages';
 
 export default {
   components: { LoadingText },
@@ -16,13 +17,15 @@ export default {
       this.submissions = (await api.get('main/my_submissions/')).data as Submission[];
       for (let submission of this.submissions) {
         if (!this.questions.has(submission.question)) {
-          this.questions.set(submission.question, (await api.get(`main/question/${submission.question}/`)).data as Question);
+          this.questions.set(
+            submission.question,
+            (await api.get(`main/question/${submission.question}/`)).data as Question,
+          );
         }
       }
       this.loading = false;
-    } catch (error) {
-      // TODO
-      this.loading = false;
+    } catch (e) {
+      messageError(e);
     }
   },
 };
@@ -42,7 +45,7 @@ export default {
           <sui-icon name="comments outline" />
           <sui-list-content>
             <sui-list-header>
-              [{{ submission.gpt_mark }}/{{ questions.get(submission.question)?.mark_maximum }}] 
+              [{{ submission.gpt_mark }}/{{ questions.get(submission.question)?.mark_maximum }}]
               {{ submission.user_answer }}
             </sui-list-header>
           </sui-list-content>

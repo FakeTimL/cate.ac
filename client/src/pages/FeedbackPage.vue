@@ -1,6 +1,7 @@
 <script lang="ts">
 import { api } from '@/api';
 import { FormErrors } from '@/forms';
+import { messageError } from '@/messages';
 import axios from 'axios';
 
 class FormFields {
@@ -22,18 +23,18 @@ export default {
   },
   methods: {
     async submit(e: Event) {
-      e.preventDefault();
-      this.success = false;
-      this.errors.clear();
-      if (this.fields.text == '') this.errors.fields.text.push('Please write something...');
-      if (this.errors.all.length > 0) return;
-      this.waiting = true;
       try {
+        e.preventDefault();
+        this.success = false;
+        this.errors.clear();
+        if (this.fields.text == '') this.errors.fields.text.push('Please write something...');
+        if (this.errors.all.length > 0) return;
+        this.waiting = true;
         await api.post('main/feedbacks/', this.fields);
         this.success = true;
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
-        else throw e;
+        else messageError(e);
       }
       this.waiting = false;
     },
@@ -64,7 +65,7 @@ export default {
           @input="errors.fields.email.length = 0"
         />
       </sui-form-field>
-      <sui-button primary @click="submit">Send</sui-button>
+      <sui-button primary :disabled="waiting" :loading="waiting" @click="submit">Send</sui-button>
     </sui-form>
 
     <sui-message v-if="success" icon positive>
@@ -79,9 +80,5 @@ export default {
         </sui-list>
       </sui-message-content>
     </sui-message>
-
-    <sui-dimmer :active="waiting">
-      <sui-loader />
-    </sui-dimmer>
   </sui-container>
 </template>

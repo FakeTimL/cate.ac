@@ -1,6 +1,8 @@
 <script lang="ts">
 import { api } from '@/api';
 import { useRouter } from 'vue-router';
+import { messageError } from './messages';
+import PopupMessages from './pages/components/PopupMessages.vue';
 import BaseLayout from './pages/components/BaseLayout.vue';
 import SignUpModal from './pages/components/SignUpModal.vue';
 import LogInModal from './pages/components/LogInModal.vue';
@@ -19,7 +21,7 @@ export default {
       sessionModalIsActive: false,
     };
   },
-  components: { BaseLayout, SignUpModal, LogInModal, SessionModal },
+  components: { PopupMessages, BaseLayout, SignUpModal, LogInModal, SessionModal },
   methods: {
     currentPathIs(s: string): boolean {
       return useRouter().currentRoute.value.path === s;
@@ -31,10 +33,14 @@ export default {
     },
   },
   async created() {
-    const data = (await api.get('accounts/session/', {})).data;
-    if (data['username']) {
-      this.username = data['username'];
-      this.avatar = data['avatar'] ?? defaultAvatar;
+    try {
+      const data = (await api.get('accounts/session/', {})).data;
+      if (data['username']) {
+        this.username = data['username'];
+        this.avatar = data['avatar'] ?? defaultAvatar;
+      }
+    } catch (e) {
+      messageError(e);
     }
   },
 };
@@ -82,6 +88,7 @@ export default {
       <session-modal v-model="sessionModalIsActive" :username="username" />
     </template>
   </base-layout>
+  <popup-messages />
 </template>
 
 <style scoped></style>

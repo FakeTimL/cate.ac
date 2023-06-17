@@ -7,6 +7,7 @@ import axios from 'axios';
 import LoadingCircle from './components/LoadingCircle.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
 import SubmissionDetail from './components/SubmissionDetail.vue';
+import { messageError } from '@/messages';
 
 class FormFields {
   user_answer: string = '';
@@ -53,11 +54,11 @@ export default {
       for (const topic_pk of this.question.topics) {
         this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
       }
-    } catch (error) {
-      // TODO
+      await this.refreshSubmissions();
+      this.loading = false;
+    } catch (e) {
+      messageError(e);
     }
-    await this.refreshSubmissions();
-    this.loading = false;
   },
   unmounted() {
     if (this.timeout !== null) {
@@ -69,28 +70,28 @@ export default {
     async refreshSubmissions() {
       try {
         this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
-      } catch (error) {
-        // TODO
-      }
-      let refreshRequired = false;
-      for (const submission of this.submissions)
-        if (submission.gpt_mark === null) {
-          refreshRequired = true;
-          break;
+        let refreshRequired = false;
+        for (const submission of this.submissions)
+          if (submission.gpt_mark === null) {
+            refreshRequired = true;
+            break;
+          }
+        if (refreshRequired) {
+          // Refresh after 5 seconds.
+          this.timeout = setTimeout(this.refreshSubmissions, 5000);
         }
-      if (refreshRequired) {
-        // Refresh after 5 seconds.
-        this.timeout = setTimeout(this.refreshSubmissions, 5000);
+      } catch (e) {
+        messageError(e);
       }
     },
     async submit(e: Event) {
-      e.preventDefault();
-      if (this.question === null) return;
-      this.errors.clear();
-      if (this.fields.user_answer == '') this.errors.fields.user_answer.push('Please write something...');
-      if (this.errors.all.length > 0) return;
-      this.waiting = true;
       try {
+        e.preventDefault();
+        if (this.question === null) return;
+        this.errors.clear();
+        if (this.fields.user_answer == '') this.errors.fields.user_answer.push('Please write something...');
+        if (this.errors.all.length > 0) return;
+        this.waiting = true;
         const submission = (await api.post(`main/question/${this.question.pk}/my_submissions/`, this.fields))
           .data as Submission;
         this.submissions.unshift(submission);
@@ -100,7 +101,7 @@ export default {
         this.timeout = setTimeout(this.refreshSubmissions, 5000);
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
-        else throw e;
+        else messageError(e);
       }
       this.waiting = false;
     },
@@ -128,7 +129,7 @@ export default {
                   @input="errors.fields.user_answer.length = 0"
                 ></textarea>
               </sui-form-field>
-              <sui-button primary @click="submit">Check</sui-button>
+              <sui-button primary :disabled="waiting" :loading="waiting" @click="submit">Check</sui-button>
             </sui-form>
 
             <sui-message v-if="errors.all.length > 0" icon error>
@@ -168,10 +169,6 @@ export default {
         </sui-tab>
       </div>
     </loading-circle>
-
-    <sui-dimmer :active="waiting">
-      <sui-loader />
-    </sui-dimmer>
   </sui-container>
 </template>
 

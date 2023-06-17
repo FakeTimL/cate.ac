@@ -1,6 +1,7 @@
 <script lang="ts">
 import { api } from '@/api';
 import { FormErrors } from '@/forms';
+import { messageError } from '@/messages';
 import axios from 'axios';
 
 class FormFields {
@@ -40,25 +41,25 @@ export default {
   },
   methods: {
     async submit() {
-      this.errors.clear();
-      if (this.fields.username == '') this.errors.fields.username.push('Username must not be empty.');
-      if (this.fields.password == '') this.errors.fields.password.push('Password must not be empty.');
-      if (this.fields.password != this.fields.passwordRepeat)
-        this.errors.fields.passwordRepeat.push('Two passwords are different.');
-      if (!this.fields.agree)
-        this.errors.fields.agree.push(
-          'Please indicate that you agree to the Terms of Use and Privacy Policy by checking the box.',
-        );
-      if (this.errors.all.length > 0) return;
-      this.waiting = true;
       try {
+        this.errors.clear();
+        if (this.fields.username == '') this.errors.fields.username.push('Username must not be empty.');
+        if (this.fields.password == '') this.errors.fields.password.push('Password must not be empty.');
+        if (this.fields.password != this.fields.passwordRepeat)
+          this.errors.fields.passwordRepeat.push('Two passwords are different.');
+        if (!this.fields.agree)
+          this.errors.fields.agree.push(
+            'Please indicate that you agree to the Terms of Use and Privacy Policy by checking the box.',
+          );
+        if (this.errors.all.length > 0) return;
+        this.waiting = true;
         await api.post('accounts/users/', this.fields);
         await api.post('accounts/session/', this.fields);
         window.location.reload(); // Page refresh is required for new CSRF token.
         return;
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
-        else throw e;
+        else messageError(e);
       }
       this.waiting = false;
     },
@@ -69,6 +70,7 @@ export default {
 <template>
   <sui-modal size="tiny" v-model="modalActive">
     <sui-modal-header>Sign up</sui-modal-header>
+
     <sui-modal-content scrolling>
       <sui-form>
         <sui-form-field :error="errors.fields.username.length > 0">
@@ -106,6 +108,7 @@ export default {
         </sui-form-field>
       </sui-form>
     </sui-modal-content>
+
     <sui-modal-actions>
       <sui-message v-if="errors.all.length > 0" icon error>
         <sui-icon name="info" />
@@ -115,12 +118,9 @@ export default {
           </sui-list>
         </sui-message-content>
       </sui-message>
-      <sui-button primary @click="submit">Sign up</sui-button>
+      <sui-button primary :disabled="waiting" :loading="waiting" @click="submit">Sign up</sui-button>
       <sui-button @click="modalActive = false">Cancel</sui-button>
     </sui-modal-actions>
-    <sui-dimmer :active="waiting">
-      <sui-loader />
-    </sui-dimmer>
   </sui-modal>
 </template>
 

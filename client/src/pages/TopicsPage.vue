@@ -1,6 +1,7 @@
 <script lang="ts">
 import { api, type Topic } from '@/api';
 import LoadingText from './components/LoadingText.vue';
+import { messageError } from '@/messages';
 
 export default {
   components: { LoadingText },
@@ -26,9 +27,8 @@ export default {
         }
       }
       this.loading = false;
-    } catch (error) {
-      // TODO
-      this.loading = false;
+    } catch (e) {
+      messageError(e);
     }
   },
 };

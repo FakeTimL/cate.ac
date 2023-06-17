@@ -8,13 +8,15 @@ export default {
       large: false,
       sidebarActive: false,
       sidebarAnimating: false,
+      timeout: null as number | null,
     };
   },
   methods: {
     toggle(value: boolean) {
       this.sidebarActive = value;
       this.sidebarAnimating = true;
-      setTimeout(() => (this.sidebarAnimating = false), 500);
+      if (this.timeout !== null) clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => (this.sidebarAnimating = false), 500);
     },
     onResize() {
       this.large = window.innerWidth > 767.5;
@@ -50,7 +52,7 @@ export default {
     </div>
     <div class="pusher" :class="{ dimmed: sidebarActive }" @click="onClickPusher">
       <div class="flex-container">
-        <sui-menu borderless :inverted="landingPage" :color="landingPage ? 'blue' : ''" class="navigation">
+        <div class="ui borderless navigation menu" :class="{ inverted: landingPage, blue: landingPage }">
           <sui-container v-if="large">
             <slot name="navigation"></slot>
           </sui-container>
@@ -60,7 +62,7 @@ export default {
           <router-link to="/" v-if="!large">
             <sui-menu-item header>CATE</sui-menu-item>
           </router-link>
-        </sui-menu>
+        </div>
         <div class="content">
           <router-view v-slot="{ Component, route }">
             <transition name="fade" mode="default">
@@ -93,13 +95,13 @@ export default {
   flex-grow: 0;
 }
 
-.footer {
+.ui.inverted.footer.segment {
   flex-grow: 1;
   padding: 2em 0em;
 }
 
 /* Navigation bar */
-.ui.navigation.menu {
+.ui.navigation.menu:not(.sidebar) {
   margin: 0;
   border-radius: 0;
   /* Tweak: hide top shadow */

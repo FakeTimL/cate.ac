@@ -2,6 +2,7 @@
 import { api, markdownHtml, type Topic, type Question } from '@/api';
 import LoadingText from './components/LoadingText.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
+import { messageError } from '@/messages';
 
 export default {
   components: {
@@ -30,9 +31,8 @@ export default {
       }
       this.topic.resources = await markdownHtml(this.topic.resources);
       this.loading = false;
-    } catch (error) {
-      // TODO
-      this.loading = false;
+    } catch (e) {
+      messageError(e);
     }
   },
 };
@@ -58,9 +58,7 @@ export default {
           >
             <sui-icon name="question circle outline" />
             <sui-list-content>
-              <sui-list-header>
-                {{ question.statement.substring(0, 50) }}...
-              </sui-list-header>
+              <sui-list-header> {{ question.statement.substring(0, 50) }}... </sui-list-header>
             </sui-list-content>
           </router-link>
         </sui-list>
