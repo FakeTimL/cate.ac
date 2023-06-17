@@ -16,11 +16,7 @@ class FormFields {
 }
 
 export default {
-  components: {
-    LoadingCircle,
-    MarkdownContent,
-    SubmissionDetail,
-  },
+  components: { LoadingCircle, MarkdownContent, SubmissionDetail },
   setup() {
     return { friendlyDate };
   },
@@ -33,23 +29,20 @@ export default {
   data() {
     return {
       loading: true,
+      reloadTimeout: null as number | null,
       question: null as Question | null,
       topics: new Array<Topic>(),
       submissions: new Array<Submission>(),
-      timeout: null as number | null,
 
       tabIndex: 0,
       submissionIndex: null as number | null,
 
       waiting: false,
       fields: new FormFields(),
-      errors: new FormErrors<FormFields>({
-        question: [],
-        user_answer: [],
-        gpt_marking: [],
-      }),
+      errors: new FormErrors<FormFields>({ question: [], user_answer: [], gpt_marking: [] }),
     };
   },
+
   async created() {
     try {
       this.question = (await api.get(`main/question/${this.pk}/`)).data as Question;
@@ -57,47 +50,38 @@ export default {
       for (const topic_pk of this.question.topics) {
         this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
       }
-      await this.refreshSubmissions();
-      this.loading = false;
+      await this.reload();
     } catch (e) {
       messageErrors(e);
     }
   },
+
   unmounted() {
-    if (this.timeout !== null) {
-      // Clear pending refresh tasks.
-      clearTimeout(this.timeout);
-    }
+    if (this.reloadTimeout !== null) clearTimeout(this.reloadTimeout);
   },
+
   methods: {
-    async refreshSubmissions() {
+    // Refresh submissions.
+    async reload() {
       try {
         this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
-        let refreshRequired = false;
-        for (const submission of this.submissions)
-          if (submission.gpt_marking) {
-            refreshRequired = true;
-            break;
-          }
-        if (refreshRequired) {
-          // Refresh after 5 seconds.
-          this.timeout = setTimeout(this.refreshSubmissions, 5000);
-        }
+        if (this.submissions.reduce((acc, submission) => acc || submission.gpt_marking, false))
+          this.reloadTimeout = setTimeout(this.reload, 1000);
+        this.loading = false;
       } catch (e) {
         messageErrors(e);
       }
     },
+
     async submit() {
+      if (this.question === null) return;
       try {
-        if (this.question === null) return;
         this.errors.clear();
         this.waiting = true;
-        const submission = (await api.post(`main/my_submissions/`, this.fields)).data as Submission;
-        this.submissions.unshift(submission);
+        await api.post(`main/my_submissions/`, this.fields);
+        await this.reload();
         this.tabIndex = 1;
         this.submissionIndex = 0;
-        // Refresh after 5 seconds.
-        this.timeout = setTimeout(this.refreshSubmissions, 5000);
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
         else messageErrors(e);
@@ -152,7 +136,7 @@ export default {
                 @click="submissionIndex = index"
               >
                 <sui-list-header>
-                  Score:
+                  Your marks:
                   {{
                     submission.gpt_mark === null ? '-' : (submission.gpt_mark / question.mark_denominator).toString()
                   }}

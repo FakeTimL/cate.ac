@@ -8,6 +8,7 @@ import { FormErrors } from '@/errors';
 
 import LoadingText from './components/LoadingText.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
+import SubmissionDetail from './components/SubmissionDetail.vue';
 
 class FormFields {
   question: number | null = null;
@@ -37,7 +38,7 @@ class QuestionItem {
 }
 
 export default {
-  components: { LoadingText, MarkdownContent },
+  components: { LoadingText, MarkdownContent, SubmissionDetail },
   setup() {
     return { friendlyDuration };
   },
@@ -49,15 +50,22 @@ export default {
   data() {
     return {
       loading: true,
+      reloadTimeout: null as number | null,
       attempt: null as Attempt | null,
       sheet: null as Sheet | null,
       author: null as User | null,
-      items: new Array<QuestionItem>(),
+      items: null as QuestionItem[] | null,
 
       currentTime: 0,
-      currentTimeTimeout: null as number | null,
+      currentTimeInterval: null as number | null,
 
       waiting: false,
+
+      total: 0,
+      marked: 0,
+      totalMarks: 0,
+      userMarksLow: 0,
+      userMarksHigh: 0,
     };
   },
 
@@ -65,10 +73,12 @@ export default {
     completed(): boolean {
       return this.attempt?.end_time !== null;
     },
+
     secondsElapsed(): number {
       if (this.attempt === null) return 0;
       return this.currentTime - new Date(this.attempt.begin_time).getTime() / 1000;
     },
+
     progressLabel(): string {
       if (this.sheet === null) return '';
       return (
@@ -76,55 +86,111 @@ export default {
         friendlyDuration(Math.abs(this.sheet.time_limit - this.secondsElapsed))
       );
     },
+
     progressPercent(): number {
       if (this.sheet === null) return 0;
       return this.sheet.time_limit >= this.secondsElapsed ? this.secondsElapsed / this.sheet.time_limit : 1.0;
     },
+
+    markingCompleted(): boolean {
+      return this.marked == this.total;
+    },
+
+    markingLabel(): string {
+      return this.total == this.marked
+        ? 'Grading finished!'
+        : `${this.marked.toString()} / ${this.total.toString()} questions graded...`;
+    },
+
+    markingPercent(): number {
+      return this.marked / this.total;
+    },
+
+    markingRange(): string {
+      return this.total == this.marked
+        ? this.userMarksHigh.toString()
+        : `(${this.userMarksLow.toString()} ~ ${this.userMarksHigh.toString()})`;
+    },
   },
 
-  async created() {
-    try {
-      this.attempt = (await api.get(`main/my_attempt/${this.pk}/`)).data as Attempt;
-      this.sheet = (await api.get(`main/sheet/${this.attempt.sheet}/`)).data as Sheet;
-      this.author = (await api.get(`accounts/user/${this.sheet.user}/`)).data as User;
-
-      // Retrieve and sort all questions on sheet.
-      const sheet_questions = new Array<[number, Question]>();
-      for (const { question: pk, index } of this.sheet.sheet_questions) {
-        const question = (await api.get(`main/question/${pk}/`)).data as Question;
-        sheet_questions.push([index, question]);
-      }
-      sheet_questions.sort(([i, _], [j, __]) => i - j);
-
-      // Retrieve all submissions made in this attempt.
-      const submissions = new Map<number, Submission>();
-      for (const { submission: pk } of this.attempt.attempt_submissions) {
-        const submission = (await api.get(`main/my_submission/${pk}/`)).data as Submission;
-        submissions.set(submission.question, submission);
-      }
-
-      // Create QuestionItems.
-      for (const [_, question] of sheet_questions) {
-        const submission = submissions.get(question.pk) ?? null;
-        this.items.push(new QuestionItem(question, submission));
-      }
-
-      // Start countdown timer.
-      this.currentTime = new Date().getTime() / 1000;
-      this.currentTimeTimeout = window.setInterval(() => (this.currentTime = new Date().getTime() / 1000), 1000);
-      this.loading = false;
-    } catch (e) {
-      messageErrors(e);
-    }
+  created() {
+    this.reload();
   },
 
   unmounted() {
-    if (this.currentTimeTimeout !== null) clearTimeout(this.currentTimeTimeout);
+    if (this.reloadTimeout !== null) clearTimeout(this.reloadTimeout);
+    if (this.currentTimeInterval !== null) clearInterval(this.currentTimeInterval);
   },
 
   methods: {
-    async submit(final: boolean) {
-      if (this.attempt === null) return;
+    // Refresh everything.
+    async reload() {
+      try {
+        this.attempt = (await api.get(`main/my_attempt/${this.pk}/`)).data as Attempt;
+        this.sheet = (await api.get(`main/sheet/${this.attempt.sheet}/`)).data as Sheet;
+        this.author = (await api.get(`accounts/user/${this.sheet.user}/`)).data as User;
+
+        // Retrieve and sort all questions on sheet.
+        const sheet_questions = new Array<[number, Question]>();
+        for (const { question: pk, index } of this.sheet.sheet_questions) {
+          const question = (await api.get(`main/question/${pk}/`)).data as Question;
+          sheet_questions.push([index, question]);
+        }
+        sheet_questions.sort(([i, _], [j, __]) => i - j);
+
+        // Retrieve all submissions made in this attempt.
+        const submissions = new Map<number, Submission>();
+        for (const { submission: pk } of this.attempt.attempt_submissions) {
+          const submission = (await api.get(`main/my_submission/${pk}/`)).data as Submission;
+          submissions.set(submission.question, submission);
+        }
+
+        // Create QuestionItems.
+        this.items = [];
+        for (const [_, question] of sheet_questions) {
+          const submission = submissions.get(question.pk) ?? null;
+          this.items.push(new QuestionItem(question, submission));
+        }
+
+        // Start countdown timer.
+        this.currentTime = new Date().getTime() / 1000;
+        this.currentTimeInterval = window.setInterval(() => (this.currentTime = new Date().getTime() / 1000), 1000);
+        this.loading = false;
+
+        // Calculate total marks.
+        if (this.completed) {
+          this.total = 0;
+          this.marked = 0;
+          this.totalMarks = 0;
+          this.userMarksLow = 0;
+          this.userMarksHigh = 0;
+
+          for (const item of this.items) {
+            this.total++;
+            this.totalMarks += item.question.mark_maximum / item.question.mark_denominator;
+
+            if (item.submission === null) {
+              this.marked++;
+            } else if (item.submission.gpt_mark !== null) {
+              this.marked++;
+              this.userMarksLow += item.submission.gpt_mark / item.question.mark_denominator;
+              this.userMarksHigh += item.submission.gpt_mark / item.question.mark_denominator;
+            } else {
+              this.userMarksHigh += item.question.mark_maximum / item.question.mark_denominator;
+            }
+          }
+
+          // Check if grading is in progress.
+          if (this.items.reduce((acc, item) => acc || (item.submission?.gpt_marking ?? false), false))
+            this.reloadTimeout = setTimeout(this.reload, 1000);
+        }
+      } catch (e) {
+        messageErrors(e);
+      }
+    },
+
+    async saveAttempt(final: boolean) {
+      if (this.attempt === null || this.items === null) return;
       try {
         if (final) this.attempt.end_time = new Date().toISOString();
         this.attempt.attempt_submissions.length = 0;
@@ -132,25 +198,38 @@ export default {
           if (item.submission !== null) {
             this.attempt.attempt_submissions.push({ submission: item.submission.pk });
           }
-        this.attempt = (await api.patch(`/main/my_attempt/${this.attempt.pk}/`, this.attempt)).data as Attempt;
+        await api.patch(`/main/my_attempt/${this.attempt.pk}/`, this.attempt);
       } catch (e) {
         messageErrors(e);
       }
-      this.waiting = false;
     },
 
-    async save(item: QuestionItem) {
+    async saveItem(item: QuestionItem) {
       try {
         item.errors.clear();
         item.waiting = true;
         item.submission = (await api.post(`main/my_submissions/`, item.fields)).data as Submission;
-        await this.submit(false);
+        await this.saveAttempt(false);
         item.modified = false;
       } catch (e) {
         if (axios.isAxiosError(e)) item.errors.decode(e);
         else messageErrors(e);
       }
       item.waiting = false;
+    },
+
+    async submit() {
+      if (this.items === null) return;
+      try {
+        this.waiting = true;
+        for (const item of this.items) await this.saveItem(item);
+        await this.saveAttempt(true);
+        await this.reload();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) {
+        messageErrors(e);
+      }
+      this.waiting = false;
     },
   },
 };
@@ -161,9 +240,20 @@ export default {
     <loading-text fill-height :loading="loading">
       <div v-if="sheet">
         <h1 class="ui header">{{ sheet.name }}</h1>
+
         <div v-if="!completed" style="padding: 1px">
           <sui-progress :label="progressLabel" :percent="progressPercent * 100" active color="primary" />
         </div>
+
+        <div v-if="completed" style="padding: 1px">
+          <sui-progress :label="markingLabel" :percent="markingPercent * 100" :active="!markingCompleted" indicating />
+        </div>
+        <div v-if="completed" class="ui raised piled segment" style="margin: 1em; text-align: center">
+          <h1 class="ui header" style="transition: opacity 0.5s" :style="{ opacity: markingPercent }">
+            Total marks: {{ markingRange }} / {{ totalMarks }}
+          </h1>
+        </div>
+
         <div class="ui list">
           <div class="item">
             <i class="hourglass icon" />
@@ -178,12 +268,12 @@ export default {
             <div class="content">Description: <markdown-content :markdown="sheet.description" /></div>
           </div>
         </div>
+
         <ol class="ui list">
           <li v-for="item in items" :key="item.question.pk" class="item" style="margin: 1em 0">
-            <p>
-              <markdown-content display :markdown="item.question.statement" />
-            </p>
-            <div class="ui form">
+            <markdown-content display :markdown="item.question.statement" />
+
+            <div v-if="!completed" class="ui form" style="margin-top: 1em">
               <div class="field" :class="{ error: item.errors.fields.user_answer.length > 0 }">
                 <textarea
                   placeholder="Type your answer here..."
@@ -199,14 +289,27 @@ export default {
               <button
                 class="ui button"
                 :class="{ disabled: item.waiting || !item.modified, loading: item.waiting }"
-                @click.prevent="save(item)"
+                @click.prevent="saveItem(item)"
               >
                 <i v-if="!item.modified" class="check icon" />
                 {{ item.modified ? 'Save' : 'Saved' }}
               </button>
             </div>
+
+            <div v-else class="ui piled segment" style="margin-top: 1em">
+              <submission-detail :question="item.question" :submission="item.submission ?? undefined" />
+            </div>
           </li>
         </ol>
+
+        <button
+          class="ui primary button"
+          :class="{ disabled: waiting || completed, loading: waiting }"
+          @click.prevent="submit"
+        >
+          <i v-if="completed" class="check icon" />
+          {{ completed ? 'Answers Confirmed & Submitted' : 'Confirm Answers & Submit' }}
+        </button>
       </div>
     </loading-text>
   </div>

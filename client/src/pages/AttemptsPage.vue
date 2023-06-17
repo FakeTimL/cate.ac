@@ -10,6 +10,7 @@ import MarkdownContent from './components/MarkdownContent.vue';
 
 class FormFields {
   sheet: number | null = null;
+  attempt_submissions: { submission: number }[] = [];
 }
 
 export default {
@@ -20,18 +21,18 @@ export default {
   data() {
     return {
       loading: true,
-      attempts: new Array<[Attempt, Sheet | null]>(),
+      attempts: new Array<[Attempt, Sheet]>(),
 
       waiting: false,
       fields: new FormFields(),
-      errors: new FormErrors<FormFields>({ sheet: [] }),
+      errors: new FormErrors<FormFields>({ sheet: [], attempt_submissions: [] }),
     };
   },
   async created() {
     try {
       const attempts = (await api.get('main/my_attempts/')).data as Attempt[];
       for (const attempt of attempts) {
-        const sheet = attempt.sheet === null ? null : ((await api.get(`main/sheet/${attempt.sheet}/`)).data as Sheet);
+        const sheet = (await api.get(`main/sheet/${attempt.sheet}/`)).data as Sheet;
         this.attempts.push([attempt, sheet]);
       }
       this.loading = false;
@@ -93,7 +94,7 @@ export default {
         >
           <i class="pencil alternate icon" />
           <div class="content">
-            <div class="header">{{ sheet !== null ? sheet.name : '(Custom practice)' }}</div>
+            <div class="header">{{ sheet.name }}</div>
             <div class="description">Started {{ friendlyDate(new Date(attempt.begin_time)) }}</div>
           </div>
         </router-link>

@@ -188,7 +188,6 @@ class UserAttemptsView(views.APIView):
       self.permission_denied(request)
     serializer = AttemptSerializer(data=request.data)
     serializer.initial_data['user'] = user.pk
-    serializer.initial_data['attempt_submissions'] = []
     serializer.initial_data['begin_time'] = datetime.now()
     serializer.initial_data['end_time'] = None
     serializer.is_valid(raise_exception=True)
@@ -235,6 +234,7 @@ class UserAttemptView(views.APIView):
       submissions = []
       for submission in attempt.submissions.all():
         submission.gpt_marking = True
+        submission.save()
         submissions.append(submission)
       SubmissionsThread(submissions).start()  # This will trigger requests to ChatGPT.
 

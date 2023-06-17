@@ -65,21 +65,21 @@ class AttemptSerializer(serializers.ModelSerializer):
     fields = ['pk', 'user', 'sheet', 'attempt_submissions', 'begin_time', 'end_time']
     read_only_fields = ['pk']
 
-  # def create(self, validated_data) -> Attempt:
-  #   attempt = Attempt(**validated_data)
-  #   attempt.save()
-  #   items = validated_data.get('attemptsubmission_set', [])
-  #   for item in items:
-  #     AttemptSubmission(attempt=attempt, submission=item['submission']).save()
-  #   return attempt
+  def create(self, validated_data) -> Attempt:
+    items = validated_data.pop('attemptsubmission_set', [])
+    attempt = Attempt(**validated_data)
+    attempt.save()
+    for item in items:
+      AttemptSubmission(attempt=attempt, submission=item['submission']).save()
+    return attempt
 
   def update(self, attempt: Attempt, validated_data) -> Attempt:
+    items = validated_data.pop('attemptsubmission_set', [])
     for attr, value in validated_data.items():
       if attr != 'attemptsubmission_set':
         setattr(attempt, attr, value)
     attempt.save()
     AttemptSubmission.objects.filter(attempt=attempt).delete()
-    items = validated_data.get('attemptsubmission_set', [])
     for item in items:
       AttemptSubmission(attempt=attempt, submission=item['submission']).save()
     return attempt
