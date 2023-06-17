@@ -43,10 +43,10 @@ export default {
 </script>
 
 <template>
-  <sui-container text style="padding: 1em 0; min-height: 80vh">
-    <sui-header as="h1">Send Anonymous Feedback</sui-header>
-    <sui-form>
-      <sui-form-field :error="errors.fields.text.length > 0">
+  <div class="ui text container" style="padding: 1em 0; min-height: 80vh">
+    <h1 class="ui header">Send Anonymous Feedback</h1>
+    <form class="ui form">
+      <div class="field" :class="{ error: errors.fields.text.length > 0 }">
         <label>Describe any problem or your ideas for improvement:</label>
         <textarea
           placeholder="Any idea is appreciated..."
@@ -55,30 +55,30 @@ export default {
           v-model="fields.text"
           @input="errors.fields.text.length = 0"
         ></textarea>
-      </sui-form-field>
+      </div>
 
-      <sui-form-field :error="errors.fields.email.length > 0">
+      <div class="field" :class="{ error: errors.fields.email.length > 0 }">
         <label>Email (optional)</label>
         <input
           placeholder="If you want follow-up discussions..."
           v-model="fields.email"
           @input="errors.fields.email.length = 0"
         />
-      </sui-form-field>
-      <sui-button primary :disabled="waiting" :loading="waiting" @click="submit">Send</sui-button>
-    </sui-form>
+      </div>
+      <button class="ui primary button" :class="{ disabled: waiting, loading: waiting }" @click="submit">Send</button>
+    </form>
 
-    <sui-message v-if="success" icon positive>
+    <div v-if="success" class="ui success icon message">
       <p>Your feedback has been sent. Thank you so much!</p>
-    </sui-message>
+    </div>
 
-    <sui-message v-if="errors.all.length > 0" icon error>
-      <sui-icon name="info" />
-      <sui-message-content>
-        <sui-list bulleted>
-          <sui-list-item v-for="error of errors.all" :key="error">{{ error }}</sui-list-item>
-        </sui-list>
-      </sui-message-content>
-    </sui-message>
-  </sui-container>
+    <div v-if="errors.all.length > 0" class="ui error icon message">
+      <i class="info icon" />
+      <div class="content">
+        <ul class="ui bulleted list">
+          <li v-for="error of errors.all" :key="error" class="item">{{ error }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </template>

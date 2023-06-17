@@ -4,13 +4,13 @@ export default {};
 
 <template>
   <div class="outer-container">
-    <sui-header icon as="h1">
-      <sui-icon name="frown outline" />
-      <sui-header-content>
+    <h1 class="ui icon header">
+      <i class="frown outline icon" />
+      <div class="content">
         404 Not Found
-        <sui-header-subheader>The requested URL does not exist...</sui-header-subheader>
-      </sui-header-content>
-    </sui-header>
+        <div class="sub header">The requested URL does not exist...</div>
+      </div>
+    </h1>
   </div>
 </template>
 

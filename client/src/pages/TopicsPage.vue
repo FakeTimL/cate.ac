@@ -35,32 +35,32 @@ export default {
 </script>
 
 <template>
-  <sui-container text style="padding: 1em 0; min-height: 80vh">
+  <div class="ui text container" style="padding: 1em 0; min-height: 80vh">
     <loading-text fill-height :loading="loading">
-      <sui-header as="h1">Browse Questions by Topic</sui-header>
-      <sui-list divided selection size="medium">
-        <sui-list-item v-for="chapter in chapters" :key="chapter.pk">
-          <sui-icon name="folder open outline" />
-          <sui-list-content>
-            <sui-list-header>{{ chapter.name }}</sui-list-header>
-            <sui-list-list>
+      <h1 class="ui header">Browse Questions by Topic</h1>
+      <div class="ui medium divided selection list">
+        <div v-for="chapter in chapters" :key="chapter.pk" class="item">
+          <i class="folder open outline icon" />
+          <div class="content">
+            <div class="header">{{ chapter.name }}</div>
+            <div class="list">
               <router-link
-                class="ui item"
                 v-for="topic in topics.get(chapter.pk)"
                 :key="topic.pk"
                 :to="`/topic/${topic.pk}/`"
+                class="item"
               >
-                <sui-icon name="book" />
-                <sui-list-content>
-                  <sui-list-header>{{ topic.name }}</sui-list-header>
-                </sui-list-content>
+                <i class="book icon" />
+                <div class="content">
+                  <div class="header">{{ topic.name }}</div>
+                </div>
               </router-link>
-            </sui-list-list>
-          </sui-list-content>
-        </sui-list-item>
-      </sui-list>
+            </div>
+          </div>
+        </div>
+      </div>
     </loading-text>
-  </sui-container>
+  </div>
 </template>
 
 <style scoped></style>

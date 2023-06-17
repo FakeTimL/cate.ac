@@ -54,6 +54,7 @@ class UserSelfSerializer(serializers.ModelSerializer):
     ]
     extra_kwargs = {
       'pk': {'read_only': True},
+      'password': {'write_only': True},
       'date_joined': {'read_only': True},
       'last_login': {'read_only': True},
     }

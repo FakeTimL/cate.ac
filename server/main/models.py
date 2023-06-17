@@ -51,9 +51,9 @@ class SheetQuestion(models.Model):
 
 
 class Submission(models.Model):
-  user = models.ForeignKey(User, related_name='submissions', blank=True, null=True, on_delete=models.CASCADE)
+  user = models.ForeignKey(User, related_name='submissions', on_delete=models.CASCADE)
   question = models.ForeignKey(Question, on_delete=models.CASCADE)
-  user_answer = models.TextField(blank=True, null=True)  # Blank if user has not responded (in an attempt)
+  user_answer = models.TextField(blank=True)             # Blank if user has not responded (in an attempt)
   gpt_mark = models.IntegerField(blank=True, null=True)  # Blank if yet to be marked
   gpt_comments = models.TextField(blank=True)            # Blank if yet to be marked
   date = models.DateTimeField(auto_now_add=True)

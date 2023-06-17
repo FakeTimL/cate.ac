@@ -53,16 +53,19 @@ export default {
         <sui-menu-item header>CATE</sui-menu-item>
       </router-link>
       <router-link to="/topics/">
-        <sui-menu-item :active="currentPathIs('/topics')">Topics</sui-menu-item>
+        <sui-menu-item :active="currentPathIs('/topics/')">Topics</sui-menu-item>
       </router-link>
       <router-link to="/submissions/" v-if="username">
-        <sui-menu-item :active="currentPathIs('/submissions')">Answers</sui-menu-item>
+        <sui-menu-item :active="currentPathIs('/submissions/')">Answers</sui-menu-item>
+      </router-link>
+      <router-link to="/attempts/" v-if="username">
+        <sui-menu-item :active="currentPathIs('/attempts/')">Mock Exams</sui-menu-item>
       </router-link>
       <router-link to="/feedback/">
-        <sui-menu-item :active="currentPathIs('/feedback')">Feedback</sui-menu-item>
+        <sui-menu-item :active="currentPathIs('/feedback/')">Feedback</sui-menu-item>
       </router-link>
       <router-link to="/about/">
-        <sui-menu-item :active="currentPathIs('/about')">About</sui-menu-item>
+        <sui-menu-item :active="currentPathIs('/about/')">About</sui-menu-item>
       </router-link>
       <sui-menu-item position="right" v-if="!username" @click="logInModalIsActive = true">
         <span>Log in</span>

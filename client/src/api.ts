@@ -31,6 +31,14 @@ export interface User {
   admin: boolean | null;
 }
 
+export interface Message {
+  pk: number;
+  sender: number;
+  receiver: number;
+  content: string;
+  date: string;
+}
+
 export interface Feedback {
   pk: number;
   text: string;
@@ -58,14 +66,33 @@ export interface Question {
   topics: number[];
 }
 
+export interface Sheet {
+  pk: number;
+  user: number;
+  sheet_questions: { question: number; index: number }[];
+  time_limit: string;
+  name: string;
+  description: string;
+}
+
 export interface Submission {
   pk: number;
   user: number;
   question: number;
   user_answer: string;
-  gpt_mark: number;
+  gpt_mark: number | null;
   gpt_comments: string;
   date: string;
+}
+
+export interface Attempt {
+  pk: number;
+  user: number;
+  attempt_submissions: { submission: number; index: number }[];
+  sheet: number | null;
+  time_limit: string;
+  begin_time: string;
+  end_time: string | null;
 }
 
 // Common API calls.

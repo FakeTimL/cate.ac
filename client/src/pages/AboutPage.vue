@@ -4,17 +4,17 @@ export default {};
 
 <template>
   <div class="background">
-    <sui-container text style="padding: 1em 0; min-height: 80vh">
-      <sui-header as="h1">About Us</sui-header>
-      <sui-message>
+    <div class="ui text container" style="padding: 1em 0; min-height: 80vh">
+      <h1 class="ui header">About Us</h1>
+      <div class="ui message">
         <p><strong>Q: What does the name "CATE" mean?</strong></p>
         <p>A: "Computer-Assisted Test Evaluator..."</p>
-      </sui-message>
-      <sui-header as="h2">Our Mission</sui-header>
+      </div>
+      <h2 class="ui header">Our Mission</h2>
       <p>TODO</p>
-      <sui-header as="h2">Our Team</sui-header>
+      <h2 class="ui header">Our Team</h2>
       <p>TODO</p>
-    </sui-container>
+    </div>
   </div>
 </template>
 
