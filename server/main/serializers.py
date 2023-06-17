@@ -46,12 +46,40 @@ class SheetSerializer(serializers.ModelSerializer):
 class SubmissionSerializer(serializers.ModelSerializer):
   class Meta:
     model = Submission
-    fields = ['pk', 'user', 'question', 'user_answer', 'gpt_mark', 'gpt_comments', 'date']
+    fields = ['pk', 'user', 'question', 'user_answer', 'gpt_marking', 'gpt_mark', 'gpt_comments', 'date']
     read_only_fields = ['pk', 'date']
 
 
+# See: https://stackoverflow.com/a/41996831
+class AttemptSubmissionSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = AttemptSubmission
+    fields = ['submission']
+
+
 class AttemptSerializer(serializers.ModelSerializer):
+  attempt_submissions = AttemptSubmissionSerializer(source='attemptsubmission_set', many=True)
+
   class Meta:
     model = Attempt
-    fields = ['pk', 'user', 'sheet', 'submissions', 'begin_time', 'end_time']
+    fields = ['pk', 'user', 'sheet', 'attempt_submissions', 'begin_time', 'end_time']
     read_only_fields = ['pk']
+
+  # def create(self, validated_data) -> Attempt:
+  #   attempt = Attempt(**validated_data)
+  #   attempt.save()
+  #   items = validated_data.get('attemptsubmission_set', [])
+  #   for item in items:
+  #     AttemptSubmission(attempt=attempt, submission=item['submission']).save()
+  #   return attempt
+
+  def update(self, attempt: Attempt, validated_data) -> Attempt:
+    for attr, value in validated_data.items():
+      if attr != 'attemptsubmission_set':
+        setattr(attempt, attr, value)
+    attempt.save()
+    AttemptSubmission.objects.filter(attempt=attempt).delete()
+    items = validated_data.get('attemptsubmission_set', [])
+    for item in items:
+      AttemptSubmission(attempt=attempt, submission=item['submission']).save()
+    return attempt

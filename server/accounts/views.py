@@ -48,7 +48,7 @@ class UserView(views.APIView):
     user = get_object_or_404(User, pk=pk)
     refl = isinstance(request.user, User) and request.user.pk == user.pk
     serializer = user_serializer(user, request=request, refl=refl, data=request.data, partial=partial)
-    serializer.data['username'] = user.username
+    serializer.initial_data['username'] = user.username
     serializer.is_valid(raise_exception=True)
     serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
     serializer.save()
@@ -111,8 +111,8 @@ class MessagesView(views.APIView):
     if not isinstance(request.user, User):
       return Response(None, status.HTTP_200_OK)
     serializer = MessageSerializer(data=request.data)
-    serializer.data['sender'] = request.user.pk
-    serializer.data['receiver'] = pk
+    serializer.initial_data['sender'] = request.user.pk
+    serializer.initial_data['receiver'] = pk
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status.HTTP_201_CREATED)

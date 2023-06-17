@@ -33,8 +33,8 @@ export default {
   </h2>
   <h4>Your answer:</h4>
   <p>{{ submission.user_answer }}</p>
-  <loading-text :length="1" :loading="submission.gpt_mark === null" text="ChatGPT is grading...">
-    <div class="ui info message">
+  <loading-text :length="1" :loading="submission.gpt_marking" text="ChatGPT is grading...">
+    <div v-if="submission.gpt_mark !== null" class="ui info message">
       <h4>Comments:</h4>
       <p>{{ submission.gpt_comments }}</p>
       <details>

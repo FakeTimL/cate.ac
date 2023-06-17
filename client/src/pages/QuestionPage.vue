@@ -12,6 +12,7 @@ import { messageErrors } from '@/messages';
 class FormFields {
   question: number | null = null;
   user_answer: string = '';
+  gpt_marking: boolean = true;
 }
 
 export default {
@@ -45,12 +46,14 @@ export default {
       errors: new FormErrors<FormFields>({
         question: [],
         user_answer: [],
+        gpt_marking: [],
       }),
     };
   },
   async created() {
     try {
       this.question = (await api.get(`main/question/${this.pk}/`)).data as Question;
+      this.fields.question = this.question.pk;
       for (const topic_pk of this.question.topics) {
         this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
       }
@@ -72,7 +75,7 @@ export default {
         this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
         let refreshRequired = false;
         for (const submission of this.submissions)
-          if (submission.gpt_mark === null) {
+          if (submission.gpt_marking) {
             refreshRequired = true;
             break;
           }
@@ -84,14 +87,10 @@ export default {
         messageErrors(e);
       }
     },
-    async submit(e: Event) {
+    async submit() {
       try {
-        e.preventDefault();
         if (this.question === null) return;
-        this.fields.question = parseInt(this.pk);
         this.errors.clear();
-        if (this.fields.user_answer == '') this.errors.fields.user_answer.push('Please write something...');
-        if (this.errors.all.length > 0) return;
         this.waiting = true;
         const submission = (await api.post(`main/my_submissions/`, this.fields)).data as Submission;
         this.submissions.unshift(submission);
@@ -129,7 +128,7 @@ export default {
                   @input="errors.fields.user_answer.length = 0"
                 ></textarea>
               </sui-form-field>
-              <sui-button primary :disabled="waiting" :loading="waiting" @click="submit">Check</sui-button>
+              <sui-button primary :disabled="waiting" :loading="waiting" @click.prevent="submit">Check</sui-button>
             </sui-form>
 
             <sui-message v-if="errors.all.length > 0" icon error>

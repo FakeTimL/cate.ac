@@ -80,6 +80,7 @@ export interface Submission {
   user: number;
   question: number;
   user_answer: string;
+  gpt_marking: boolean;
   gpt_mark: number | null;
   gpt_comments: string;
   date: string;
@@ -89,7 +90,7 @@ export interface Attempt {
   pk: number;
   user: number;
   sheet: number;
-  submissions: number[];
+  attempt_submissions: { submission: number }[];
   begin_time: string;
   end_time: string | null;
 }

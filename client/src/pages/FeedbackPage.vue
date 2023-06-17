@@ -27,14 +27,11 @@ export default {
     };
   },
   methods: {
-    async submit(e: Event) {
+    async submit() {
       try {
-        e.preventDefault();
-        this.success = false;
         this.errors.clear();
-        if (this.fields.text == '') this.errors.fields.text.push('Please write something...');
-        if (this.errors.all.length > 0) return;
         this.waiting = true;
+        this.success = false;
         await api.post('main/feedbacks/', this.fields);
         this.success = true;
       } catch (e) {
@@ -70,7 +67,9 @@ export default {
           @input="errors.fields.email.length = 0"
         />
       </div>
-      <button class="ui primary button" :class="{ disabled: waiting, loading: waiting }" @click="submit">Send</button>
+      <button class="ui primary button" :class="{ disabled: waiting, loading: waiting }" @click.prevent="submit">
+        Send
+      </button>
     </form>
 
     <div v-if="success" class="ui success icon message">

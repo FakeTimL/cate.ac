@@ -34,6 +34,7 @@ class SubmissionsThread(threading.Thread):
       max_retry -= 1
       try:
         (submission.gpt_mark, submission.gpt_comments) = gpt_invoke(submission.question, submission.user_answer)
+        submission.gpt_marking = False
         submission.save()
         return True
       except json.JSONDecodeError as error:  # ChatGPT did not respond in valid JSON format.
@@ -48,6 +49,8 @@ class SubmissionsThread(threading.Thread):
       except openai.error.OpenAIError as error:  # Unexpected ChatGPT error: ' + str(error)
         logger.warning(error)
         sleep(60)
+    submission.gpt_marking = False
+    submission.save()
     return False
 
 
