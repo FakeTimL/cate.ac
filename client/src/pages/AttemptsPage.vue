@@ -1,8 +1,9 @@
 <script lang="ts">
 import { api, type Attempt, type Sheet } from '@/api';
-import LoadingText from './components/LoadingText.vue';
 import { messageErrors } from '@/messages';
 import { friendlyDate } from '@/dates';
+
+import LoadingText from './components/LoadingText.vue';
 
 export default {
   components: { LoadingText },

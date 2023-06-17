@@ -70,7 +70,7 @@ export interface Sheet {
   pk: number;
   user: number;
   sheet_questions: { question: number; index: number }[];
-  time_limit: string;
+  time_limit: number;
   name: string;
   description: string;
 }
@@ -88,9 +88,8 @@ export interface Submission {
 export interface Attempt {
   pk: number;
   user: number;
-  attempt_submissions: { submission: number; index: number }[];
-  sheet: number | null;
-  time_limit: string;
+  sheet: number;
+  submissions: number[];
   begin_time: string;
   end_time: string | null;
 }

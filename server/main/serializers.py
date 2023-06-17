@@ -50,17 +50,8 @@ class SubmissionSerializer(serializers.ModelSerializer):
     read_only_fields = ['pk', 'date']
 
 
-# See: https://stackoverflow.com/a/41996831
-class AttemptSubmissionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = AttemptSubmission
-    fields = ['submission', 'index']
-
-
 class AttemptSerializer(serializers.ModelSerializer):
-  attempt_submissions = AttemptSubmissionSerializer(source='attemptsubmission_set', many=True)
-
   class Meta:
     model = Attempt
-    fields = ['pk', 'user', 'attempt_submissions', 'sheet', 'time_limit', 'begin_time', 'end_time']
+    fields = ['pk', 'user', 'sheet', 'submissions', 'begin_time', 'end_time']
     read_only_fields = ['pk']

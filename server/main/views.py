@@ -134,6 +134,27 @@ class UserSubmissionsView(views.APIView):
     return Response(serializer.data, status.HTTP_201_CREATED)
 
 
+class UserSubmissionView(views.APIView):
+  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
+
+  # Retrieve a submission for current user.
+  def get(self, request: Request, pk: int) -> Response:
+    user = request.user
+    submission = get_object_or_404(Submission, pk=pk)
+    if not (isinstance(user, User) and user == submission.user):
+      self.permission_denied(request)
+    return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
+
+  # Delete submission.
+  def delete(self, request: Request, pk: int) -> Response:
+    user = request.user
+    submission = get_object_or_404(Submission, pk=pk)
+    if not (isinstance(user, User) and user == submission.user):
+      self.permission_denied(request)
+    submission.delete()
+    return Response(None, status.HTTP_200_OK)
+
+
 class UserQuestionSubmissionsView(views.APIView):
   permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
 
@@ -165,7 +186,7 @@ class UserAttemptsView(views.APIView):
       self.permission_denied(request)
     serializer = AttemptSerializer(data=request.data)
     serializer.data['user'] = user.pk
-    serializer.data['start_time'] = None
+    serializer.data['start_time'] = datetime.now()
     serializer.data['end_time'] = None
     serializer.is_valid(raise_exception=True)
     serializer.save()

@@ -13,6 +13,7 @@ import TopicPage from './pages/TopicPage.vue';
 import QuestionPage from './pages/QuestionPage.vue';
 import SubmissionsPage from './pages/SubmissionsPage.vue';
 import AttemptsPage from './pages/AttemptsPage.vue';
+import AttemptPage from './pages/AttemptPage.vue';
 import FeedbackPage from './pages/FeedbackPage.vue';
 import AboutPage from './pages/AboutPage.vue';
 import NotFoundPage from './pages/NotFoundPage.vue';
@@ -27,6 +28,7 @@ const router = createRouter({
     { path: '/question/:pk/', component: QuestionPage, props: true },
     { path: '/submissions/', component: SubmissionsPage },
     { path: '/attempts/', component: AttemptsPage },
+    { path: '/attempt/:pk/', component: AttemptPage, props: true },
     { path: '/feedback/', component: FeedbackPage },
     { path: '/about/', component: AboutPage },
     // See: https://router.vuejs.org/guide/essentials/dynamic-matching.html#catch-all-404-not-found-route

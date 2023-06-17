@@ -16,7 +16,9 @@ urlpatterns = [
   path('attempts/', views.AttemptsView.as_view(), name='attempts'),  # type: ignore
   path('attempt/<int:pk>/', views.AttemptView.as_view(), name='attempt'),  # type: ignore
   path('my_submissions/', views.UserSubmissionsView.as_view(), name='user_submissions'),  # type: ignore
-  path('my_attempts/', views.UserAttemptsView.as_view(), name='user_attempts'),  # type: ignore
+  path('my_submission/<int:pk>/', views.UserSubmissionView.as_view(), name='user_submission'),  # type: ignore
   path('question/<int:pk>/my_submissions/', views.UserQuestionSubmissionsView.as_view(),  # type: ignore
        name='user_question_submissions'),
+  path('my_attempts/', views.UserAttemptsView.as_view(), name='user_attempts'),  # type: ignore
+  path('my_attempt/<int:pk>/', views.UserAttemptView.as_view(), name='user_attempt'),  # type: ignore
 ]
