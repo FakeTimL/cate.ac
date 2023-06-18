@@ -53,7 +53,7 @@ export default {
 
 <template>
   <sui-modal v-if="user" size="tiny" v-model="modalActive">
-    <sui-modal-header>User {{ user.username }}</sui-modal-header>
+    <sui-modal-header>User {{ user.username }}#{{ user.pk }}</sui-modal-header>
 
     <sui-modal-content scrolling>
       <sui-form></sui-form>

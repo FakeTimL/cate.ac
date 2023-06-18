@@ -41,7 +41,7 @@ export default {
     }
   },
   methods: {
-    async submit() {
+    async add() {
       try {
         this.errors.clear();
         this.waiting = true;
@@ -69,8 +69,8 @@ export default {
           v-model="fields.sheet"
           @input="errors.fields.sheet.length = 0"
         />
-        <button class="ui primary button" :class="{ disabled: waiting, loading: waiting }" @click="submit">
-          Start New
+        <button class="ui primary button" :class="{ disabled: waiting, loading: waiting }" @click="add">
+          <i class="plus icon" />New
         </button>
       </div>
 

@@ -90,7 +90,7 @@ class SessionView(views.APIView):
     return Response(None, status.HTTP_200_OK)
 
 
-class ConversationsView(views.APIView):
+class UserMessagesView(views.APIView):
   permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
 
   # List all messages.
@@ -102,26 +102,12 @@ class ConversationsView(views.APIView):
     queryset = queryset_send.union(queryset_recv).order_by('-date')
     return Response(MessageSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
-
-class ConversationView(views.APIView):
-  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
-
-  # List all messages from / to another user.
-  def get(self, request: Request, pk: int) -> Response:
-    if not isinstance(request.user, User):
-      return Response(None, status.HTTP_200_OK)
-    queryset_send = Message.objects.filter(sender=request.user.pk, receiver=pk)
-    queryset_recv = Message.objects.filter(sender=pk, receiver=request.user.pk)
-    queryset = queryset_send.union(queryset_recv).order_by('-date')
-    return Response(MessageSerializer(queryset, many=True).data, status.HTTP_200_OK)
-
   # Create new message to a given user.
-  def post(self, request: Request, pk: int) -> Response:
+  def post(self, request: Request) -> Response:
     if not isinstance(request.user, User):
       return Response(None, status.HTTP_200_OK)
     serializer = MessageSerializer(data=request.data)
     serializer.initial_data['sender'] = request.user.pk
-    serializer.initial_data['receiver'] = pk
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data, status.HTTP_201_CREATED)

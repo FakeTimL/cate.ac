@@ -11,6 +11,7 @@ class SheetQuestionInline(admin.StackedInline):
 
 
 class SheetAdmin(admin.ModelAdmin):
+  readonly_fields = ['id']
   inlines = [SheetQuestionInline]
 
 

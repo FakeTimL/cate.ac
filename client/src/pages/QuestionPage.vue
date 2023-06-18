@@ -51,6 +51,7 @@ export default {
         this.topics.push((await api.get(`main/topic/${topic_pk}/`)).data as Topic);
       }
       await this.reload();
+      this.loading = false;
     } catch (e) {
       messageErrors(e);
     }
@@ -67,7 +68,6 @@ export default {
         this.submissions = (await api.get(`main/question/${this.pk}/me/submissions/`)).data as Submission[];
         if (this.submissions.reduce((acc, submission) => acc || submission.gpt_marking, false))
           this.reloadTimeout = setTimeout(this.reload, 1000);
-        this.loading = false;
       } catch (e) {
         messageErrors(e);
       }

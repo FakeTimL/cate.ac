@@ -147,6 +147,7 @@ export default {
       this.currentTimeInterval = window.setInterval(() => (this.currentTime = new Date().getTime() / 1000), 1000);
 
       await this.reload();
+      this.loading = false;
     } catch (e) {
       messageErrors(e);
     }
@@ -194,8 +195,6 @@ export default {
           if (this.items.reduce((acc, item) => acc || (item.submission?.gpt_marking ?? false), false))
             this.reloadTimeout = setTimeout(this.reload, 1000);
         }
-
-        this.loading = false;
       } catch (e) {
         messageErrors(e);
       }
