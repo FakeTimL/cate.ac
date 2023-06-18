@@ -63,6 +63,12 @@ export default {
   async created() {
     await this.reload();
     this.loading = false;
+    // Scroll to bottom of conversation.
+    if (this.items !== null && this.items.length > 0) this.itemIndex = 0;
+    this.$nextTick(() => {
+      const elem = this.$refs.window as HTMLElement | undefined;
+      elem?.scroll({ top: elem.scrollHeight, behavior: 'smooth' });
+    });
   },
 
   unmounted() {
@@ -118,7 +124,7 @@ export default {
       try {
         this.errors.clear();
         this.waiting = true;
-        const message = (await api.post(`accounts/me/messages/`, this.fields)).data as Message;
+        const _message = (await api.post(`accounts/me/messages/`, this.fields)).data as Message;
         // Trigger immediate reload (TODO: avoid).
         if (this.reloadTimeout !== null) clearTimeout(this.reloadTimeout);
         await this.reload();
@@ -151,8 +157,10 @@ export default {
         this.items.unshift(item);
         this.itemIndex = 0;
         // Scroll to bottom of conversation.
-        const elem = this.$refs.window as HTMLElement;
-        this.$nextTick(() => elem.scroll({ top: elem.scrollHeight, behavior: 'smooth' }));
+        this.$nextTick(() => {
+          const elem = this.$refs.window as HTMLElement | undefined;
+          elem?.scroll({ top: elem.scrollHeight, behavior: 'smooth' });
+        });
       } catch (e) {
         messageErrors(e);
       }
@@ -162,7 +170,7 @@ export default {
 </script>
 
 <template>
-  <div class="ui container" style="padding: 2em">
+  <div class="ui container" style="padding: 1em 0">
     <loading-circle :loading="loading" fill-height>
       <div v-if="user" class="ui stackable grid">
         <div class="five wide column">
@@ -210,7 +218,7 @@ export default {
           </div>
         </div>
 
-        <div class="eleven wide column">
+        <div class="eleven wide column" style="padding: 1em 0">
           <div v-if="current !== null" class="window">
             <div class="ui segment" ref="window">
               <div class="ui grid">
@@ -235,7 +243,7 @@ export default {
                   </div>
                   <div v-else class="sent message">
                     <div class="content">
-                      <div class="ui primary right pointing label">
+                      <div class="ui blue right pointing label">
                         <markdown-content :markdown="message.content" />
                       </div>
                     </div>
@@ -274,8 +282,13 @@ export default {
 
 <style scoped>
 .message {
-  padding: 1em;
   display: flex;
+  align-items: center;
+}
+
+.message .label:deep(a) {
+  color: inherit;
+  text-decoration: underline;
 }
 
 .content {

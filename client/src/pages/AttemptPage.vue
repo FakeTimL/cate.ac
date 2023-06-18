@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Sheet, Attempt, Question, User, Submission, Topic } from '@/api';
+import type { Sheet, Attempt, Question, User, Submission, Topic, Message } from '@/api';
 import axios from 'axios';
 import { api } from '@/api';
 import { messageErrors } from '@/state';
@@ -247,6 +247,29 @@ export default {
       }
       this.waiting = false;
     },
+
+    async ask(question: Question, submission: Submission | null) {
+      if (this.sheet === null || this.author === null) return;
+      try {
+        this.waiting = true;
+        let content = '';
+        content += `Hello, I have some question regarding your practice sheet `;
+        content += `[paper ${this.sheet.pk}](/admin/main/sheet/${this.sheet.pk}/change/).  \n`;
+        content += `Link to the question: [question ${question.pk}](/admin/main/question/${question.pk}/change/).  \n`;
+        if (submission !== null)
+          content += `Link to my submission: [submission ${submission.pk}](/admin/main/submission/${submission.pk}/change/).  \n`;
+        const _message = (
+          await api.post(`accounts/me/messages/`, {
+            receiver: this.author.pk,
+            content: content,
+          })
+        ).data as Message;
+        this.$router.push('/conversations/');
+      } catch (e) {
+        messageErrors(e);
+      }
+      this.waiting = false;
+    },
   },
 };
 </script>
@@ -331,10 +354,15 @@ export default {
               />
             </div>
 
-            <router-link v-if="completed" :to="`/conversation/${author.pk}/`" class="ui primary button">
+            <button
+              v-if="completed"
+              class="ui primary button"
+              :class="{ disabled: waiting, loading: waiting }"
+              @click="ask(item.question, item.submission)"
+            >
               <i class="question icon" />
               Ask Question
-            </router-link>
+            </button>
           </li>
         </ol>
 
