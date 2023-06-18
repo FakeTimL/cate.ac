@@ -29,7 +29,8 @@ window.requestAnimationFrame(updateAll);
   <div class="banner" style="min-height: 100%; background-color: rgb(51, 143, 212); color: rgb(255, 255, 255)">
     <div class="center">
       <!-- Elevate Your Exam Revision, with AI-Powered Interactive Tactics. -->
-      <h1 class="ui inverted header">Integrate the Power of AI,<br />to Help You Revise Interactively.</h1>
+      <!-- Integrate the Power of AI, to Help You Revise Interactively. -->
+      <h1 class="ui inverted header">Interact with Powerful AI Models,<br />to Excel Your Computer Science Revision.</h1>
       <router-link to="/topics/" class="ui huge inverted basic button">Start revising!</router-link>
     </div>
   </div>

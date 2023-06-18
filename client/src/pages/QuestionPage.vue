@@ -6,6 +6,7 @@ import { messageErrors, user } from '@/state';
 import axios from 'axios';
 
 import LoadingCircle from './components/LoadingCircle.vue';
+import ResponsiveQuestion from './components/ResponsiveQuestion.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
 import SubmissionDetail from './components/SubmissionDetail.vue';
 
@@ -16,7 +17,7 @@ class FormFields {
 }
 
 export default {
-  components: { LoadingCircle, MarkdownContent, SubmissionDetail },
+  components: { LoadingCircle, ResponsiveQuestion, MarkdownContent, SubmissionDetail },
   setup() {
     return { user, friendlyDate };
   },
@@ -98,7 +99,7 @@ export default {
       <div v-if="question">
         <sui-tab v-model:activeIndex="tabIndex">
           <sui-tab-panel header="Question">
-            <markdown-content display :markdown="question.statement" />
+            <responsive-question :markdown="question.statement" />
             <sui-divider />
 
             <div v-if="!user" class="ui placeholder segment">

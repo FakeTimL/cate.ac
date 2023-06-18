@@ -70,7 +70,7 @@ export default {
           @input="errors.fields.sheet.length = 0"
         />
         <button class="ui primary button" :class="{ disabled: waiting, loading: waiting }" @click="add">
-          <i class="plus icon" />New
+          <i class="plus icon" />New Attempt
         </button>
       </div>
 

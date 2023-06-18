@@ -115,6 +115,7 @@ hljs.registerLanguage('lean', hljsLean);
 export default {
   props: {
     markdown: { type: String, required: true },
+    unsafe: { type: Boolean, default: false }, // Allow HTML in markdown.
     display: { type: Boolean, default: false },
   },
   data() {
@@ -123,6 +124,7 @@ export default {
   created() {
     const big = this.display;
     const md = new MarkdownIt({
+      html: this.unsafe,
       highlight(str, lang) {
         if (lang && hljs.getLanguage(lang)) {
           try {
