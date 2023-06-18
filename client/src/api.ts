@@ -3,7 +3,7 @@ import axios from 'axios';
 // API client configuration.
 
 export const api = axios.create({
-  baseURL: '/api/',
+  baseURL: 'http://localhost:8000/api/',
   withCredentials: true,
   xsrfHeaderName: 'X-CSRFTOKEN',
   xsrfCookieName: 'csrftoken',

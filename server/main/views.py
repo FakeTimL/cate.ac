@@ -118,7 +118,7 @@ class UserSubmissionsView(views.APIView):
     queryset = Submission.objects.filter(user=user).order_by('-date')
     return Response(SubmissionSerializer(queryset, many=True).data, status.HTTP_200_OK)
 
-  # Submit a new answer and have ChatGPT grade it.
+  # Submit a new answer and (optionally) have ChatGPT grade it.
   def post(self, request: Request) -> Response:
     user = request.user
     if not isinstance(user, User):
@@ -127,7 +127,7 @@ class UserSubmissionsView(views.APIView):
       'user': user.pk,
       'question': request.data.get('question'),
       'user_answer': request.data.get('user_answer'),
-      'gpt_marking': request.data.get('gpt_marking', False),
+      'gpt_marking': request.data.get('gpt_marking', False),  # TODO: reconsider
     })
     serializer.is_valid(raise_exception=True)
     submission = serializer.save()
@@ -146,6 +146,26 @@ class UserSubmissionView(views.APIView):
     if not (isinstance(user, User) and user == submission.user):
       self.permission_denied(request)
     return Response(SubmissionSerializer(submission).data, status.HTTP_200_OK)
+
+  # Partially update submission before it is graded, and (optionally) have ChatGPT grade it.
+  def patch(self, request: Request, pk: int) -> Response:
+    user = request.user
+    submission = get_object_or_404(Submission, pk=pk)
+    if not (isinstance(user, User) and user == submission.user):
+      self.permission_denied(request)
+    if submission.gpt_marked:
+      self.permission_denied(request)
+    serializer = SubmissionSerializer(submission, data={
+      'user': submission.user.pk,
+      'question': submission.question.pk,
+      'user_answer': request.data.get('user_answer'),
+      'gpt_marking': request.data.get('gpt_marking', False),  # TODO: reconsider
+    })
+    serializer.is_valid(raise_exception=True)
+    submission = serializer.save()
+    if submission.gpt_marking:
+      SubmissionsThread([submission]).start()  # This will trigger requests to ChatGPT.
+    return Response(serializer.data, status.HTTP_200_OK)
 
   # Delete submission.
   def delete(self, request: Request, pk: int) -> Response:
@@ -186,12 +206,16 @@ class UserAttemptsView(views.APIView):
     user = request.user
     if not isinstance(user, User):
       self.permission_denied(request)
-    serializer = AttemptSerializer(data=request.data)
-    serializer.initial_data['user'] = user.pk
-    serializer.initial_data['begin_time'] = datetime.now()
-    serializer.initial_data['end_time'] = None
+    serializer = AttemptSerializer(data={
+      'user': user.pk,
+      'sheet': request.data.get('sheet'),
+      'attempt_submissions': request.data.get('attempt_submissions'),
+      'end_time': None if request.data.get('end_time') is None else datetime.now(),  # TODO: reconsider
+    })
     serializer.is_valid(raise_exception=True)
-    serializer.save()
+    attempt = serializer.save()
+    if attempt.end_time is not None:
+      SubmissionsThread(list(attempt.submissions.all())).start()  # This will trigger requests to ChatGPT.
     return Response(serializer.data, status.HTTP_201_CREATED)
 
 
@@ -206,7 +230,7 @@ class UserAttemptView(views.APIView):
       self.permission_denied(request)
     return Response(AttemptSerializer(attempt).data, status.HTTP_200_OK)
 
-  # Partially update attempt data.
+  # Partially update attempt data before it is completed.
   def patch(self, request: Request, pk: int) -> Response:
     user = request.user
     attempt = get_object_or_404(Attempt, pk=pk)
@@ -214,30 +238,16 @@ class UserAttemptView(views.APIView):
       self.permission_denied(request)
     if attempt.completed:
       self.permission_denied(request)
-
-    # Only allowed fields:
-    data = dict()
-
-    if request.data.get('attempt_submissions') is not None:
-      data['attempt_submissions'] = request.data['attempt_submissions']
-
-    just_completed = False
-    if request.data.get('end_time') is not None:
-      data['end_time'] = datetime.now()
-      just_completed = True
-
-    serializer = AttemptSerializer(attempt, data=data, partial=True)
+    serializer = AttemptSerializer(attempt, data={
+      'user': attempt.user.pk,
+      'sheet': attempt.sheet.pk,
+      'attempt_submissions': request.data.get('attempt_submissions'),
+      'end_time': None if request.data.get('end_time') is None else datetime.now(),  # TODO: reconsider
+    })
     serializer.is_valid(raise_exception=True)
     attempt = serializer.save()
-
-    if just_completed:
-      submissions = []
-      for submission in attempt.submissions.all():
-        submission.gpt_marking = True
-        submission.save()
-        submissions.append(submission)
-      SubmissionsThread(submissions).start()  # This will trigger requests to ChatGPT.
-
+    if attempt.end_time is not None:
+      SubmissionsThread(list(attempt.submissions.all())).start()  # This will trigger requests to ChatGPT.
     return Response(serializer.data, status.HTTP_200_OK)
 
   # Delete attempt.

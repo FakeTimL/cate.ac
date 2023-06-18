@@ -64,14 +64,14 @@ class Submission(models.Model):
     return self.gpt_mark is not None
 
   def __str__(self) -> str:
-    return str(self.user) + ': ' + ('' if self.user_answer is None else self.user_answer)
+    return str(self.user) + ': ' + self.user_answer
 
 
 class Attempt(models.Model):
   user = models.ForeignKey(User, related_name='attempts', on_delete=models.CASCADE)
   sheet = models.ForeignKey(Sheet, related_name='attempts', on_delete=models.CASCADE)
   submissions = models.ManyToManyField(Submission, through='AttemptSubmission', related_name='attempt')
-  begin_time = models.DateTimeField()
+  begin_time = models.DateTimeField(auto_now_add=True)
   end_time = models.DateTimeField(blank=True, null=True)
 
   @property

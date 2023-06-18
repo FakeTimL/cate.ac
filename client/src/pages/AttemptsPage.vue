@@ -46,7 +46,7 @@ export default {
         this.errors.clear();
         this.waiting = true;
         const attempt = (await api.post(`main/my_attempts/`, this.fields)).data as Attempt;
-        window.location.href = `/attempt/${attempt.pk}/`;
+        this.$router.push(`/attempt/${attempt.pk}/`);
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
         else messageErrors(e);

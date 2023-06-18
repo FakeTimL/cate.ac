@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)
 # See: https://stackoverflow.com/a/11903904
 class SubmissionsThread(threading.Thread):
   def __init__(self, submissions: list[Submission], **kwargs):
+    for submission in submissions:
+      submission.gpt_marking = True
+      submission.save()
     self.submissions = submissions
     super(SubmissionsThread, self).__init__(**kwargs)
 

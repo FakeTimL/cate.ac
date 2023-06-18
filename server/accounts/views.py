@@ -43,20 +43,16 @@ class UserView(views.APIView):
     serializer = user_serializer(user, request=request, refl=refl)
     return Response(serializer.data, status.HTTP_200_OK)
 
-  # Update user data.
-  def put(self, request: Request, pk: int, partial=False) -> Response:
+  # Partially update user data.
+  def patch(self, request: Request, pk: int) -> Response:
     user = get_object_or_404(User, pk=pk)
     refl = isinstance(request.user, User) and request.user.pk == user.pk
-    serializer = user_serializer(user, request=request, refl=refl, data=request.data, partial=partial)
+    serializer = user_serializer(user, request=request, refl=refl, data=request.data, partial=True) # TODO: avoid partial
     serializer.initial_data['username'] = user.username
     serializer.is_valid(raise_exception=True)
     serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
     serializer.save()
     return Response(serializer.data, status.HTTP_200_OK)
-
-  # Partially update user data.
-  def patch(self, request: Request, pk: int) -> Response:
-    return self.put(request, pk, partial=True)
 
   # Delete user (staff only).
   def delete(self, request: Request, pk: int) -> Response:

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Sheet, Attempt, Question, User, Submission } from '@/api';
+import type { Sheet, Attempt, Question, User, Submission, Topic } from '@/api';
 import axios from 'axios';
 import { api } from '@/api';
 import { messageErrors } from '@/messages';
@@ -19,15 +19,12 @@ class FormFields {
 class QuestionItem {
   question: Question;
   submission = null as Submission | null;
+  topics = null as Topic[] | null;
 
   modified = false;
   waiting = false;
   fields = new FormFields();
-  errors = new FormErrors<FormFields>({
-    question: [],
-    user_answer: [],
-    gpt_marking: [],
-  });
+  errors = new FormErrors<FormFields>({ question: [], user_answer: [], gpt_marking: [] });
 
   constructor(question: Question, submission: Submission | null) {
     this.question = question;
@@ -198,7 +195,7 @@ export default {
           if (item.submission !== null) {
             this.attempt.attempt_submissions.push({ submission: item.submission.pk });
           }
-        await api.patch(`/main/my_attempt/${this.attempt.pk}/`, this.attempt);
+        await api.patch(`main/my_attempt/${this.attempt.pk}/`, this.attempt);
       } catch (e) {
         messageErrors(e);
       }
@@ -208,8 +205,13 @@ export default {
       try {
         item.errors.clear();
         item.waiting = true;
-        item.submission = (await api.post(`main/my_submissions/`, item.fields)).data as Submission;
-        await this.saveAttempt(false);
+        if (item.submission !== null) {
+          item.submission = (await api.patch(`main/my_submission/${item.submission.pk}/`, item.fields))
+            .data as Submission;
+        } else {
+          item.submission = (await api.post(`main/my_submissions/`, item.fields)).data as Submission;
+          await this.saveAttempt(false);
+        }
         item.modified = false;
       } catch (e) {
         if (axios.isAxiosError(e)) item.errors.decode(e);
@@ -297,7 +299,11 @@ export default {
             </div>
 
             <div v-else class="ui piled segment" style="margin-top: 1em">
-              <submission-detail :question="item.question" :submission="item.submission ?? undefined" />
+              <submission-detail
+                :question="item.question"
+                :topics="item.topics ?? undefined"
+                :submission="item.submission ?? undefined"
+              />
             </div>
           </li>
         </ol>
