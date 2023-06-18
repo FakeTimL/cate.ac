@@ -1,8 +1,8 @@
 <script lang="ts">
 import { api, type Topic, type Question } from '@/api';
+import { messageErrors } from '@/state';
 import LoadingText from './components/LoadingText.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
-import { messageErrors } from '@/messages';
 
 export default {
   components: {

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { api, type Topic } from '@/api';
+import { messageErrors } from '@/state';
 import LoadingText from './components/LoadingText.vue';
-import { messageErrors } from '@/messages';
 
 export default {
   components: { LoadingText },

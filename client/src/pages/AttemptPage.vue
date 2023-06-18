@@ -2,7 +2,7 @@
 import type { Sheet, Attempt, Question, User, Submission, Topic } from '@/api';
 import axios from 'axios';
 import { api } from '@/api';
-import { messageErrors } from '@/messages';
+import { messageErrors } from '@/state';
 import { friendlyDuration } from '@/dates';
 import { FormErrors } from '@/errors';
 
@@ -18,16 +18,17 @@ class FormFields {
 
 class QuestionItem {
   question: Question;
+  topics: Topic[];
   submission = null as Submission | null;
-  topics = null as Topic[] | null;
 
   modified = false;
   waiting = false;
   fields = new FormFields();
   errors = new FormErrors<FormFields>({ question: [], user_answer: [], gpt_marking: [] });
 
-  constructor(question: Question, submission: Submission | null) {
+  constructor(question: Question, topics: Topic[], submission: Submission | null) {
     this.question = question;
+    this.topics = topics;
     this.submission = submission;
     this.fields.question = question.pk;
     this.fields.user_answer = submission?.user_answer ?? '';
@@ -110,8 +111,45 @@ export default {
     },
   },
 
-  created() {
-    this.reload();
+  async created() {
+    try {
+      this.attempt = (await api.get(`main/my_attempt/${this.pk}/`)).data as Attempt;
+      this.sheet = (await api.get(`main/sheet/${this.attempt.sheet}/`)).data as Sheet;
+      this.author = (await api.get(`accounts/user/${this.sheet.user}/`)).data as User;
+
+      // Retrieve and sort all questions on sheet.
+      const sheet_questions = new Array<[number, Question]>();
+      for (const { question: pk, index } of this.sheet.sheet_questions) {
+        sheet_questions.push([index, (await api.get(`main/question/${pk}/`)).data as Question]);
+      }
+      sheet_questions.sort(([i, _], [j, __]) => i - j);
+
+      // Retrieve all submissions made in this attempt.
+      const submissions = new Map<number, Submission>();
+      for (const { submission: pk } of this.attempt.attempt_submissions) {
+        const submission = (await api.get(`main/my_submission/${pk}/`)).data as Submission;
+        submissions.set(submission.question, submission);
+      }
+
+      // Retrieve all topics and create QuestionItems.
+      this.items = [];
+      for (const [_, question] of sheet_questions) {
+        const submission = submissions.get(question.pk) ?? null;
+        const topics = new Array<Topic>();
+        for (const pk of question.topics) {
+          topics.push((await api.get(`main/topic/${pk}/`)).data as Topic);
+        }
+        this.items.push(new QuestionItem(question, topics, submission));
+      }
+
+      // Start countdown timer.
+      this.currentTime = new Date().getTime() / 1000;
+      this.currentTimeInterval = window.setInterval(() => (this.currentTime = new Date().getTime() / 1000), 1000);
+
+      await this.reload();
+    } catch (e) {
+      messageErrors(e);
+    }
   },
 
   unmounted() {
@@ -120,39 +158,14 @@ export default {
   },
 
   methods: {
-    // Refresh everything.
+    // Refresh submissions.
     async reload() {
+      if (this.items === null) return;
       try {
-        this.attempt = (await api.get(`main/my_attempt/${this.pk}/`)).data as Attempt;
-        this.sheet = (await api.get(`main/sheet/${this.attempt.sheet}/`)).data as Sheet;
-        this.author = (await api.get(`accounts/user/${this.sheet.user}/`)).data as User;
-
-        // Retrieve and sort all questions on sheet.
-        const sheet_questions = new Array<[number, Question]>();
-        for (const { question: pk, index } of this.sheet.sheet_questions) {
-          const question = (await api.get(`main/question/${pk}/`)).data as Question;
-          sheet_questions.push([index, question]);
-        }
-        sheet_questions.sort(([i, _], [j, __]) => i - j);
-
-        // Retrieve all submissions made in this attempt.
-        const submissions = new Map<number, Submission>();
-        for (const { submission: pk } of this.attempt.attempt_submissions) {
-          const submission = (await api.get(`main/my_submission/${pk}/`)).data as Submission;
-          submissions.set(submission.question, submission);
-        }
-
-        // Create QuestionItems.
-        this.items = [];
-        for (const [_, question] of sheet_questions) {
-          const submission = submissions.get(question.pk) ?? null;
-          this.items.push(new QuestionItem(question, submission));
-        }
-
-        // Start countdown timer.
-        this.currentTime = new Date().getTime() / 1000;
-        this.currentTimeInterval = window.setInterval(() => (this.currentTime = new Date().getTime() / 1000), 1000);
-        this.loading = false;
+        for (const item of this.items)
+          if (item.submission !== null) {
+            item.submission = (await api.get(`main/my_submission/${item.submission.pk}/`)).data as Submission;
+          }
 
         // Calculate total marks.
         if (this.completed) {
@@ -181,6 +194,8 @@ export default {
           if (this.items.reduce((acc, item) => acc || (item.submission?.gpt_marking ?? false), false))
             this.reloadTimeout = setTimeout(this.reload, 1000);
         }
+
+        this.loading = false;
       } catch (e) {
         messageErrors(e);
       }
@@ -195,7 +210,7 @@ export default {
           if (item.submission !== null) {
             this.attempt.attempt_submissions.push({ submission: item.submission.pk });
           }
-        await api.patch(`main/my_attempt/${this.attempt.pk}/`, this.attempt);
+        this.attempt = (await api.patch(`main/my_attempt/${this.attempt.pk}/`, this.attempt)).data as Attempt;
       } catch (e) {
         messageErrors(e);
       }
@@ -240,7 +255,7 @@ export default {
 <template>
   <div class="ui text container" style="padding: 1em 0">
     <loading-text fill-height :loading="loading">
-      <div v-if="sheet">
+      <div v-if="attempt !== null && sheet !== null && author !== null && items !== null">
         <h1 class="ui header">{{ sheet.name }}</h1>
 
         <div v-if="!completed" style="padding: 1px">
@@ -254,6 +269,15 @@ export default {
           <h1 class="ui header" style="transition: opacity 0.5s" :style="{ opacity: markingPercent }">
             Total marks: {{ markingRange }} / {{ totalMarks }}
           </h1>
+          <!-- Please keep it rounded up. -->
+          <div class="ui yellow star huge disabled rating">
+            <i
+              v-for="n in 5"
+              :key="n"
+              class="star icon"
+              :class="{ active: n <= Math.ceil((userMarksLow / totalMarks) * 5) }"
+            />
+          </div>
         </div>
 
         <div class="ui list">
@@ -261,15 +285,17 @@ export default {
             <i class="hourglass icon" />
             <div class="content">Time limit: {{ friendlyDuration(sheet.time_limit) }}</div>
           </div>
-          <div v-if="author !== null" class="item">
+          <div class="item">
             <i class="user icon" />
             <div class="content">Author: {{ author.username }}</div>
           </div>
           <div v-if="sheet.description.length > 0" class="item">
             <i class="book icon" />
-            <div class="content">Description: <markdown-content :markdown="sheet.description" /></div>
+            <div class="content"><markdown-content :markdown="sheet.description" /></div>
           </div>
         </div>
+
+        <div class="ui divider" />
 
         <ol class="ui list">
           <li v-for="item in items" :key="item.question.pk" class="item" style="margin: 1em 0">
@@ -298,13 +324,18 @@ export default {
               </button>
             </div>
 
-            <div v-else class="ui piled segment" style="margin-top: 1em">
+            <div v-else class="ui piled segment" style="margin: 1.5em 0">
               <submission-detail
                 :question="item.question"
                 :topics="item.topics ?? undefined"
                 :submission="item.submission ?? undefined"
               />
             </div>
+
+            <router-link v-if="completed" :to="`/conversation/${author.pk}/`" class="ui primary button">
+              <i class="question icon" />
+              Ask Question
+            </router-link>
           </li>
         </ol>
 

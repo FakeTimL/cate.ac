@@ -1,7 +1,7 @@
 <script lang="ts">
 import { api } from '@/api';
 import { FormErrors } from '@/errors';
-import { messageErrors } from '@/messages';
+import { messageErrors } from '@/state';
 import axios from 'axios';
 
 import MarkdownContent from './components/MarkdownContent.vue';

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { api } from '@/api';
 import { FormErrors } from '@/errors';
-import { messageErrors } from '@/messages';
+import { messageErrors, user } from '@/state';
 import axios from 'axios';
 
 import MarkdownContent from './MarkdownContent.vue';
@@ -10,8 +10,11 @@ class FormFields {}
 
 export default {
   components: { MarkdownContent },
+  setup() {
+    return { user };
+  },
   // See: https://vuejs.org/guide/components/v-model.html
-  props: ['modelValue', 'username'],
+  props: ['modelValue'],
   emits: ['update:modelValue'],
   data() {
     return {
@@ -49,11 +52,14 @@ export default {
 </script>
 
 <template>
-  <sui-modal size="tiny" v-model="modalActive">
-    <sui-modal-header>User {{ username }}</sui-modal-header>
+  <sui-modal v-if="user" size="tiny" v-model="modalActive">
+    <sui-modal-header>User {{ user.username }}</sui-modal-header>
 
     <sui-modal-content scrolling>
       <sui-form></sui-form>
+
+      <a v-if="user.admin" href="/admin/" target="_blank" class="ui button">Site Administration</a>
+      <a v-if="user.admin" href="/api/main/feedbacks/" target="_blank" class="ui button">Feedbacks</a>
     </sui-modal-content>
 
     <sui-modal-actions>

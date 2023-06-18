@@ -2,12 +2,12 @@
 import { api, type Topic, type Question, type Submission } from '@/api';
 import { FormErrors } from '@/errors';
 import { friendlyDate } from '@/dates';
+import { messageErrors, user } from '@/state';
 import axios from 'axios';
 
 import LoadingCircle from './components/LoadingCircle.vue';
 import MarkdownContent from './components/MarkdownContent.vue';
 import SubmissionDetail from './components/SubmissionDetail.vue';
-import { messageErrors } from '@/messages';
 
 class FormFields {
   question: number | null = null;
@@ -18,7 +18,7 @@ class FormFields {
 export default {
   components: { LoadingCircle, MarkdownContent, SubmissionDetail },
   setup() {
-    return { friendlyDate };
+    return { user, friendlyDate };
   },
   props: {
     pk: {
@@ -101,54 +101,71 @@ export default {
             <markdown-content display :markdown="question.statement" />
             <sui-divider />
 
-            <sui-form>
-              <sui-form-field :error="errors.fields.user_answer.length > 0">
-                <label>Answer:</label>
-                <textarea
-                  placeholder="Type your answer here..."
-                  rows="15"
-                  style="resize: vertical"
-                  v-model="fields.user_answer"
-                  @input="errors.fields.user_answer.length = 0"
-                ></textarea>
-              </sui-form-field>
-              <sui-button primary :disabled="waiting" :loading="waiting" @click.prevent="submit">Check</sui-button>
-            </sui-form>
+            <div v-if="!user" class="ui placeholder segment">
+              <div class="ui icon header">
+                <i class="edit outline icon" />
+                Sign up or log in to answer questions
+              </div>
+            </div>
 
-            <sui-message v-if="errors.all.length > 0" icon error>
-              <sui-icon name="info" />
-              <sui-message-content>
-                <sui-list bulleted>
-                  <sui-list-item v-for="error of errors.all" :key="error">
-                    <markdown-content :markdown="error" />
-                  </sui-list-item>
-                </sui-list>
-              </sui-message-content>
-            </sui-message>
+            <div v-else>
+              <sui-form>
+                <sui-form-field :error="errors.fields.user_answer.length > 0">
+                  <label>Answer:</label>
+                  <textarea
+                    placeholder="Type your answer here..."
+                    rows="15"
+                    style="resize: vertical"
+                    v-model="fields.user_answer"
+                    @input="errors.fields.user_answer.length = 0"
+                  ></textarea>
+                </sui-form-field>
+                <sui-button primary :disabled="waiting" :loading="waiting" @click.prevent="submit">Check</sui-button>
+              </sui-form>
+              <sui-message v-if="errors.all.length > 0" icon error>
+                <sui-icon name="info" />
+                <sui-message-content>
+                  <sui-list bulleted>
+                    <sui-list-item v-for="error of errors.all" :key="error">
+                      <markdown-content :markdown="error" />
+                    </sui-list-item>
+                  </sui-list>
+                </sui-message-content>
+              </sui-message>
+            </div>
           </sui-tab-panel>
 
           <sui-tab-panel header="My submissions">
-            <sui-list selection>
-              <sui-list-item
-                v-for="(submission, index) in submissions"
-                :key="submission.pk"
-                :active="index === submissionIndex"
-                @click="submissionIndex = index"
-              >
-                <sui-list-header>
-                  Your marks:
-                  {{
-                    submission.gpt_mark === null ? '-' : (submission.gpt_mark / question.mark_denominator).toString()
-                  }}
-                  / {{ (question.mark_maximum / question.mark_denominator).toString() }}
-                </sui-list-header>
-                <span>Answered {{ friendlyDate(new Date(submission.date)) }}</span>
-              </sui-list-item>
-            </sui-list>
+            <div v-if="!user" class="ui placeholder segment">
+              <div class="ui icon header">
+                <i class="history icon" />
+                Sign up or log in to view history
+              </div>
+            </div>
 
-            <div v-if="submissionIndex !== null && submissions[submissionIndex]">
-              <sui-divider />
-              <submission-detail :question="question" :topics="topics" :submission="submissions[submissionIndex]" />
+            <div v-else>
+              <sui-list selection>
+                <sui-list-item
+                  v-for="(submission, index) in submissions"
+                  :key="submission.pk"
+                  :active="index === submissionIndex"
+                  @click="submissionIndex = index"
+                >
+                  <sui-list-header>
+                    Your marks:
+                    {{
+                      submission.gpt_mark === null ? '-' : (submission.gpt_mark / question.mark_denominator).toString()
+                    }}
+                    / {{ (question.mark_maximum / question.mark_denominator).toString() }}
+                  </sui-list-header>
+                  <span>Answered {{ friendlyDate(new Date(submission.date)) }}</span>
+                </sui-list-item>
+              </sui-list>
+
+              <div v-if="submissionIndex !== null && submissions[submissionIndex]">
+                <sui-divider />
+                <submission-detail :question="question" :topics="topics" :submission="submissions[submissionIndex]" />
+              </div>
             </div>
           </sui-tab-panel>
         </sui-tab>

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { messages } from '@/messages';
+import { messages } from '@/state';
 import MarkdownContent from './MarkdownContent.vue';
 
 export default {

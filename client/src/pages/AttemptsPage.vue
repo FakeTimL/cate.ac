@@ -1,7 +1,7 @@
 <script lang="ts">
 import axios from 'axios';
 import { api, type Attempt, type Sheet } from '@/api';
-import { messageErrors } from '@/messages';
+import { messageErrors } from '@/state';
 import { friendlyDate } from '@/dates';
 import { FormErrors } from '@/errors';
 

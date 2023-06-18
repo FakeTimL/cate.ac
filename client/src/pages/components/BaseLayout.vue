@@ -21,11 +21,12 @@ export default {
     onResize() {
       this.large = window.innerWidth > 767.5;
     },
+    onClickSidebar() {
+      this.toggle(false);
+    },
     onClickPusher(e: Event) {
-      if (this.sidebarActive) {
-        e.stopPropagation();
-        this.toggle(false);
-      }
+      if (this.sidebarActive) e.stopPropagation();
+      this.toggle(false);
     },
     onClickButton(e: Event) {
       e.stopPropagation();
@@ -47,6 +48,7 @@ export default {
     <div
       class="ui left push sidebar inverted vertical navigation menu"
       :class="{ visible: sidebarActive, animating: sidebarAnimating }"
+      @click="onClickSidebar"
     >
       <slot name="navigation"></slot>
     </div>
