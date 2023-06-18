@@ -30,7 +30,7 @@ export default {
   },
   async created() {
     try {
-      const attempts = (await api.get('main/my_attempts/')).data as Attempt[];
+      const attempts = (await api.get('main/me/attempts/')).data as Attempt[];
       for (const attempt of attempts) {
         const sheet = (await api.get(`main/sheet/${attempt.sheet}/`)).data as Sheet;
         this.attempts.push([attempt, sheet]);
@@ -45,7 +45,7 @@ export default {
       try {
         this.errors.clear();
         this.waiting = true;
-        const attempt = (await api.post(`main/my_attempts/`, this.fields)).data as Attempt;
+        const attempt = (await api.post(`main/me/attempts/`, this.fields)).data as Attempt;
         this.$router.push(`/attempt/${attempt.pk}/`);
       } catch (e) {
         if (axios.isAxiosError(e)) this.errors.decode(e);
@@ -92,7 +92,7 @@ export default {
           :to="`/attempt/${attempt.pk}/`"
           class="item"
         >
-          <i class="pencil alternate icon" />
+          <i class="file alternate icon" />
           <div class="content">
             <div class="header">{{ sheet.name }}</div>
             <div class="description">Started {{ friendlyDate(new Date(attempt.begin_time)) }}</div>

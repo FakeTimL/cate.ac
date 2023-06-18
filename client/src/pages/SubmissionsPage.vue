@@ -14,7 +14,7 @@ export default {
   },
   async created() {
     try {
-      this.submissions = (await api.get('main/my_submissions/')).data as Submission[];
+      this.submissions = (await api.get('main/me/submissions/')).data as Submission[];
       for (let submission of this.submissions) {
         if (!this.questions.has(submission.question)) {
           this.questions.set(
@@ -42,7 +42,7 @@ export default {
           :key="submission.pk"
           :to="`/question/${submission.question}/`"
         >
-          <sui-icon name="comments outline" />
+          <sui-icon name="edit" />
           <sui-list-content>
             <sui-list-header>
               [{{ submission.gpt_mark }}/{{ questions.get(submission.question)?.mark_maximum }}]

@@ -47,7 +47,7 @@ class UserView(views.APIView):
   def patch(self, request: Request, pk: int) -> Response:
     user = get_object_or_404(User, pk=pk)
     refl = isinstance(request.user, User) and request.user.pk == user.pk
-    serializer = user_serializer(user, request=request, refl=refl, data=request.data, partial=True) # TODO: avoid partial
+    serializer = user_serializer(user, request=request, refl=refl, data=request.data, partial=True)  # TODO
     serializer.initial_data['username'] = user.username
     serializer.is_valid(raise_exception=True)
     serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
@@ -90,7 +90,20 @@ class SessionView(views.APIView):
     return Response(None, status.HTTP_200_OK)
 
 
-class MessagesView(views.APIView):
+class ConversationsView(views.APIView):
+  permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
+
+  # List all messages.
+  def get(self, request: Request) -> Response:
+    if not isinstance(request.user, User):
+      return Response(None, status.HTTP_200_OK)
+    queryset_send = Message.objects.filter(sender=request.user.pk)
+    queryset_recv = Message.objects.filter(receiver=request.user.pk)
+    queryset = queryset_send.union(queryset_recv).order_by('-date')
+    return Response(MessageSerializer(queryset, many=True).data, status.HTTP_200_OK)
+
+
+class ConversationView(views.APIView):
   permission_classes = [permissions.AllowAny]  # Disable DRF permission checking, use our own logic.
 
   # List all messages from / to another user.

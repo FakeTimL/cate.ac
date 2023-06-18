@@ -64,7 +64,7 @@ export default {
     // Refresh submissions.
     async reload() {
       try {
-        this.submissions = (await api.get(`main/question/${this.pk}/my_submissions/`)).data as Submission[];
+        this.submissions = (await api.get(`main/question/${this.pk}/me/submissions/`)).data as Submission[];
         if (this.submissions.reduce((acc, submission) => acc || submission.gpt_marking, false))
           this.reloadTimeout = setTimeout(this.reload, 1000);
         this.loading = false;
@@ -78,7 +78,7 @@ export default {
       try {
         this.errors.clear();
         this.waiting = true;
-        await api.post(`main/my_submissions/`, this.fields);
+        await api.post(`main/me/submissions/`, this.fields);
         await this.reload();
         this.tabIndex = 1;
         this.submissionIndex = 0;

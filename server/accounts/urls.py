@@ -3,8 +3,9 @@ from . import views
 
 app_name = 'accounts'  # Namespace for URLs
 urlpatterns = [
-  path('users/', views.UsersView.as_view(), name='users'),  # type: ignore
-  path('user/<int:pk>/', views.UserView.as_view(), name='user'),  # type: ignore
-  path('session/', views.SessionView.as_view(), name='session'),  # type: ignore
-  path('messages/<int:pk>/', views.MessagesView.as_view(), name='messages'),  # type: ignore
+  path('users/', views.UsersView.as_view()),  # type: ignore
+  path('user/<int:pk>/', views.UserView.as_view()),  # type: ignore
+  path('me/', views.SessionView.as_view()),  # type: ignore
+  path('me/conversations/', views.ConversationsView.as_view()),  # type: ignore
+  path('me/conversation/<int:pk>/', views.ConversationView.as_view()),  # type: ignore
 ]

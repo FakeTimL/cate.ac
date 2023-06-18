@@ -38,7 +38,7 @@ export default {
   },
   async created() {
     try {
-      const data = (await api.get('accounts/session/')).data;
+      const data = (await api.get('accounts/me/')).data;
       if (data) user.value = data as User;
       // console.log(data);
     } catch (e) {
@@ -51,41 +51,52 @@ export default {
 <template>
   <base-layout :landingPage="currentPathIs('/')">
     <template #navigation>
-      <router-link to="/">
-        <sui-menu-item header>CATE</sui-menu-item>
+      <router-link to="/" class="header item">
+        <span>CATE</span>
       </router-link>
-      <router-link to="/topics/">
-        <sui-menu-item :active="currentPathIs('/topics/')">Topics</sui-menu-item>
+      <router-link to="/topics/" class="item" :class="{ active: currentPathIs('/topics/') }">
+        <i class="book icon" />
+        <span>Topics</span>
       </router-link>
-      <router-link to="/submissions/" v-if="user">
-        <sui-menu-item :active="currentPathIs('/submissions/')">Answers</sui-menu-item>
+      <router-link v-if="user" to="/submissions/" class="item" :class="{ active: currentPathIs('/submissions/') }">
+        <i class="edit icon" />
+        <span>Answers</span>
       </router-link>
-      <router-link to="/attempts/" v-if="user">
-        <sui-menu-item :active="currentPathIs('/attempts/')">Mock Exams</sui-menu-item>
+      <router-link v-if="user" to="/attempts/" class="item" :class="{ active: currentPathIs('/attempts/') }">
+        <i class="file alternate icon" />
+        <span>Exams</span>
       </router-link>
-      <router-link to="/feedback/">
-        <sui-menu-item :active="currentPathIs('/feedback/')">Feedback</sui-menu-item>
+      <router-link to="/feedback/" class="item" :class="{ active: currentPathIs('/feedback/') }">
+        <i class="comment icon" />
+        <span>Feedback</span>
       </router-link>
-      <router-link to="/about/">
-        <sui-menu-item :active="currentPathIs('/about/')">About</sui-menu-item>
+      <!--
+      <router-link to="/about/" class="item" :class="{ active: currentPathIs('/about/') }">
+        <i class="info circle icon" />
+        <span>About</span>
       </router-link>
-      <sui-menu-item position="right" v-if="!user" @click="logInModalIsActive = true">
+      -->
+      <a v-if="!user" @click="logInModalIsActive = true" class="right item">
         <span>Log in</span>
-      </sui-menu-item>
-      <sui-menu-item v-if="!user" @click="signUpModalIsActive = true">
-        <sui-icon name="user circle" />
+      </a>
+      <a v-if="!user" @click="signUpModalIsActive = true" class="item">
+        <i class="user circle icon" />
         <span>Sign up</span>
-      </sui-menu-item>
-      <sui-menu-item position="right" v-if="user" @click="sessionModalIsActive = true">
-        <sui-image avatar :src="avatar" :alt="`${user.username}'s avatar`" />
+      </a>
+      <router-link v-if="user" to="/conversations/" class="right item">
+        <i class="envelope icon" />
+        <span>Messages</span>
+      </router-link>
+      <a v-if="user" @click="sessionModalIsActive = true" class="item">
+        <img class="ui avatar image" :src="avatar" :alt="`${user.username}'s avatar`" />
         <span>{{ user.username }}</span>
-      </sui-menu-item>
+      </a>
     </template>
     <template #footer>
-      <sui-list link inverted size="small">
-        <sui-list-item as="a" href="https://doc.ic.uk.cate.ac/">doc.ic.uk.cate.ac</sui-list-item>
-        <sui-list-item as="a" href="https://cate.doc.ic.ac.uk/">cate.doc.ic.ac.uk</sui-list-item>
-      </sui-list>
+      <div class="ui small inverted link list">
+        <a href="https://doc.ic.uk.cate.ac/" class="item">doc.ic.uk.cate.ac</a>
+        <a href="https://cate.doc.ic.ac.uk/" class="item">cate.doc.ic.ac.uk</a>
+      </div>
     </template>
     <template #modals>
       <sign-up-modal v-model="signUpModalIsActive" />

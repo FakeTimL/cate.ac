@@ -38,7 +38,7 @@ export default {
       try {
         this.errors.clear();
         this.waiting = true;
-        await api.delete('accounts/session/');
+        await api.delete('accounts/me/');
         window.location.reload(); // Page refresh is required for new CSRF token.
         return;
       } catch (e) {

@@ -44,7 +44,7 @@ export default {
         if (this.fields.password == '') this.errors.fields.password.push('Please enter password.');
         if (this.errors.all.length > 0) return;
         this.waiting = true;
-        await api.post('accounts/session/', this.fields);
+        await api.post('accounts/me/', this.fields);
         window.location.reload(); // Page refresh is required for new CSRF token.
         return;
       } catch (e) {

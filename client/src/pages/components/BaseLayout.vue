@@ -55,14 +55,14 @@ export default {
     <div class="pusher" :class="{ dimmed: sidebarActive }" @click="onClickPusher">
       <div class="flex-container">
         <div class="ui borderless navigation menu" :class="{ inverted: landingPage, blue: landingPage }">
-          <sui-container v-if="large">
+          <div v-if="large" class="ui container">
             <slot name="navigation"></slot>
-          </sui-container>
-          <sui-menu-item v-if="!large" @click="onClickButton">
-            <sui-icon name="bars" />
-          </sui-menu-item>
-          <router-link to="/" v-if="!large">
-            <sui-menu-item header>CATE</sui-menu-item>
+          </div>
+          <a v-if="!large" class="item" @click="onClickButton">
+            <i class="bars icon" />
+          </a>
+          <router-link v-if="!large" class="header item" to="/">
+            <span>CATE</span>
           </router-link>
         </div>
         <div class="content">
@@ -74,11 +74,11 @@ export default {
             </transition>
           </router-view>
         </div>
-        <sui-segment inverted vertical class="footer">
-          <sui-container>
+        <div class="ui inverted vertical footer segment">
+          <div class="ui container">
             <slot name="footer"></slot>
-          </sui-container>
-        </sui-segment>
+          </div>
+        </div>
         <slot name="modals"></slot>
       </div>
     </div>
@@ -106,8 +106,7 @@ export default {
 .ui.navigation.menu:not(.sidebar) {
   margin: 0;
   border-radius: 0;
-  /* Tweak: hide top shadow */
-  /* margin-top: -1px; */
+  border-top-width: 0;
   /* Transition between landing page and other pages */
   transition: background-color 0.5s;
 }
@@ -121,7 +120,7 @@ export default {
   margin-top: -1em;
   margin-bottom: -1em;
   /* Tweak: make it less crowded */
-  margin-right: 0.4em;
+  margin-right: 0.5em;
 }
 
 .ui.navigation.menu :deep(.item .ui.tiny.image) {

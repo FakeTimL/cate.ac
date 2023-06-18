@@ -113,7 +113,7 @@ export default {
 
   async created() {
     try {
-      this.attempt = (await api.get(`main/my_attempt/${this.pk}/`)).data as Attempt;
+      this.attempt = (await api.get(`main/me/attempt/${this.pk}/`)).data as Attempt;
       this.sheet = (await api.get(`main/sheet/${this.attempt.sheet}/`)).data as Sheet;
       this.author = (await api.get(`accounts/user/${this.sheet.user}/`)).data as User;
 
@@ -127,7 +127,7 @@ export default {
       // Retrieve all submissions made in this attempt.
       const submissions = new Map<number, Submission>();
       for (const { submission: pk } of this.attempt.attempt_submissions) {
-        const submission = (await api.get(`main/my_submission/${pk}/`)).data as Submission;
+        const submission = (await api.get(`main/me/submission/${pk}/`)).data as Submission;
         submissions.set(submission.question, submission);
       }
 
@@ -164,7 +164,7 @@ export default {
       try {
         for (const item of this.items)
           if (item.submission !== null) {
-            item.submission = (await api.get(`main/my_submission/${item.submission.pk}/`)).data as Submission;
+            item.submission = (await api.get(`main/me/submission/${item.submission.pk}/`)).data as Submission;
           }
 
         // Calculate total marks.
@@ -210,7 +210,7 @@ export default {
           if (item.submission !== null) {
             this.attempt.attempt_submissions.push({ submission: item.submission.pk });
           }
-        this.attempt = (await api.patch(`main/my_attempt/${this.attempt.pk}/`, this.attempt)).data as Attempt;
+        this.attempt = (await api.patch(`main/me/attempt/${this.attempt.pk}/`, this.attempt)).data as Attempt;
       } catch (e) {
         messageErrors(e);
       }
@@ -221,10 +221,10 @@ export default {
         item.errors.clear();
         item.waiting = true;
         if (item.submission !== null) {
-          item.submission = (await api.patch(`main/my_submission/${item.submission.pk}/`, item.fields))
+          item.submission = (await api.patch(`main/me/submission/${item.submission.pk}/`, item.fields))
             .data as Submission;
         } else {
-          item.submission = (await api.post(`main/my_submissions/`, item.fields)).data as Submission;
+          item.submission = (await api.post(`main/me/submissions/`, item.fields)).data as Submission;
           await this.saveAttempt(false);
         }
         item.modified = false;

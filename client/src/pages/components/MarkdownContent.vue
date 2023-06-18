@@ -123,7 +123,6 @@ export default {
   created() {
     const big = this.display;
     const md = new MarkdownIt({
-      html: true,
       highlight(str, lang) {
         if (lang && hljs.getLanguage(lang)) {
           try {
@@ -138,6 +137,7 @@ export default {
       },
     });
     md.use(katex, { errorColor: '#9f3a38' });
+    // See: https://github.com/markdown-it/markdown-it/blob/master/docs/security.md
     this.converted = md.render(this.markdown);
   },
 };
