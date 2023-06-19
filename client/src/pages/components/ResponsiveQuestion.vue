@@ -5,8 +5,8 @@ import MarkdownContent from './MarkdownContent.vue';
 export default {
   components: { MarkdownContent },
   props: {
-    markdown: {type: String, required: true},
-    disabled: {type: Boolean, default: false},
+    markdown: { type: String, required: true },
+    disabled: { type: Boolean, default: false },
   },
   data() {
     return { statement: '' };
@@ -31,8 +31,8 @@ export default {
     for (const [key, value] of Object.entries(placeholders)) {
       this.statement = this.statement.replace(key, value);
     }
-    console.log(this.statement)
-  }
+    console.log(this.statement);
+  },
 };
 </script>
 

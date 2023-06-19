@@ -63,12 +63,6 @@ export default {
   async created() {
     await this.reload();
     this.loading = false;
-    // Scroll to bottom of conversation.
-    if (this.items !== null && this.items.length > 0) this.itemIndex = 0;
-    this.$nextTick(() => {
-      const elem = this.$refs.window as HTMLElement | undefined;
-      elem?.scroll({ top: elem.scrollHeight, behavior: 'smooth' });
-    });
   },
 
   unmounted() {
@@ -105,16 +99,39 @@ export default {
           subjects.set(subject.pk, subject);
         }
 
-        // Update or create ConversationItems.
+        // Update or create ConversationItems. Old focus is preserved.
         const old = this.items;
+        const oldCurrent = this.itemIndex !== null ? this.items?.[this.itemIndex] ?? null : null;
+        let oldCurrentHasNewMessages = false;
+
         this.items = new Array<ConversationItem>();
+        this.itemIndex = null;
         for (const [pk, messages] of map.entries()) {
           const subject = subjects.get(pk)!;
           const prevItem = old?.find((v) => v.subject.pk == subject.pk) ?? null;
           this.items.push(new ConversationItem(subject, messages.reverse(), prevItem));
+          if (oldCurrent !== null && pk == oldCurrent.subject.pk) {
+            this.itemIndex = this.items.length - 1;
+            oldCurrentHasNewMessages = messages.length > oldCurrent.messages.length;
+          }
         }
 
-        this.reloadTimeout = setTimeout(this.reload, 5000);
+        // If loading for the first time, focus on the first entry.
+        if (this.loading && this.items.length > 0) this.itemIndex = 0;
+
+        // Check if we need to scroll to bottom.
+        // See: https://stackoverflow.com/a/34550171
+        const elem = this.$refs.window as HTMLElement | undefined;
+        const atBottom = elem !== undefined && Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight) < 3.0;
+        const needScroll = this.loading || (atBottom && oldCurrentHasNewMessages);
+
+        // Scroll to bottom of conversation.
+        if (needScroll) {
+          this.loading = false; // If loading for the first time, make sure DOM is updated at next tick.
+          this.$nextTick(() => this.scrollToBottom(true));
+        }
+
+        this.reloadTimeout = setTimeout(this.reload, 1000);
       } catch (e) {
         messageErrors(e);
       }
@@ -125,7 +142,7 @@ export default {
         this.errors.clear();
         this.waiting = true;
         const _message = (await api.post(`accounts/me/messages/`, this.fields)).data as Message;
-        // Trigger immediate reload (TODO: avoid).
+        // Trigger immediate reload.
         if (this.reloadTimeout !== null) clearTimeout(this.reloadTimeout);
         await this.reload();
         this.waiting = false;
@@ -143,27 +160,25 @@ export default {
       if (this.items === null || item === null || !item.content) return;
       try {
         item.waiting = true;
-        const message = (
+        const _message = (
           await api.post(`accounts/me/messages/`, {
             receiver: item.subject.pk,
             content: item.content,
           })
         ).data as Message;
-        item.messages.push(message);
         item.content = '';
         item.waiting = false;
-        // Move item to top of list.
-        this.items.splice(this.items.indexOf(item), 1);
-        this.items.unshift(item);
-        this.itemIndex = 0;
-        // Scroll to bottom of conversation.
-        this.$nextTick(() => {
-          const elem = this.$refs.window as HTMLElement | undefined;
-          elem?.scroll({ top: elem.scrollHeight, behavior: 'smooth' });
-        });
+        // Trigger immediate reload.
+        if (this.reloadTimeout !== null) clearTimeout(this.reloadTimeout);
+        await this.reload();
       } catch (e) {
         messageErrors(e);
       }
+    },
+
+    scrollToBottom(animate: boolean = false) {
+      const elem = this.$refs.window as HTMLElement | undefined;
+      elem?.scroll({ top: elem.scrollHeight, behavior: animate ? 'smooth' : 'auto' });
     },
   },
 };
@@ -203,7 +218,10 @@ export default {
               :key="item.subject.pk"
               class="item"
               :class="{ active: index == itemIndex }"
-              @click="itemIndex = index"
+              @click="
+                itemIndex = index;
+                $nextTick(scrollToBottom);
+              "
             >
               <img
                 class="ui avatar image"
